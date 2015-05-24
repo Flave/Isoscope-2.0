@@ -1,0 +1,12 @@
+if(process.env.BROWSER) {
+  require('./assets/main.scss');
+}
+
+var React = require('react');
+var Router = require('react-router');
+var RouteHandler = Router.RouteHandler;
+var routes = require('./routes.js');
+
+Router.run(routes, Router.HistoryLocation, function (Handler, state) {
+  React.render(<Handler routerState={state} />, document.getElementById('root'));
+});

@@ -11,10 +11,14 @@
   "license": "ISC",
   "dependencies": {
     "babel": "^5.4.7",
+    "css-loader": "^0.14.1",
     "express": "^4.12.4",
     "node-jsx": "^0.13.3",
+    "node-sass": "^3.1.2",
     "react": "^0.13.3",
-    "react-router": "^0.13.3"
+    "react-router": "^0.13.3",
+    "sass-loader": "^1.0.2",
+    "style-loader": "^0.12.3"
   },
   "devDependencies": {
     "autoprefixer-loader": "^1.2.0",

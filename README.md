@@ -32,6 +32,12 @@ A development server serving and updating the transformed javascript and css run
 └── index.js                  # Entrypoint for running the server
 ```
 
+This Boilerplate is mainly based on the following setups
+(List of React-Hotloader starterkits)[https://github.com/gaearon/react-hot-loader/tree/master/docs#starter-kits]
+(react-hot-boilerplate)[https://github.com/gaearon/react-hot-boilerplate]
+(isomorphic-hot-loader)[https://github.com/irvinebroque/isomorphic-hot-loader]
+(isomorphic500)[https://github.com/gpbl/isomorphic500]
+(Pete Hunt Webpack essentials)[https://github.com/petehunt/webpack-howto]
 
 ## Todos
 - Dynamic bundle.js loading

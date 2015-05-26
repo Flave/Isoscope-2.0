@@ -1,0 +1,13 @@
+.drawer {
+  width: 100%;
+  position: absolute;
+  bottom: 0;
+  height: $drawer-height;
+  transform: translate(0, 100%);
+  background-color: white;
+  transition: $drawer-transition;
+
+  &.is-open {
+    transform: translate(0, 0);
+  }
+}

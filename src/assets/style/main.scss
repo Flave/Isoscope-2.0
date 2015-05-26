@@ -1,5 +1,7 @@
-@import "reset";
-@import "component";
+@import "base/reset";
+@import "base/variables";
+@import "components/drawer";
+@import "components/menu";
 
 
 .app-container {

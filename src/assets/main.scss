@@ -1,5 +1,19 @@
+@import "reset";
 @import "component";
 
-body {
-  background-color: green;
+
+.app-container {
+  position: fixed;
+  width: 100%;
+  height: 100%;
+}
+
+.controller-view {
+  width: 100%;
+  height: 100%;
+}
+
+.map-container {
+  width: 100%;
+  height: 100%;
 }

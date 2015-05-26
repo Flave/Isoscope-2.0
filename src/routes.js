@@ -6,13 +6,13 @@ var NotFoundRoute = require('react-router').NotFoundRoute;
 var DefaultRoute = require('react-router').DefaultRoute;
 var Redirect = require('react-router').Redirect;
 var App = require('./App');
-var Home = require('./components/Home');
-var About = require('./components/About');
+var Master = require('./components/Master');
+var Info = require('./components/Info');
 
 var Routes = (
   <Route handler={App}>
-    <Route name="home" path="/" handler={Home}/>
-    <Route name="about" path="/about" handler={About}/>
+    <Route name="home" path="/" handler={Master}/>
+    <Route name="info" path="/info" handler={Info}/>
   </Route>
 );
 

@@ -1,9 +1,9 @@
 var React = require('react');
 
-var Component = React.createClass({
+var Info = React.createClass({
   render: function() {
     return (<p>About</p>)
   }
 });
 
-module.exports = Component;
+module.exports = Info;

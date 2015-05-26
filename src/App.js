@@ -1,9 +1,10 @@
 var React = require('react');
-var RouteHandler = require('react-router').RouteHandler;
+var Router = require('react-router');
+var RouteHandler = Router.RouteHandler;
 
 var App = React.createClass({
   render: function() {
-    return (<div>
+    return (<div className="app-container">
         <RouteHandler/>
       </div>)
   }

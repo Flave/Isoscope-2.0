@@ -12,7 +12,10 @@
   "dependencies": {
     "babel": "^5.4.7",
     "css-loader": "^0.14.1",
+    "d3": "^3.5.5",
     "express": "^4.12.4",
+    "leaflet": "^0.7.3",
+    "lodash": "^3.9.1",
     "node-jsx": "^0.13.3",
     "node-sass": "^3.1.2",
     "react": "^0.13.3",

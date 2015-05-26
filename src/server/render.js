@@ -22,7 +22,6 @@ var render = function(req, res, next) {
   var markup = "";
   // Run the router, and render the result to string
   router.run(function (Handler, state) {
-    console.log(state);
     markup = React.renderToString(React.createElement(Handler, {routerState: state}), null);
   });
 

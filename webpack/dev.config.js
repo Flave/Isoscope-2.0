@@ -27,7 +27,8 @@ module.exports = {
   module: {
     loaders: [
       { test: /\.js$/, exclude: /node_modules/, loaders: ["react-hot", "babel"] },
-      { test: /\.scss$/, loader: 'style!css!autoprefixer?browsers=last 2 versions!sass?sourceMap=true&sourceMapContents=true' }
+      { test: /\.scss$/, loader: 'style!css!autoprefixer?browsers=last 2 versions!sass?sourceMap=true&sourceMapContents=true' },
+      { test: /\.css$/, loader: 'style!css' }
     ]
   },
   progress: true,

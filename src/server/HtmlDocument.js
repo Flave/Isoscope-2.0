@@ -10,6 +10,7 @@ var HtmlDocument = React.createClass({
         <html>
           <head>
             <title>React and Webpack Template</title>
+            <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.css" />
           </head>
           <body>
             <div id="root" dangerouslySetInnerHTML={{ __html: this.props.markup }}/>

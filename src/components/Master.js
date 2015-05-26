@@ -1,9 +1,16 @@
 var React = require('react');
-var Map = require('./Map/Index.js');
+var Map = require('./map/Map.js');
+var Drawer = require('./drawer/Drawer.js');
+var Menu = require('./menu/Menu.js');
 
 var Component = React.createClass({
   contextTypes: {
     router: React.PropTypes.func.isRequired
+  },
+  getInitialState: function() {
+    return {
+      drawerIsOpen: false
+    }
   },
   extractMapParams: function() {
     var defaultParams, mapQuery, mapParams;
@@ -19,12 +26,29 @@ var Component = React.createClass({
       zoom: parseInt(mapParams[2]) || defaultParams.zoom
     };
   },
+
+  handleDrawerToggle: function() {
+    this.setState({drawerIsOpen: !this.state.drawerIsOpen});
+  },
+
+  handleMapClick: function(e) {
+
+  },
+
   render: function() {
     var mapParams = this.extractMapParams();
 
     return (
         <div className="controller-view">
-          <Map lat={mapParams.lat} lng={mapParams.lng} zoom={mapParams.zoom} />
+          <Map 
+            lat={mapParams.lat} 
+            lng={mapParams.lng} 
+            zoom={mapParams.zoom} 
+            handleClick={this.handleMapClick} />
+            <Menu 
+              handleDrawerToggle={this.handleDrawerToggle}
+              isOpen={this.state.drawerIsOpen} />
+            <Drawer isOpen={this.state.drawerIsOpen} />
         </div>
       )
   }

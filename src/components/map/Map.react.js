@@ -1,7 +1,7 @@
-var React = require('react');
-var Router = require('react-router');
-var RouteHandler = Router.RouteHandler;
-var L;
+var React = require('react'),
+    Router = require('react-router'),
+    hereApi = require('../../apis/here'),
+    L;
 
 if(process.env.BROWSER) {
   L = require('leaflet');
@@ -35,7 +35,8 @@ var App = React.createClass({
   },
 
   handleMapClick: function(e) {
-    console.log(e);
+    console.log(e)
+    hereApi.get({startLocation: [12.332, 5.342]});
   },
 
   /*

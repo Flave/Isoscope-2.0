@@ -1,5 +1,4 @@
 var React = require('react'),
-    hereApi = require('../../apis/here-isolines.js'),
     ViewSettings = require('./ViewSettings.react');
 
 
@@ -12,7 +11,6 @@ var Menu = React.createClass({
   componentDidMount: function() {
     var viewSettingsToggle = this.refs.viewSettingsToggle.getDOMNode();
     var viewSettings = this.refs.viewSettings.getDOMNode();
-    console.log(viewSettingsToggle);
   },
 
   handleViewSettingsToggle: function() {

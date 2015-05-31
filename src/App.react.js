@@ -1,11 +1,10 @@
 var React = require('react'),
     Router = require('react-router'),
-    RouteHandler = Router.RouteHandler,
-    hereApi = require('./apis/here-isolines');
+    RouteHandler = Router.RouteHandler;
 
 var App = React.createClass({
   componentDidMount: function() {
-    hereApi.get();
+    
   },
   render: function() {
     return (<div className="app-container">

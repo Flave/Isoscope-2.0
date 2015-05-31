@@ -1,7 +1,14 @@
 var React = require('react'),
     Map = require('./map/Map.react'),
     Drawer = require('./drawer/Drawer.react'),
-    Menu = require('./menu/Menu.react');
+    Menu = require('./menu/Menu.react'),
+    IsolinesStore = require('../stores/IsolinesStore');
+
+function getAllIsolines() {
+  return {
+    allIsolines: IsolinesStore.getAll()
+  }
+}
 
 var Component = React.createClass({
   contextTypes: {
@@ -11,6 +18,13 @@ var Component = React.createClass({
     return {
       drawerIsOpen: false
     }
+  },
+
+  componentDidMount: function() {
+    var that = this;
+    IsolinesStore.addChangeListener(function() {
+      console.log(getAllIsolines());
+    })
   },
 
   extractMapParams: function() {

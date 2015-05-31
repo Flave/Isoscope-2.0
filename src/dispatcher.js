@@ -1,6 +1,7 @@
-var Dispatcher = require('flux').Dispatcher;
+var Dispatcher = require('flux').Dispatcher,
+    _ = require('lodash');
 
-var AppDispatcher = assign({}, Dispatcher.prototype, {
+var AppDispatcher = _.assign(new Dispatcher(), {
 
   /**
    * A bridge function between the views and the dispatcher, marking the action

@@ -1,0 +1,36 @@
+.view-settings {
+  position: absolute; 
+  top: -40px;
+  width: 280px;
+  background-color: #FFF;
+  padding: 25px;
+  visibility: hidden;
+  opacity: 0;
+
+  &.is-open {
+    visibility: visible;
+    opacity: 1;
+  }
+}
+
+.slider {
+  .bar {
+    height: 3px;
+  }
+
+  .bar-0 {
+    background-color: red;
+  } 
+
+  .bar-1 {
+    background-color: green;
+  }
+
+  .handle {
+    width: 20px;
+    height: 20px;
+    border-radius: 100%;
+    transform: translate(0%, -50%);
+    background-color: blue;
+  }
+}

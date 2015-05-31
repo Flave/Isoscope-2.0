@@ -29,11 +29,6 @@ var render = function(req, res, next) {
     <HtmlDocument markup={markup}/>
   );
 
-  // In development, the compiled javascript is served by a WebpackDevServer, which lets us 'hot load' scripts in for live editing.
-  if (process.env.NODE_ENV === "development") {
-    require("../../webpack/webpack-dev-server");
-  }
-
   // In production, we just serve the pre-compiled assets from the /build directory
   if (process.env.NODE_ENV === "production") {
   }

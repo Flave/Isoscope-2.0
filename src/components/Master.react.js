@@ -1,7 +1,7 @@
-var React = require('react');
-var Map = require('./map/Map.js');
-var Drawer = require('./drawer/Drawer.js');
-var Menu = require('./menu/Menu.js');
+var React = require('react'),
+    Map = require('./map/Map.react'),
+    Drawer = require('./drawer/Drawer.react'),
+    Menu = require('./menu/Menu.react');
 
 var Component = React.createClass({
   contextTypes: {
@@ -12,6 +12,7 @@ var Component = React.createClass({
       drawerIsOpen: false
     }
   },
+
   extractMapParams: function() {
     var defaultParams, mapQuery, mapParams;
 

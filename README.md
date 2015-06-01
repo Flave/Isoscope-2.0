@@ -4,19 +4,19 @@ Barebones Boilerplate using the above mentioned technologies. Quite some stuff s
 
 To install run
 ```
-npm install #some modules might be missing in package.json
+npm install
 ```
 
 To start development run
 ```
 npm run dev
 ```
-and visit http://localhost:3000
+and visit `[http://localhost:3000](http://localhost:3000)`
 
 A development server serving and updating the transformed javascript and css runs on http://localhost:3001.
 
 
-## Foler Structure
+## Basic Folder Structure
 ```
 ├── src
 │   ├── assets/               # everything static like css, fonts and images
@@ -45,12 +45,11 @@ This Boilerplate is mainly based on the following setups
 - Flux integration
 - State transfer
 - Make ports configurable
+- Production configurations (build etc.)
 
-## Conventions
+## Things to note
 - Be explicit about naming e.g. isExpanded vs. expanded
 - Always list all the initial state and default props
 
 ### Event Handlers
 - handle [+ component] + event
-
-

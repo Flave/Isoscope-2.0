@@ -1,8 +1,7 @@
 var jsonp = require('jsonp'),
     _ = require('lodash'),
     Q = require('q'),
-    d3 = require('d3'),
-    IsolineActions = require('../actions/IsolineActions');
+    d3 = require('d3');
 
 var api = {},
     app_id = 'bVQHRXUn6uNHP3B24bdt',
@@ -58,7 +57,7 @@ function queryStringToJSON(queryString) {
 function processIsolineValues(latLngValues) {
   return _.map(latLngValues, function(latLngValue) {
     var latLng = latLngValue.split(',');
-    return {lat: parseFloat(latLng[0]), lng: parseFloat(latLng[1])};
+    return [ parseFloat(latLng[0]), parseFloat(latLng[1]) ];
   });
 }
 
@@ -69,14 +68,15 @@ function processIsolineValues(latLngValues) {
 */
 
 function processIsolineResponse(res) {
-  console.log(res);
   var isoline = res.Response.isolines[0];
   var meta = res.Response.MetaInfo;
   var params = queryStringToJSON(meta.RequestId);
-
   var isoline = {
     data: processIsolineValues(isoline.value)
   }
+
+  // split startLocation paramter into array of lat/lng
+  params.startLocation = params.startLocation.split(',');
 
   return _.assign({}, params, isoline);
 }
@@ -99,20 +99,27 @@ var hereApi = {
   */
   get: function(options) {
     // requestId: start=lat,lng&mode=mode&weekday=weekday&hourOfDay=hourOfDay&travelTime=travelTime&
-
+    var deferred = Q.defer();
     var params = JSON2QueryString({
       departure: getXsDateTime(0, 0, 0),
       mode: 'fastest;car;traffic:enabled',
-      start: '52.5160,13.3778',
-      time: 'PT0H05M',
+      start: `${options.startLocation[0]},${options.startLocation[1]}`,
+      time: 'PT0H02M',
       app_id: app_id,
       app_code: app_code,
       requestId: JSON2QueryString(options)
     });
 
     jsonp(`${base}?${params}`, {param: 'jsonCallback'}, function(err, res) {
-      IsolineActions.add(processIsolineResponse(res));
+      if(err)
+        deferred.reject(error);
+      else if(res.Details)
+        deferred.reject(res);
+      else
+        deferred.resolve(processIsolineResponse(res));
     });
+
+    return deferred.promise;
   }
 }
 

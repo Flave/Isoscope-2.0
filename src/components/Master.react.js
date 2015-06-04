@@ -1,29 +1,36 @@
 var React = require('react'),
-    Map = require('./map/Map.react'),
+    Map = require('./map/MapController.react'),
     Drawer = require('./drawer/Drawer.react'),
     Menu = require('./menu/Menu.react'),
+    hereApi = require('../apis/here'),
+    _ = require('lodash'),
+    Q = require('q'),
+    IsolineActions = require('../actions/IsolineActions'),
     IsolinesStore = require('../stores/IsolinesStore');
 
 function getAllIsolines() {
-  return {
-    allIsolines: IsolinesStore.getAll()
-  }
+  return IsolinesStore.getAll();
 }
 
 var Component = React.createClass({
   contextTypes: {
-    router: React.PropTypes.func.isRequired
+    router: React.PropTypes.func.isRequired,
   },
   getInitialState: function() {
     return {
-      drawerIsOpen: false
+      drawerIsOpen: false,
+      clusters: [],
+      travelTime: 2,
+      hourOfDay: 0,
+      weekday: 0,
+      travelMode: 'car'
     }
   },
 
   componentDidMount: function() {
     var that = this;
     IsolinesStore.addChangeListener(function() {
-      console.log(getAllIsolines());
+      that.setState({clusters: getAllIsolines()});
     })
   },
 
@@ -47,7 +54,23 @@ var Component = React.createClass({
   },
 
   handleMapClick: function(e) {
+    var that = this;
+    var promises = _.range(24).map(function(hour) {
+      return hereApi.get({
+        travelMode: that.state.travelMode,
+        travelTime: hour,
+        weekday: that.state.weekday,
+        startLocation: [e.latlng.lat, e.latlng.lng]
+      });
+    });
 
+    Q.all(promises)
+      .spread(function() {
+        IsolineActions.add(arguments[0]);
+/*        _.forEach(arguments, function(isoline) {
+          IsolineActions.add(isoline);
+        })*/
+      });
   },
 
   render: function() {
@@ -58,8 +81,9 @@ var Component = React.createClass({
           <Map 
             lat={mapParams.lat} 
             lng={mapParams.lng} 
-            zoom={mapParams.zoom} 
-            handleClick={this.handleMapClick} />
+            zoom={mapParams.zoom}
+            clusters={this.state.clusters}
+            handleMapClick={this.handleMapClick} />
             <Menu 
               handleDrawerToggle={this.handleDrawerToggle}
               isOpen={this.state.drawerIsOpen} />

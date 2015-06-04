@@ -9,12 +9,28 @@ var _isolines = [];
 
 function add(data) {
   _isolines.push(data);
-
 }
 
 var IsolineStore = _.assign({}, EventEmitter.prototype, {
   getAll: function() {
     return _isolines;
+  },
+
+  getAllAsGeoJSON: function() {
+    var geoJSON = {
+      type: "FeatureCollection",
+      features: _isolines.map(function(isoline) {
+        return {
+          type: "Feature",
+          properties: {},
+          geometry: {
+            type: "Polygon",
+            coordinates: [isoline.data]
+          }
+        }
+      })
+    }
+    return geoJSON;
   },
 
   emitChange: function() {

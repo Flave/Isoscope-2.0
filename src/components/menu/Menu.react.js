@@ -23,8 +23,9 @@ var Menu = React.createClass({
     
     return (
       <div className={className}>
-        <button onClick={this.props.handleDrawerToggle}>Timeline</button>
-        <button ref="viewSettingsToggle" onClick={this.handleViewSettingsToggle}>View Setting</button>
+        <button className="btn" onClick={this.props.handleDrawerToggle}>Timeline</button>
+        <button className="btn" ref="viewSettingsToggle" onClick={this.handleViewSettingsToggle}>Settings</button>
+        <button className="btn">Layers</button>
         <ViewSettings isOpen={this.state.viewSettingsIsOpen} ref="viewSettings" />
       </div>
     );

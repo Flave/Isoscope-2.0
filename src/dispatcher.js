@@ -10,6 +10,7 @@ var AppDispatcher = _.assign(new Dispatcher(), {
    */
    
   handleViewAction: function(action) {
+    console.log('Dispatching view action: ', action);
     this.dispatch({
       source: 'VIEW_ACTION',
       action: action
@@ -17,6 +18,7 @@ var AppDispatcher = _.assign(new Dispatcher(), {
   },
 
   handleAPIAction: function(action) {
+    console.log('Dispatching api action: ', action);
     this.dispatch({
       source: 'API_ACTION',
       action: action

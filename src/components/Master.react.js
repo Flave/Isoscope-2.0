@@ -5,11 +5,17 @@ var React = require('react'),
     hereApi = require('../apis/here'),
     _ = require('lodash'),
     Q = require('q'),
-    IsolineActions = require('../actions/IsolineActions'),
-    IsolinesStore = require('../stores/IsolinesStore');
+    ClusterActions = require('../actions/ClusterActions'),
+    ClustersStore = require('../stores/ClustersStore');
 
-function getAllIsolines() {
-  return IsolinesStore.getAll();
+
+
+function getAllClusters() {
+  return ClustersStore.getAll();
+}
+
+function getClusters(settings) {
+  return ClustersStore.get(settings);
 }
 
 var Component = React.createClass({
@@ -20,24 +26,25 @@ var Component = React.createClass({
     return {
       drawerIsOpen: false,
       clusters: [],
-      travelTime: 2,
-      hourOfDay: 0,
-      weekday: 0,
-      travelMode: 'car'
+      isolineSettings: {
+        travelTime: 2,
+        weekday: 0,
+        travelMode: 'car'
+      }
     }
   },
 
   componentDidMount: function() {
     var that = this;
-    IsolinesStore.addChangeListener(function() {
-      that.setState({clusters: getAllIsolines()});
+    ClustersStore.addChangeListener(function() {
+      that.setState({clusters: getAllClusters()});
     })
   },
 
   extractMapParams: function() {
     var defaultParams, mapQuery, mapParams;
 
-    defaultParams = {lat: 52.5, lng: 13.2, zoom: 14};
+    defaultParams = {lat: 52.522644823574645, lng: 13.40628147125244, zoom: 14};
     mapQuery = this.context.router.getCurrentQuery().map;
     if(!mapQuery) return defaultParams;
     mapParams = mapQuery.split(',');
@@ -49,28 +56,42 @@ var Component = React.createClass({
     };
   },
 
+
+  /*
+  * MAP INTERACTION
+  */
+
+  handleMapClick: function(e) {
+    var that = this;
+/*    var promise = ClusterActions.add({
+      travelMode: that.state.travelMode,
+      weekday: that.state.weekday,
+      startLocation: [e.latlng.lat, e.latlng.lng]
+    });*/
+
+    var promise = hereApi.getCluster({
+      travelMode: that.state.travelMode,
+      weekday: that.state.weekday,
+      startLocation: [e.latlng.lat, e.latlng.lng]
+    });
+
+    promise.then(function() {
+      console.log('cluster loaded');
+    });
+  },
+
+
+  /*
+  * GENERAL INTERACTION
+  */
+
   handleDrawerToggle: function() {
     this.setState({drawerIsOpen: !this.state.drawerIsOpen});
   },
 
-  handleMapClick: function(e) {
-    var that = this;
-    var promises = _.range(24).map(function(hour) {
-      return hereApi.get({
-        travelMode: that.state.travelMode,
-        travelTime: hour,
-        weekday: that.state.weekday,
-        startLocation: [e.latlng.lat, e.latlng.lng]
-      });
-    });
+  handleSettingsChanged: function(_settings) {
+    var settings = _.assign({}, this.state.isolineSettings, _settings);
 
-    Q.all(promises)
-      .spread(function() {
-        IsolineActions.add(arguments[0]);
-/*        _.forEach(arguments, function(isoline) {
-          IsolineActions.add(isoline);
-        })*/
-      });
   },
 
   render: function() {

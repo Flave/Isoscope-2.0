@@ -11,9 +11,9 @@ var map;
 var Map = React.createClass({
   getDefaultProps: function() {
     return { 
-      lat: 52,
-      lng: 13,
-      zoom: 12
+      lat: 52.522644823574645,
+      lng: 13.40628147125244,
+      zoom: 13
     }
   },
   mixins: [Router.Navigation],

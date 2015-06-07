@@ -1,5 +1,6 @@
 var React = require('react'),
-    ReactSlider = require('react-slider');
+    ReactSlider = require('react-slider'),
+    SegmentedControl = require('../common/SegmentedControl.react');
 
 
 var ViewSettings = React.createClass({
@@ -18,6 +19,7 @@ var ViewSettings = React.createClass({
     return (
       <div className={className}>
         <ReactSlider min={0} max={300} step={1} onAfterChange={this.handleTravelTimeChange} withBars={true}/>
+        <SegmentedControl items={[{value: 'car', label:'Car'}, {value: 'pdestrian', label:'Pedestrian'}]} />
       </div>
     );
   }

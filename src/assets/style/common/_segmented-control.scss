@@ -1,0 +1,16 @@
+.segmented-control {
+}
+
+.segmented-control__item {
+  padding: 10px 15px;
+  background-color: #eeeeee;
+  line-height: 40px;
+
+  &:last-child {
+    border-radius: 0 20px 20px 0;
+  }
+
+  &:first-child {
+    border-radius: 20px 0 0 20px;
+  }
+}

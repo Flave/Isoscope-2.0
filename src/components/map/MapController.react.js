@@ -2,7 +2,7 @@ var React = require('react'),
     Router = require('react-router'),
     hereApi = require('../../apis/here'),
     IsolinesOverlay = require('./IsolinesOverlay'),
-    IsolinesStore = require('../../stores/IsolinesStore'),
+    ClustersStore = require('../../stores/ClustersStore'),
     d3 = require('d3'),
     Map = require('./Map.react');
 
@@ -30,14 +30,14 @@ var MapController = React.createClass({
 
     this.state.isolinesOverlay
       .map(map)
-      .clusters(this.props.clusters);
+      .data(this.props.clusters);
 
     this.setState({overlaySvg: overlaySvg});
   },
 
   renderOverlays: function() {
     this.state.isolinesOverlay
-      .clusters(IsolinesStore.getAllAsGeoJSON())(this.state.overlaySvg);
+      .data(this.props.clusters)(this.state.overlaySvg);
   },
 
   /*

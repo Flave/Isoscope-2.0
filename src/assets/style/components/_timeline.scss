@@ -1,0 +1,24 @@
+.tl {
+
+}
+
+.tl__axis {
+  .tick {
+    font-size: 12px;
+
+    line {
+      stroke: #eee;
+      fill: none;
+    }
+  }
+
+  .domain {
+    fill: none;
+    stroke: none;
+  }
+}
+
+.tl__line {
+  fill: none;
+  stroke: #000000;
+}

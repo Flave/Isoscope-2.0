@@ -117,13 +117,11 @@ var hereApi = {
       departure: util.getXsDateTime(0, options.departureTime, 0), // = departureTime
       mode: 'fastest;car;traffic:enabled',
       start: `${options.startLocation[0]},${options.startLocation[1]}`,
-      time: 'PT0H02M', // = travelTime
+      time: 'PT0H10M', // = travelTime
       app_id: app_id,
       app_code: app_code,
       requestId: util.JSON2QueryString(options) // requestId: start=lat,lng&mode=mode&weekday=weekday&departureTime=departureTime&travelTime=travelTime&
     });
-
-    console.log(params);
 
     jsonp(`${base}?${params}`, {param: 'jsonCallback'}, function(err, res) {
       if(err)

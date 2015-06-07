@@ -25,13 +25,31 @@ var CHANGE_EVENT = 'change';
 var _clusters = [];
 
 function add(data) {
-  _clusters.push(data);
+  //_clusters.push(data);
+  _clusters[0] = data;
+}
+
+function calculateDistances() {
+  _clusters.forEach(function(cluster) {
+    var startLocation = cluster.properties.startLocation;
+    cluster.features.forEach(function(isoline) {
+      var points = isoline.geometry.coordinates[0];
+      isoline.properties.distances = getDistances(startLocation, points);
+    });
+  });
+}
+
+function getDistances(startLocation, points) {
+  var startLatLng = L.latLng([startLocation[0], startLocation[1]]);
+  return points.map(function(point) {
+    var latLng = L.latLng([point[0], point[1]]);
+    return startLatLng.distanceTo(latLng);
+  });
 }
 
 var ClustersStore = _.assign({}, EventEmitter.prototype, {
 
   get: function(settings) {
-    console.log(_clusters, settings);
     return _.findWhere(_clusters, settings);
   },
 
@@ -74,6 +92,7 @@ var ClustersStore = _.assign({}, EventEmitter.prototype, {
     switch(action.actionType) {
       case ClusterConstants.CLUSTER_ADD:
         add(action.data);
+        calculateDistances();
         ClustersStore.emitChange();
         break;
       default:

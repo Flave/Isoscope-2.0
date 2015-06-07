@@ -108,7 +108,9 @@ var Component = React.createClass({
             <Menu 
               handleDrawerToggle={this.handleDrawerToggle}
               isOpen={this.state.drawerIsOpen} />
-            <Drawer isOpen={this.state.drawerIsOpen} />
+            <Drawer 
+              isOpen={this.state.drawerIsOpen} 
+              clusters={this.state.clusters}/>
         </div>
       )
   }

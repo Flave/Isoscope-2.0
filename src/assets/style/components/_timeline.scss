@@ -21,4 +21,16 @@
 .tl__line {
   fill: none;
   stroke: #000000;
+
+  &.tl__mean {
+    stroke: #888;
+  }
+
+  &.tl__min {
+    stroke: #ff8899;
+  }
+
+  &.tl__max {
+    stroke: #44ee99;
+  }
 }

@@ -3,6 +3,7 @@ var React = require('react'),
     Drawer = require('./drawer/Drawer.react'),
     Menu = require('./menu/Menu.react'),
     hereApi = require('../apis/here'),
+    route360Api = require('../apis/route360'),
     _ = require('lodash'),
     Q = require('q'),
     ClusterActions = require('../actions/ClusterActions'),
@@ -63,17 +64,14 @@ var Component = React.createClass({
 
   handleMapClick: function(e) {
     var that = this;
-/*    var promise = ClusterActions.add({
-      travelMode: that.state.travelMode,
-      weekday: that.state.weekday,
-      startLocation: [e.latlng.lat, e.latlng.lng]
-    });*/
 
     var promise = hereApi.getCluster({
       travelMode: that.state.travelMode,
       weekday: that.state.weekday,
       startLocation: [e.latlng.lat, e.latlng.lng]
     });
+
+    //var promise = route360Api.get();
 
     promise.then(function() {
       console.log('cluster loaded');

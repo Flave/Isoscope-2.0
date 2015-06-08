@@ -1,7 +1,7 @@
 var React = require('react'),
     Map = require('./map/MapController.react'),
     Drawer = require('./drawer/Drawer.react'),
-    Menu = require('./menu/Menu.react'),
+    Menu = require('./menu/Menu.react.js'),
     hereApi = require('../apis/here'),
     route360Api = require('../apis/route360'),
     _ = require('lodash'),

@@ -10,6 +10,10 @@ npm install
 To start development run
 ```
 npm run dev
+
+or without nodemon
+
+NODE_ENV=development node index.js
 ```
 and visit `[http://localhost:3000](http://localhost:3000)`
 

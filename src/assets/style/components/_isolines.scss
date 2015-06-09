@@ -5,3 +5,13 @@
   stroke: red;
   stroke-width: 1;
 }
+
+.overlay-mean {
+  fill: none;
+  stroke: #444;
+  stroke-dasharray: 5, 5;
+}
+
+.overlay-center {
+  fill: #fff;
+}

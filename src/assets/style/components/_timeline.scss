@@ -18,19 +18,33 @@
   }
 }
 
-.tl__line {
+.tl-dot {
+  fill: #000000;
+  opacity: .3;
+  stroke: none;
+
+  &.is-above-average {
+    fill: #44ee99;
+  }
+
+  &.is-below-average {
+    fill: #ff8899;
+  }
+}
+
+.tl-line {
   fill: none;
   stroke: #000000;
 
-  &.tl__mean {
+  &.tl-mean {
     stroke: #888;
   }
 
-  &.tl__min {
+  &.tl-min {
     stroke: #ff8899;
   }
 
-  &.tl__max {
+  &.tl-max {
     stroke: #44ee99;
   }
 }

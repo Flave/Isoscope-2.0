@@ -8,7 +8,7 @@ if(process.env.BROWSER) {
 
 
 function Timeline() {
-  var data,
+  var data, // array of geoJSONs of clusters.
       size = [0, 0],
       padding = {top: 50, right: 25, bottom: 0, left: 60},
       chartSize = [size[0] - padding.right - padding.left, size[1] - padding.top - padding.bottom],
@@ -20,8 +20,7 @@ function Timeline() {
       line = d3.svg.line()
         .x(function(d, i){ return hour2X(i); })
         .y(function(d){ return distance2Y(d); })
-        .interpolate('basis'),
-      distanceExtent = [];
+        .interpolate('basis');
 
 
   function _timeline(_svg) {
@@ -34,7 +33,6 @@ function Timeline() {
       height: size[1]
     });
 
-    calculateDistanceExtent();
     updateScales();
     updateAxes();
 
@@ -58,6 +56,7 @@ function Timeline() {
       .append('g')
       .classed('tl__cluster-group', true);
 
+
     // Do .each so we have access to the whole cluster data inside event handlers
     clusterGroup.each(function(cluster, clusterIndex) {
       var isolineGroup = d3.select(this)
@@ -74,7 +73,7 @@ function Timeline() {
 
         // DATA BINDING for dots
         var dots = d3.select(this)
-          .selectAll('circle.tl__dot')
+          .selectAll('circle.tl-dot')
           .data(isoline.properties.distances);
 
         // UPDATE dots
@@ -84,14 +83,21 @@ function Timeline() {
         dots
           .enter()
           .append('circle')
-          .classed('tl__dot', true)
-          .attr('r', 3)
-          .attr('opacity', .1);
+          .classed('tl-dot', true)
+          .attr('r', 3);
 
         // ENTER + UPDATE dots
         dots
           .on('mouseover', function() {
             console.log(cluster);
+          })
+          .classed('is-above-average', function(distance, i) {
+            if(distance > isoline.properties.meanDistances)
+              return true;
+          })
+          .classed('is-below-average', function(distance, i) {
+            if(distance < isoline.properties.meanDistances)
+              return true;
           })
           .transition()
           .duration(500)
@@ -135,38 +141,42 @@ function Timeline() {
   * Draws max, min and average lines
   */
   function drawLines() {
-    var meanData = reduceDistances(data, d3.mean),
-        maxData = reduceDistances(data, d3.max),
-        minData = reduceDistances(data, d3.min);
-
-    console.log(meanData);
     var linesGroup = svg
-      .selectAll('g.tl__lines')
-      .data([1]);
+      .selectAll('g.tl-lines')
+      .data([data]);
 
     linesGroup
       .enter()
       .append('g')
       .attr('transform', `translate(${padding.left}, ${padding.top})`)
-      .classed('tl__lines', true);
+      .classed('tl-lines', true);
 
-    drawLine(linesGroup, meanData, 'mean', meanData);
-    drawLine(linesGroup, maxData, 'max', meanData);
-    drawLine(linesGroup, minData, 'min', meanData);
+    drawLine(linesGroup, 'meanDistances', 'mean');
+    drawLine(linesGroup, 'maxDistances', 'max');
+    drawLine(linesGroup, 'minDistances', 'min');
+
+    linesGroup
+      .exit()
+      .remove();
   }
 
-  function drawLine(container, data, className, initialData) {
-    initialData = initialData || data;
+  function drawLine(container, propertyName, className) {
 
     var lineElement = container
-      .selectAll(`path.tl__${className}`)
-      .data(data);
+      .selectAll(`path.tl-${className}`)
+      .data(function(clusters) {
+        return clusters.map(function(cluster){
+          return cluster.features.map(function(isoline) { 
+            return isoline.properties[propertyName]; 
+          });
+        });
+      });
 
     lineElement
       .enter()
       .append('path')
       /*.attr('d', line)*/
-      .classed(`tl__${className} tl__line`, true);
+      .classed(`tl-${className} tl-line`, true);
 
     lineElement
       /*.data(data)*/
@@ -179,8 +189,9 @@ function Timeline() {
   * Updates x and y scales
   */
   function updateScales() {
+    var max = d3.max(data, function(cluster) { return cluster.properties.maxDistance; });
     hour2X.range([0, chartSize[0]]);
-    distance2Y.domain([distanceExtent[1], 0]).range([0, chartSize[1]]);
+    distance2Y.domain([max, 0]).range([0, chartSize[1]]);
   }
 
 
@@ -243,29 +254,6 @@ function Timeline() {
     return data.map(function(cluster) {
       return cluster.features.map(function(isoline) {
         return reduceFunc(isoline.properties.distances);
-      });
-    });
-  }
-
-
-  /**
-  * Calculates the extent of all the distances of all the isolines of all the clusters.
-  */
-  function calculateDistanceExtent() {
-    // get minDistance of all clusters
-    distanceExtent[0] = d3.min(data, function(cluster) {
-      return d3.min(cluster.features, function(isoline) {
-        return d3.min(isoline.properties.distances);
-      });
-    });
-
-
-    /**
-    * Get maxDistance of all clusters
-    */
-    distanceExtent[1] = d3.max(data, function(cluster) {
-      return d3.max(cluster.features, function(isoline) {
-        return d3.max(isoline.properties.distances);
       });
     });
   }

@@ -10,8 +10,10 @@ function IsolinesOverlay() {
       map,
       data,
       cluster,
+      mean,
+      center,
       svg,
-      transform = d3.geo.transform({point: projectPoint}),
+      transform = d3.geo.transform({point: streamProjectPoint}),
       path = d3.geo.path().projection(transform),
       line = d3.svg.line().x(function(d){ return d[0]}).y(function(d){return d[1]}).interpolate('basis-closed'),
       isolines;
@@ -33,6 +35,24 @@ function IsolinesOverlay() {
       .classed('leaflet-zoom-hide', true)
       .classed('clusters-container', true);
 
+    drawIsolines();
+    drawCircles();
+
+    // ENTER center circle
+    center = clusterGroup
+      .selectAll('circle.overlay-center')
+      .data(function(d){return d;})
+
+    center
+      .enter()
+      .append('circle')
+      .classed('overlay-center', true)
+      .attr('r', 3);
+
+    reset();
+  }
+
+  function drawIsolines() {
     // DATA BINDING of clusters
     cluster = clusterGroup
       .selectAll('g.cluster')
@@ -65,8 +85,18 @@ function IsolinesOverlay() {
       .exit()
       .attr('opacity', 0)
       .remove();
+  }
 
-    reset();
+  function drawCircles() {
+    mean = clusterGroup
+      .selectAll('circle.overlay-mean')
+      .data(function(clusters) { return clusters; });
+
+    mean
+      .enter()
+      .append('circle')
+      .classed('overlay-mean', true)
+      .attr('r', 10);
   }
 
 
@@ -84,16 +114,30 @@ function IsolinesOverlay() {
     return _isolinesOverlay;
   }
 
-  function projectFeature(feature) {
+  function projectIsoline(feature) {
     return feature.geometry.coordinates[0].map(function(latLng) {
       var point = map.latLngToLayerPoint(new L.LatLng(latLng[0], latLng[1]))
       return [point.x, point.y]
     });
   }
 
-  function projectPoint(x, y) {
+  function projectPoint(x, y)  {
+    var point = map.latLngToLayerPoint(new L.LatLng(x, y))
+    return [point.x, point.y];
+  }
+
+  function streamProjectPoint(x, y) {
     var point = map.latLngToLayerPoint(new L.LatLng(x, y));
     this.stream.point(point.x, point.y);
+  }
+
+  function projectDistance(distance) {
+    var centerLatLng = map.getCenter();
+    var centerPoint = map.latLngToLayerPoint(centerLatLng);
+    var xPoint = [centerPoint.x + 1, centerPoint.y];
+    var xLatLng = map.layerPointToLatLng(xPoint);
+    var unitDistance = centerLatLng.distanceTo(xLatLng); // meters per pixel
+    return distance / unitDistance;
   }
 
   function getBounds(geoDataArray) {
@@ -127,7 +171,16 @@ function IsolinesOverlay() {
         .style('top', topLeft[1] + 'px');
 
       clusterGroup.attr("transform", "translate(" + -topLeft[0] + "," + -topLeft[1] + ")");
-      isolines.attr("d", function(d){ return line(projectFeature(d)); });
+      isolines.attr("d", function(d){ return line(projectIsoline(d)); });
+
+      mean
+        .attr('cx', function(cluster) { return projectPoint(cluster.properties.startLocation[0], cluster.properties.startLocation[1])[0]; })
+        .attr('cy', function(cluster) { return projectPoint(cluster.properties.startLocation[0], cluster.properties.startLocation[1])[1]; })
+        .attr('r', function(cluster) { return projectDistance(cluster.properties.meanDistance); });
+
+      center
+        .attr('cx', function(cluster) { return projectPoint(cluster.properties.startLocation[0], cluster.properties.startLocation[1])[0]; })
+        .attr('cy', function(cluster) { return projectPoint(cluster.properties.startLocation[0], cluster.properties.startLocation[1])[1]; });
     }
   }
 

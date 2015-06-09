@@ -103,12 +103,12 @@ var Component = React.createClass({
             zoom={mapParams.zoom}
             clusters={this.state.clusters}
             handleMapClick={this.handleMapClick} />
-            <Menu 
-              handleDrawerToggle={this.handleDrawerToggle}
-              isOpen={this.state.drawerIsOpen} />
-            <Drawer 
-              isOpen={this.state.drawerIsOpen} 
-              clusters={this.state.clusters}/>
+          <Menu 
+            handleDrawerToggle={this.handleDrawerToggle}
+            isOpen={this.state.drawerIsOpen} />
+          <Drawer 
+            isOpen={this.state.drawerIsOpen} 
+            clusters={this.state.clusters}/>
         </div>
       )
   }

@@ -1,6 +1,7 @@
 var ClusterConstants = require('../constants/ClusterConstants'),
     EventEmitter = require('events').EventEmitter,
     dispatcher = require('../dispatcher'),
+    d3 = require('d3'),
     _ = require('lodash');
 
 var CHANGE_EVENT = 'change';
@@ -47,6 +48,55 @@ function getDistances(startLocation, points) {
   });
 }
 
+
+/**
+* Calculates the reduced distance function of the isoline. Executes the reduceFunc function
+* on the distance array of every isoline.
+*/
+function reduceDistancesOfIsolines(reduceFunc, propertyName) {
+  _clusters.forEach(function(cluster) {
+    cluster.features.forEach(function(isoline) {
+      isoline.properties[propertyName] = reduceFunc(isoline.properties.distances);
+    });
+  });
+}
+
+
+/**
+* Runs the reduceFunc over all the distances of all the isolines cluster
+*/
+function reduceDistancesOfClusters(reduceFunc, propertyName) {
+  _clusters.forEach(function(cluster) {
+    cluster.properties[propertyName] = reduceFunc(cluster.features, function(isoline) {
+      return reduceFunc(isoline.properties.distances);
+    });
+  });
+}
+
+
+
+/**
+* Calculates the extent of all the distances of all the isolines of all the clusters.
+*/
+function calculateDistanceExtent() {
+  // get minDistance of all clusters
+  distanceExtent[0] = d3.min(data, function(cluster) {
+    return d3.min(cluster.features, function(isoline) {
+      return d3.min(isoline.properties.distances);
+    });
+  });
+
+
+  /**
+  * Get maxDistance of all clusters
+  */
+  distanceExtent[1] = d3.max(data, function(cluster) {
+    return d3.max(cluster.features, function(isoline) {
+      return d3.max(isoline.properties.distances);
+    });
+  });
+}
+
 var ClustersStore = _.assign({}, EventEmitter.prototype, {
 
   get: function(settings) {
@@ -55,24 +105,6 @@ var ClustersStore = _.assign({}, EventEmitter.prototype, {
 
   getAll: function() {
     return _clusters;
-  },
-
-  getAllAsGeoJSON: function() {
-    return _clusters.map(function(cluster) {
-      return {
-        type: "FeatureCollection",
-        features: cluster.isolines.map(function(isoline) {
-          return {
-            type: "Feature",
-            properties: {},
-            geometry: {
-              type: "Polygon",
-              coordinates: [isoline.data]
-            }
-          }
-        })
-      }
-    });
   },
 
   emitChange: function() {
@@ -93,6 +125,15 @@ var ClustersStore = _.assign({}, EventEmitter.prototype, {
       case ClusterConstants.CLUSTER_ADD:
         add(action.data);
         calculateDistances();
+        reduceDistancesOfIsolines(d3.mean, 'meanDistances');
+        reduceDistancesOfIsolines(d3.max, 'maxDistances');
+        reduceDistancesOfIsolines(d3.min, 'minDistances');
+        reduceDistancesOfIsolines(d3.median, 'medianDistances');
+
+        reduceDistancesOfClusters(d3.mean, 'meanDistance');
+        reduceDistancesOfClusters(d3.max, 'maxDistance');
+        reduceDistancesOfClusters(d3.min, 'minDistance');
+
         ClustersStore.emitChange();
         break;
       default:

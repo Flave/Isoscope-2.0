@@ -1,6 +1,6 @@
 var jsonp = require('jsonp'),
     _ = require('lodash'),
-    L = require('leaflet'),
+    L,
     util = require('../utility'),
     Q = require('q');
 
@@ -8,6 +8,9 @@ var api = {},
     apiKey = 'PFHFE67HTWKLOR6R8QTI',
     base = 'http://api.route360.net/api_dev/v1/polygon';
 
+if(process.env.BROWSER) {
+  L = require('leaflet');
+}
 
 function parseLatLonArray(latlngs) {
 

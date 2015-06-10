@@ -104,6 +104,7 @@ var ClustersStore = _.assign({}, EventEmitter.prototype, {
   },
 
   getAll: function() {
+    console.log(_clusters);
     return _clusters;
   },
 

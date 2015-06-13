@@ -36,20 +36,8 @@ function IsolinesOverlay() {
       .classed('clusters-container', true);
 
     drawIsolines();
-    drawCircles();
-
-    // ENTER center circle
-    center = clusterGroup
-      .selectAll('circle.overlay-center')
-      .data(function(d){return d;})
-
-    center
-      .enter()
-      .append('circle')
-      .classed('overlay-center', true)
-      .attr('r', 3);
-
-    reset();
+    //drawCircles();
+    //drawCenters();
   }
 
   function drawIsolines() {
@@ -78,13 +66,24 @@ function IsolinesOverlay() {
     isolines
       .enter()
       .append('path')
-      .classed('isoline', true);
+      .classed('isoline', true)
+      .attr('d', function(d) {
+        var point = projectPoint(d.properties.startLocation[0], d.properties.startLocation[1]);
+        return 'M' + point[0] + ',' + point[1];
+      });
+
+    isolines
+      .transition()
+      .duration(1000)
+      .attrTween('d', pathTween);
 
     // EXIT isolines
     isolines
       .exit()
       .attr('opacity', 0)
       .remove();
+
+    resetContainers();
   }
 
   function drawCircles() {
@@ -99,6 +98,18 @@ function IsolinesOverlay() {
       .attr('r', 10);
   }
 
+  function drawCenters() {
+    // ENTER center circle
+    center = clusterGroup
+      .selectAll('circle.overlay-center')
+      .data(function(d){return d;});
+
+    center
+      .enter()
+      .append('circle')
+      .classed('overlay-center', true)
+      .attr('r', 3);
+  }
 
 
   _isolinesOverlay.data = function(_data) {
@@ -109,7 +120,10 @@ function IsolinesOverlay() {
 
   _isolinesOverlay.map = function(_map) {
     if(!arguments.length) return map;
-    !map && _map.on('viewreset', reset);
+    !map && _map.on('viewreset', function() {
+      resetContainers();
+      resetDrawings();
+    });
     map = _map;
     return _isolinesOverlay;
   }
@@ -157,7 +171,39 @@ function IsolinesOverlay() {
     return [[left, top], [right, bottom]];
   }
 
-  function reset() {
+
+//  function tween()
+
+  function pathTween(isoline) {
+    var precision = 10;
+
+    var d1 = line(projectIsoline(isoline));
+    var path0 = this,
+        path1 = path0.cloneNode(),
+        n0 = path0.getTotalLength(),
+        n1 = (path1.setAttribute("d", d1), path1).getTotalLength();
+
+    // Uniform sampling of distance based on specified precision.
+    var distances = [0], 
+        i = 0, 
+        dt = precision / Math.max(n0, n1);
+
+    while ((i += dt) < 1) distances.push(i);
+    distances.push(1);
+
+    // Compute point-interpolators at each distance.
+    var points = distances.map(function(t) {
+      var p0 = path0.getPointAtLength(t * n0),
+          p1 = path1.getPointAtLength(t * n1);
+      return d3.interpolate([p0.x, p0.y], [p1.x, p1.y]);
+    });
+
+    return function(t) {
+      return t < 1 ? "M" + points.map(function(p) { return p(t); }).join("L") : d1;
+    };
+  }
+
+  function resetContainers() {
     // only render stuff if there is actually some geometry
     if(data.length) {
       var bounds = getBounds(data),
@@ -170,17 +216,27 @@ function IsolinesOverlay() {
         .style('left', topLeft[0] + 'px')
         .style('top', topLeft[1] + 'px');
 
-      clusterGroup.attr("transform", "translate(" + -topLeft[0] + "," + -topLeft[1] + ")");
-      isolines.attr("d", function(d){ return line(projectIsoline(d)); });
+      clusterGroup
+        .attr("transform", "translate(" + -topLeft[0] + "," + -topLeft[1] + ")");
+    }    
+  }
 
-      mean
+  function resetDrawings() {
+    // only render stuff if there is actually some geometry
+    if(data.length) {
+
+      isolines.attr('d', function(isoline) {
+        return line(projectIsoline(isoline));
+      });
+
+/*      mean
         .attr('cx', function(cluster) { return projectPoint(cluster.properties.startLocation[0], cluster.properties.startLocation[1])[0]; })
         .attr('cy', function(cluster) { return projectPoint(cluster.properties.startLocation[0], cluster.properties.startLocation[1])[1]; })
         .attr('r', function(cluster) { return projectDistance(cluster.properties.meanDistance); });
 
       center
         .attr('cx', function(cluster) { return projectPoint(cluster.properties.startLocation[0], cluster.properties.startLocation[1])[0]; })
-        .attr('cy', function(cluster) { return projectPoint(cluster.properties.startLocation[0], cluster.properties.startLocation[1])[1]; });
+        .attr('cy', function(cluster) { return projectPoint(cluster.properties.startLocation[0], cluster.properties.startLocation[1])[1]; });*/
     }
   }
 

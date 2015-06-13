@@ -64,18 +64,20 @@ var Component = React.createClass({
 
   handleMapClick: function(e) {
     var that = this;
-
-    var promise = hereApi.getCluster({
+    ClusterActions.add({
       travelMode: that.state.travelMode,
       weekday: that.state.weekday,
       startLocation: [e.latlng.lat, e.latlng.lng]
     });
 
+/*    var promise = hereApi.getCluster();
+
     //var promise = route360Api.get();
 
     promise.then(function() {
+      console.log(arguments);
       console.log('cluster loaded');
-    });
+    });*/
   },
 
 

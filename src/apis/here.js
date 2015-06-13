@@ -1,8 +1,6 @@
 var jsonp = require('jsonp'),
     _ = require('lodash'),
     Q = require('q'),
-    ClustersStore = require('../stores/ClustersStore'),
-    ClusterActions = require('../actions/ClusterActions'),
     d3 = require('d3'),
     util = require('../utility');
 
@@ -91,8 +89,7 @@ var hereApi = {
             }
           })
         };
-
-        ClusterActions.add(geoJSON);
+        return geoJSON;
       });
   },
 
@@ -117,7 +114,7 @@ var hereApi = {
       departure: util.getXsDateTime(0, options.departureTime, 0), // = departureTime
       mode: 'fastest;car;traffic:enabled',
       start: `${options.startLocation[0]},${options.startLocation[1]}`,
-      time: 'PT0H10M', // = travelTime
+      time: 'PT0H05M', // = travelTime
       app_id: app_id,
       app_code: app_code,
       requestId: util.JSON2QueryString(options) // requestId: start=lat,lng&mode=mode&weekday=weekday&departureTime=departureTime&travelTime=travelTime&

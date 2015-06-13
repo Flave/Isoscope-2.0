@@ -1,18 +1,20 @@
 "use strict";
 
-var React = require('react');
-var Route = require('react-router').Route;
-var NotFoundRoute = require('react-router').NotFoundRoute;
-var DefaultRoute = require('react-router').DefaultRoute;
-var Redirect = require('react-router').Redirect;
-var App = require('./App.react');
-var Master = require('./components/Master.react');
-var Info = require('./components/Info.react');
+var React = require('react'),
+    Route = require('react-router').Route,
+    NotFoundRoute = require('react-router').NotFoundRoute,
+    DefaultRoute = require('react-router').DefaultRoute,
+    Redirect = require('react-router').Redirect,
+    App = require('./App.react'),
+    Master = require('./components/Master.react'),
+    Info = require('./components/Info.react'),
+    TransitionTest = require('./components/TransitionTest.react');
 
 var Routes = (
   <Route handler={App}>
     <Route name="home" path="/" handler={Master}/>
     <Route name="info" path="/info" handler={Info}/>
+    <Route name="transition-test" path="/transition-test" handler={TransitionTest} />
   </Route>
 );
 

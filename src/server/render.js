@@ -1,5 +1,5 @@
 var Router = require('react-router');
-var routes = require('../routes.js');
+var routes = require('../routes');
 var React = require('react');
 var HtmlDocument = require('./HtmlDocument');
 

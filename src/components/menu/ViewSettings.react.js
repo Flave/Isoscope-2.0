@@ -18,7 +18,7 @@ var ViewSettings = React.createClass({
 
     return (
       <div className={className}>
-        <ReactSlider min={0} max={300} step={1} onAfterChange={this.handleTravelTimeChange} withBars={true}/>
+        <ReactSlider min={0} max={30} step={2} onAfterChange={this.handleTravelTimeChange} withBars={true}/>
         <SegmentedControl items={[{value: 'car', label:'Car'}, {value: 'pdestrian', label:'Pedestrian'}]} />
       </div>
     );

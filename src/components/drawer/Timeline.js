@@ -110,7 +110,7 @@ function Timeline() {
           .remove();
       });
     });
-
+    
     drawLines();
   }
 

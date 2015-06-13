@@ -22,7 +22,8 @@ if (server.get("env") === "production") {
   }));
 }
 
-require('./server/routes')(server);
+// For API requests or other non react/page requests
+//require('./server/routes')(server);
 
 server.use(render);
 

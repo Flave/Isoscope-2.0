@@ -9,52 +9,89 @@ var ClusterConstants = require('../constants/ClusterConstants'),
 var CHANGE_EVENT = 'change';
 
 
-/*
- Holds all the clusters as geoJSONs with structure:
-[
-  {
-    startLocation: [lat, lng],
-    id: someUID,
-    clusters: [
-      {
-        type: "FeatureCollection",
-        features: [
-          {
-            geometry: {coordinates: [isoline data]},
-            properties:{
-              travelTime, weekday...  
-            }
-          }
-        ]
-      }
-    ]
-  }
-]
+/**
+* Holds all the clusters as geoJSONs with structure:
+* {
+*   "type": "FeatureCollection",
+*   "properties": {
+*     "startLocation": [ 52.526456973352445, 13.363151550292969 ],
+*     "hoursOfDay": [ 0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23],
+*     "meanDistance": 871.6379946706592,
+*     "maxDistance": 1548.1109234458077,
+*     "minDistance": 154.92081258254476
+*   },
+*   "features": [
+*     {
+*       "geometry": {
+*         "type": "Polygon",
+*         "coordinates": [[[lat,lng], [lat,lng]]]
+*       },
+*       "properties": {
+*         "travelMode": "undefined",
+*         "travelTime": "undefined",
+*         "departureTime": "0",
+*         "weekday": "undefined",
+*         "startLocation": [
+*           "52.526456973352445",
+*           "13.363151550292969"
+*         ],
+*         "distances": [ 1548.1109234458077, 1357.3765392551702, 1346.5382251156732, 1205.1121571827152,...],
+*         "meanDistance": 977.1755604650635,
+*         "maxDistance": 1548.1109234458077,
+*         "minDistance": 237.6430430714227,
+*         "medianDistance": 1028.8241689562765
+*       }
+*     }
+*   ]
+* }
 */
+
 var _clusters = [];
 
-
+/**
+* Fetches and adds a new cluster to _clusters with the specified configuration
+* @param {object}   config          standard configuration of cluster with weekday, travelTime, startLocation, travelMode
+*/
 function add(config) {
   return hereApi.getCluster(config)
     .then(function(cluster) {
-      _clusters.push(cluster);
+      _clusters.push(calculateProperties(cluster));
+      return cluster;
     }, function(err) {
       console.log(err);
     });
 }
 
 /*
-{
-  viewPort: [[52.3, 13.1],[51.3, 13.18]]
-}
+* Updates _clusters with the specified options.
+*  // 1. Group all clusters by start Location
+*  // 2. Get all clusters within viewport
+*  // 3. Check if there is a cluster with the specified configuration
+* {
+*   viewPort: [[52.3, 13.1],[51.3, 13.18]]
+* }
 */
-function load(options) {
-  var promises;
-  // 1. Group all clusters by start Location
-  // 2. Get all clusters within viewport
-  // 3. Check if there is a cluster with the specified configuration
-  
-  promises = _.chain(_clusters)
+function update(options) {
+  return Q.all(loadClusters(options))
+    .spread(function() {
+      var newClusters = _.chain(Array.prototype.slice.call(arguments))
+        .filter(_.negate(_.isUndefined))
+        .forEach(calculateProperties)
+        .value();
+
+      _clusters = _.uniq(_clusters.concat(newClusters));
+      return newClusters;
+    });
+}
+
+
+/**
+* Returns a promise for all the clusters with the same startLocation. For each location checks if a cluster with specified options
+* exists in cache. If not fetches a new one.
+*/
+
+function loadClusters(options) {
+  return _.chain(_clusters)
     // filter for clusters inside viewport
     .filter(function(cluster, key) {
       return true;
@@ -64,29 +101,47 @@ function load(options) {
       return startLocation[0] + ',' + startLocation[1];
     })
     .map(function(clusterGroup, key) {
-      // 1. check if ther is a cluster with config
-      // 2. if so resolve promise with found cluster
-      // 3. if not get cluster from api
-      var deferred = Q.deferred();
+      var deferred = Q.defer();
       var cluster = _.findWhere(clusterGroup, {properties: options});
 
-      if(!cluster)
-        return hereApi.getCluster(options);
+      if(!cluster) {
+        var latLng = key.split(',').map(parseFloat);
+        var config = _.assign({}, options, {startLocation: latLng})
+        return hereApi.getCluster(config);
+      }
 
       deferred.resolve(cluster);
       return deferred.promise;
     }).value();
-
-  return promises;
 }
 
-function calculateDistances() {
-  _clusters.forEach(function(cluster) {
-    var startLocation = cluster.properties.startLocation;
-    cluster.features.forEach(function(isoline) {
-      var points = isoline.geometry.coordinates[0];
-      isoline.properties.distances = getDistances(startLocation, points);
-    });
+
+/**
+* Calculates distance properties for cluster passed as argument.
+* Calculates following properties on cluster and isolines
+* {array}   cluster.features[n].properties.distances                                  An array of all the distances for all the individual points on the isoline
+* {number}  cluster.features[n].properties.[meanDistance, maxDistance, minDistance]   The mean of all the distances of all the points on the isoline
+* {number}  cluster.properties.[meanDistance, maxDistance, minDistance]               The mean of all the means of all the points on the isoline
+*/
+function calculateProperties(cluster) {
+  calculateDistances(cluster);
+
+  reduceDistancesOfIsolines(cluster, d3.mean, 'meanDistance');
+  reduceDistancesOfIsolines(cluster, d3.max, 'maxDistance');
+  reduceDistancesOfIsolines(cluster, d3.min, 'minDistance');
+  reduceDistancesOfIsolines(cluster, d3.median, 'medianDistance');
+
+  reduceDistancesOfClusters(cluster, d3.mean, 'meanDistance');
+  reduceDistancesOfClusters(cluster, d3.max, 'maxDistance');
+  reduceDistancesOfClusters(cluster, d3.min, 'minDistance');
+  return cluster;
+}
+
+function calculateDistances(cluster) {
+  var startLocation = cluster.properties.startLocation;
+  cluster.features.forEach(function(isoline) {
+    var points = isoline.geometry.coordinates[0];
+    isoline.properties.distances = getDistances(startLocation, points);
   });
 }
 
@@ -103,11 +158,9 @@ function getDistances(startLocation, points) {
 * Calculates the reduced distance function of the isoline. Executes the reduceFunc function
 * on the distance array of every isoline.
 */
-function reduceDistancesOfIsolines(reduceFunc, propertyName) {
-  _clusters.forEach(function(cluster) {
-    cluster.features.forEach(function(isoline) {
-      isoline.properties[propertyName] = reduceFunc(isoline.properties.distances);
-    });
+function reduceDistancesOfIsolines(cluster, reduceFunc, propertyName) {
+  cluster.features.forEach(function(isoline) {
+    isoline.properties[propertyName] = reduceFunc(isoline.properties.distances);
   });
 }
 
@@ -115,42 +168,18 @@ function reduceDistancesOfIsolines(reduceFunc, propertyName) {
 /**
 * Runs the reduceFunc over all the distances of all the isolines cluster
 */
-function reduceDistancesOfClusters(reduceFunc, propertyName) {
-  _clusters.forEach(function(cluster) {
-    cluster.properties[propertyName] = reduceFunc(cluster.features, function(isoline) {
-      return reduceFunc(isoline.properties.distances);
-    });
+function reduceDistancesOfClusters(cluster, reduceFunc, propertyName) {
+  cluster.properties[propertyName] = reduceFunc(cluster.features, function(isoline) {
+    return reduceFunc(isoline.properties.distances);
   });
 }
 
 
-
-/**
-* Calculates the extent of all the distances of all the isolines of all the clusters.
-*/
-function calculateDistanceExtent() {
-  // get minDistance of all clusters
-  distanceExtent[0] = d3.min(data, function(cluster) {
-    return d3.min(cluster.features, function(isoline) {
-      return d3.min(isoline.properties.distances);
-    });
-  });
-
-
-  /**
-  * Get maxDistance of all clusters
-  */
-  distanceExtent[1] = d3.max(data, function(cluster) {
-    return d3.max(cluster.features, function(isoline) {
-      return d3.max(isoline.properties.distances);
-    });
-  });
-}
 
 var ClustersStore = _.assign({}, EventEmitter.prototype, {
 
-  get: function(settings) {
-    return _.findWhere(_clusters, settings);
+  get: function(config) {
+    return _.filter(_clusters, _.matches({properties: config}));
   },
 
   getAll: function() {
@@ -175,20 +204,17 @@ var ClustersStore = _.assign({}, EventEmitter.prototype, {
       case ClusterConstants.CLUSTER_ADD:
         add(action.data)
           .then(function() {
-            calculateDistances();
-            reduceDistancesOfIsolines(d3.mean, 'meanDistances');
-            reduceDistancesOfIsolines(d3.max, 'maxDistances');
-            reduceDistancesOfIsolines(d3.min, 'minDistances');
-            reduceDistancesOfIsolines(d3.median, 'medianDistances');
-
-            reduceDistancesOfClusters(d3.mean, 'meanDistance');
-            reduceDistancesOfClusters(d3.max, 'maxDistance');
-            reduceDistancesOfClusters(d3.min, 'minDistance');
             ClustersStore.emitChange();
+          }, function(err) {
+            console.log(err);
           });
         break;
-      case ClusterConstants.CLUSTER_LOAD:
-        load(action.data);
+      case ClusterConstants.CLUSTER_UPDATE:
+        update(action.data).then(function() {
+          ClustersStore.emitChange();
+        }, function(err) {
+          console.log(err);
+        });
         break;
       default:
         break;

@@ -1,42 +1,33 @@
 var React = require('react'),
-    Timeline = require('./Timeline');
+    Timeline = require('./Timeline.react');
 
 var App = React.createClass({
   getInitialState: function() {
-    return {
-      timeline: Timeline()
-    }
+    return {}
   },
   getDefaultProps: function() {
     return {
-      isOpen: false
+      isOpen: true
     }
   },
   componentDidMount: function() {
-    this.updateTimeline();
-  },
-
-  componentDidUpdate: function() {
-    this.updateTimeline();
-  },
-
-  updateTimeline: function() {
-    var svgNode = this.refs.timelineCanvas.getDOMNode(),
-        componentNode = this.getDOMNode(),
-        size = [componentNode.offsetWidth, componentNode.offsetHeight],
-        svg = d3.select(svgNode);
-
-    this.state.timeline
-      .data(this.props.clusters)
-      .size(size)(svg);
+    
   },
 
   render: function() {
     var isOpenClassName = this.props.isOpen ? 'is-open' : '';
     var className = isOpenClassName + ' drawer';
+    var maxDistance = d3.max(this.props.clusters, function(cluster) {
+      return cluster.properties.maxDistance;
+    });
+
+
+    var timelines = this.props.clusters.map(function(cluster, i) {
+      return <Timeline maxDistance={maxDistance} key={i} data={cluster} />
+    });
 
     return (<div className={className}>
-        <svg ref="timelineCanvas"/>
+        {timelines}
       </div>)
   }
 });

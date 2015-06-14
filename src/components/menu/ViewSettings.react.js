@@ -9,7 +9,7 @@ var ViewSettings = React.createClass({
   },
 
   handleTravelTimeChange: function(value) {
-    console.log(arguments);
+    this.props.handleIsolinesSettingsChange({travelTime: value});
   },
 
   render: function() {

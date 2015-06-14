@@ -36,8 +36,8 @@ function IsolinesOverlay() {
       .classed('clusters-container', true);
 
     drawIsolines();
-    //drawCircles();
-    //drawCenters();
+    drawCircles();
+    drawCenters();
   }
 
   function drawIsolines() {
@@ -211,12 +211,16 @@ function IsolinesOverlay() {
           bottomRight = bounds [1];
 
       svg
+        .transition()
+        .duration(1000)
         .attr('width', bottomRight[0] - topLeft[0])
         .attr('height', bottomRight[1] - topLeft[1])
         .style('left', topLeft[0] + 'px')
         .style('top', topLeft[1] + 'px');
 
       clusterGroup
+        .transition()
+        .duration(1000)
         .attr("transform", "translate(" + -topLeft[0] + "," + -topLeft[1] + ")");
     }    
   }
@@ -229,14 +233,14 @@ function IsolinesOverlay() {
         return line(projectIsoline(isoline));
       });
 
-/*      mean
+      mean
         .attr('cx', function(cluster) { return projectPoint(cluster.properties.startLocation[0], cluster.properties.startLocation[1])[0]; })
         .attr('cy', function(cluster) { return projectPoint(cluster.properties.startLocation[0], cluster.properties.startLocation[1])[1]; })
         .attr('r', function(cluster) { return projectDistance(cluster.properties.meanDistance); });
 
       center
         .attr('cx', function(cluster) { return projectPoint(cluster.properties.startLocation[0], cluster.properties.startLocation[1])[0]; })
-        .attr('cy', function(cluster) { return projectPoint(cluster.properties.startLocation[0], cluster.properties.startLocation[1])[1]; });*/
+        .attr('cy', function(cluster) { return projectPoint(cluster.properties.startLocation[0], cluster.properties.startLocation[1])[1]; });
     }
   }
 

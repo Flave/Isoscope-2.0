@@ -11,12 +11,8 @@ var React = require('react'),
 
 
 
-function getAllClusters() {
-  return ClustersStore.getAll();
-}
-
-function getClusters(settings) {
-  return ClustersStore.get(settings);
+function getClusters(config) {
+  return ClustersStore.get(config);
 }
 
 var Component = React.createClass({
@@ -27,19 +23,26 @@ var Component = React.createClass({
     return {
       drawerIsOpen: false,
       clusters: [],
-      isolineSettings: {
-        travelTime: 2,
-        weekday: 0,
-        travelMode: 'car'
-      }
+      travelTime: 2,
+      weekday: 0,
+      travelMode: 'car'
     }
   },
 
   componentDidMount: function() {
     var that = this;
     ClustersStore.addChangeListener(function() {
-      that.setState({clusters: getAllClusters()});
+      var isolineConfig = that.getIsolineConfig();
+      that.setState({clusters: getClusters(isolineConfig)});
     })
+  },
+
+  getIsolineConfig: function() {
+    return {
+      travelMode: this.state.travelMode,
+      weekday: this.state.weekday,
+      travelTime: this.state.travelTime,
+    }
   },
 
   extractMapParams: function() {
@@ -67,17 +70,9 @@ var Component = React.createClass({
     ClusterActions.add({
       travelMode: that.state.travelMode,
       weekday: that.state.weekday,
+      travelTime: that.state.travelTime,
       startLocation: [e.latlng.lat, e.latlng.lng]
     });
-
-/*    var promise = hereApi.getCluster();
-
-    //var promise = route360Api.get();
-
-    promise.then(function() {
-      console.log(arguments);
-      console.log('cluster loaded');
-    });*/
   },
 
 
@@ -89,9 +84,15 @@ var Component = React.createClass({
     this.setState({drawerIsOpen: !this.state.drawerIsOpen});
   },
 
-  handleSettingsChanged: function(_settings) {
-    var settings = _.assign({}, this.state.isolineSettings, _settings);
+  handleIsolinesSettingsChange: function(_settings) {
+    var nextState = _.assign({}, this.state, _settings);
+    this.setState(nextState);
 
+    ClusterActions.update({
+      travelMode: nextState.travelMode,
+      weekday: nextState.weekday,
+      travelTime: nextState.travelTime
+    });
   },
 
   render: function() {
@@ -107,8 +108,10 @@ var Component = React.createClass({
             handleMapClick={this.handleMapClick} />
           <Menu 
             handleDrawerToggle={this.handleDrawerToggle}
+            handleIsolinesSettingsChange={this.handleIsolinesSettingsChange}
             isOpen={this.state.drawerIsOpen} />
-          <Drawer 
+          <Drawer
+            travelTime={this.state.travelTime}
             isOpen={this.state.drawerIsOpen} 
             clusters={this.state.clusters}/>
         </div>

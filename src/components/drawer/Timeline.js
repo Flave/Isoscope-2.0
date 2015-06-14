@@ -8,23 +8,24 @@ if(process.env.BROWSER) {
 
 
 function Timeline() {
-  var data, // array of geoJSONs of clusters.
+  var data, // geoJSONs of cluster
       size = [0, 0],
-      padding = {top: 50, right: 25, bottom: 0, left: 60},
+      padding = {top: 10, right: 10, bottom: 10, left: 10},
       chartSize = [size[0] - padding.right - padding.left, size[1] - padding.top - padding.bottom],
       hour2X = d3.scale.linear().domain([0, 23]),
       distance2Y = d3.scale.linear().nice(),
+      maxDistance,
       svg,
       timeAxis = d3.svg.axis().orient('top'),
       distanceAxis = d3.svg.axis().orient('left'),
       line = d3.svg.line()
         .x(function(d, i){ return hour2X(i); })
-        .y(function(d){ return distance2Y(d); })
+        .y(function(d, i){ return distance2Y(d); })
         .interpolate('basis');
 
 
   function _timeline(_svg) {
-    if(!data || !data.length) return;
+    if(!data) return;
     svg = _svg;
     chartSize = [size[0] - padding.right - padding.left, size[1] - padding.top - padding.bottom];
 
@@ -36,84 +37,54 @@ function Timeline() {
     updateScales();
     updateAxes();
 
+    svg.datum(data);
 
-    var clustersGroup = svg
-      .selectAll('g.tl__clusters-group')
-      .data([data]);
-
-    clustersGroup
-      .enter()
-      .append('g')
-      .attr('transform', `translate(${padding.left}, ${padding.top})`)
-      .classed('tl__clusters-group', true);
-
-    var clusterGroup = clustersGroup
-      .selectAll('g.tl__cluster-group')
-      .data(function(clusters) { return clusters; });
-
-    clusterGroup
-      .enter()
-      .append('g')
-      .classed('tl__cluster-group', true);
-
-
-    // Do .each so we have access to the whole cluster data inside event handlers
-    clusterGroup.each(function(cluster, clusterIndex) {
-      var isolineGroup = d3.select(this)
-        .selectAll('g.tl__isoline-group')
-        .data(cluster.features);
-
-      isolineGroup
-        .enter()
-        .append('g')
-        .classed('tl__isoline-group', true);
-
-      // Do .each so we can get the index of the isoline to calculate x position
-      isolineGroup.each(function(isoline, isolineIndex) {
-
-        // DATA BINDING for dots
-        var dots = d3.select(this)
-          .selectAll('circle.tl-dot')
-          .data(isoline.properties.distances);
-
-        // UPDATE dots
-        dots
-
-        // ENTER dots
-        dots
-          .enter()
-          .append('circle')
-          .classed('tl-dot', true)
-          .attr('r', 3);
-
-        // ENTER + UPDATE dots
-        dots
-          .on('mouseover', function() {
-            console.log(cluster);
-          })
-          .classed('is-above-average', function(distance, i) {
-            if(distance > isoline.properties.meanDistances)
-              return true;
-          })
-          .classed('is-below-average', function(distance, i) {
-            if(distance < isoline.properties.meanDistances)
-              return true;
-          })
-          .transition()
-          .duration(500)
-          .attr('cx', function(distance, i) {return hour2X(isolineIndex); })
-          .attr('cy', function(distance) {return distance2Y(distance); });
-
-        // EXIT dots
-        dots
-          .exit()
-          .remove();
-      });
-    });
-    
+    drawDots();
     drawLines();
   }
 
+  function drawDots() {
+    var isolineGroup = svg
+      .selectAll('g.isoline')
+      .data(function(cluster) {
+        return cluster.features;
+      });
+
+    isolineGroup
+      .enter()
+      .append('g')
+      .classed('isoline', true);
+
+    isolineGroup.each(function(isoline, isolineIndex) {
+      var dot = d3.select(this)
+        .selectAll('circle.dot')
+        .data(isoline.properties.distances);
+
+      dot
+        .enter()
+        .append('circle')
+        .classed('dot', true)
+        .attr('r', 3);
+
+      // ENTER + UPDATE dot
+      dot
+        .on('mouseover', function() {
+          console.log(isoline);
+        })
+        .classed('is-above-average', function(distance, i) {
+          if(distance > isoline.properties.meanDistance)
+            return true;
+        })
+        .classed('is-below-average', function(distance, i) {
+          if(distance < isoline.properties.meanDistance)
+            return true;
+        })
+        .transition()
+        .duration(500)
+        .attr('cx', function(distance, i) {return hour2X(isolineIndex); })
+        .attr('cy', function(distance) {return distance2Y(distance); });
+    });
+  }
 
   /*
   * Public functions for Timeline component
@@ -136,24 +107,30 @@ function Timeline() {
     return _timeline;
   }
 
+  _timeline.maxDistance = function(_) {
+    if(!arguments.length) return maxDistance;
+    maxDistance = _;
+    return _timeline;
+  }
+
 
   /*
   * Draws max, min and average lines
   */
   function drawLines() {
     var linesGroup = svg
-      .selectAll('g.tl-lines')
-      .data([data]);
+      .selectAll('g.lines')
+      .data(function(cluster) { return [cluster]; });
 
     linesGroup
       .enter()
       .append('g')
       .attr('transform', `translate(${padding.left}, ${padding.top})`)
-      .classed('tl-lines', true);
+      .classed('lines', true);
 
-    drawLine(linesGroup, 'meanDistances', 'mean');
-    drawLine(linesGroup, 'maxDistances', 'max');
-    drawLine(linesGroup, 'minDistances', 'min');
+    drawLine(linesGroup, 'meanDistance', 'mean');
+    drawLine(linesGroup, 'maxDistance', 'max');
+    drawLine(linesGroup, 'minDistance', 'min');
 
     linesGroup
       .exit()
@@ -163,23 +140,20 @@ function Timeline() {
   function drawLine(container, propertyName, className) {
 
     var lineElement = container
-      .selectAll(`path.tl-${className}`)
-      .data(function(clusters) {
-        return clusters.map(function(cluster){
-          return cluster.features.map(function(isoline) { 
-            return isoline.properties[propertyName]; 
-          });
-        });
+      .selectAll(`path.${className}`)
+      .data(function(cluster) {
+        return [cluster.features.map(function(isoline, i) {
+          return isoline.properties[propertyName];
+        })];     
       });
+
 
     lineElement
       .enter()
       .append('path')
-      /*.attr('d', line)*/
-      .classed(`tl-${className} tl-line`, true);
+      .classed(`${className} line`, true);
 
     lineElement
-      /*.data(data)*/
       .transition()
       .duration(500)
       .attr('d', line);
@@ -189,9 +163,8 @@ function Timeline() {
   * Updates x and y scales
   */
   function updateScales() {
-    var max = d3.max(data, function(cluster) { return cluster.properties.maxDistance; });
     hour2X.range([0, chartSize[0]]);
-    distance2Y.domain([max, 0]).range([0, chartSize[1]]);
+    distance2Y.domain([maxDistance, 0]).range([0, chartSize[1]]);
   }
 
 
@@ -204,13 +177,13 @@ function Timeline() {
     timeAxis.scale(hour2X);
 
     var timeAxisContainer = svg
-      .selectAll('g.tl__x-axis')
+      .selectAll('g.x-axis')
       .data([1]);
 
     timeAxisContainer
       .enter()
       .append('g')
-      .classed('tl__x-axis tl__axis', true)
+      .classed('x-axis axis', true)
       .attr('transform', `translate(${padding.left}, ${padding.top})`);
 
     timeAxis
@@ -224,13 +197,13 @@ function Timeline() {
     distanceAxis.scale(distance2Y);
 
     var distanceAxisContainer = svg
-      .selectAll('g.tl__y-axis')
+      .selectAll('g.y-axis')
       .data([1]);
 
     distanceAxisContainer
       .enter()
       .append('g')
-      .classed('tl__y-axis tl__axis', true)
+      .classed('y-axis axis', true)
       .attr('transform', `translate(0, ${padding.top})`);
 
     distanceAxis

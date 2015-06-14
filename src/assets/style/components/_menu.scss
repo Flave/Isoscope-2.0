@@ -1,10 +1,11 @@
 .menu {
   position: absolute;
   bottom: 0;
+  right: 0;
   padding: 20px;
   transition: $drawer-transition;
 
   &.is-open {
-    bottom: $drawer-height;
+    right: $drawer-width;
   }
 }

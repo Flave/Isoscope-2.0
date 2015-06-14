@@ -1,50 +1,48 @@
-.tl {
+.timeline {
+  .axis {
+    .tick {
+      font-size: 12px;
 
-}
+      line {
+        stroke: #eee;
+        fill: none;
+      }
+    }
 
-.tl__axis {
-  .tick {
-    font-size: 12px;
-
-    line {
-      stroke: #eee;
+    .domain {
       fill: none;
+      stroke: none;
     }
   }
 
-  .domain {
-    fill: none;
+  .dot {
+    fill: #000000;
+    opacity: .3;
     stroke: none;
-  }
-}
 
-.tl-dot {
-  fill: #000000;
-  opacity: .3;
-  stroke: none;
+    &.is-above-average {
+      fill: #44ee99;
+    }
 
-  &.is-above-average {
-    fill: #44ee99;
+    &.is-below-average {
+      fill: #ff8899;
+    }
   }
 
-  &.is-below-average {
-    fill: #ff8899;
-  }
-}
+  .line {
+    fill: none;
+    stroke: #000000;
 
-.tl-line {
-  fill: none;
-  stroke: #000000;
+    &.mean {
+      stroke: #888;
+    }
 
-  &.tl-mean {
-    stroke: #888;
-  }
+    &.min {
+      stroke: #ff8899;
+    }
 
-  &.tl-min {
-    stroke: #ff8899;
-  }
-
-  &.tl-max {
-    stroke: #44ee99;
+    &.max {
+      stroke: #44ee99;
+    }
   }
 }

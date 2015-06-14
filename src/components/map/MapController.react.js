@@ -22,6 +22,10 @@ var MapController = React.createClass({
     this.renderOverlays();
   },
 
+/*  shouldComponentUpdate: function(nextProps, nextState) {
+    return ;
+  },*/
+
   initializeIsolinesOverlay: function() {
     var map = this.refs.map.getMap();
     var overlaySvg = d3.select(map.getPanes().overlayPane)
@@ -57,7 +61,8 @@ var MapController = React.createClass({
   render: function() {
     return (
       <Map 
-        ref="map" 
+        ref="map"
+        handleMapBoundsChanged={this.props.handleMapBoundsChanged}
         handleMapMoveEnd={this.handleMapMoveEnd}
         handleClick={this.props.handleMapClick}/>
     )

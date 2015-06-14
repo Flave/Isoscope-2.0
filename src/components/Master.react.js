@@ -25,16 +25,24 @@ var Component = React.createClass({
       clusters: [],
       travelTime: 2,
       weekday: 0,
-      travelMode: 'car'
+      travelMode: 'car',
+      mapBounds: undefined
     }
   },
 
   componentDidMount: function() {
     var that = this;
     ClustersStore.addChangeListener(function() {
-      var isolineConfig = that.getIsolineConfig();
-      that.setState({clusters: getClusters(isolineConfig)});
+      that.setState({clusters: getClusters(that.getIsolineConfig())});
     })
+  },
+
+  shouldComponentUpdate: function(nexProps, nextState) {
+    
+    return (true
+        // don't update if mapBounds changed
+        //this.props !== nextProps.mapBounds
+      )
   },
 
   getIsolineConfig: function() {
@@ -75,6 +83,10 @@ var Component = React.createClass({
     });
   },
 
+  handleMapBoundsChanged: function(mapBounds) {
+    this.setState({mapBounds: mapBounds});
+  },
+
 
   /*
   * GENERAL INTERACTION
@@ -105,7 +117,8 @@ var Component = React.createClass({
             lng={mapParams.lng} 
             zoom={mapParams.zoom}
             clusters={this.state.clusters}
-            handleMapClick={this.handleMapClick} />
+            handleMapClick={this.handleMapClick}
+            handleMapBoundsChanged={this.handleMapBoundsChanged} />
           <Menu 
             handleDrawerToggle={this.handleDrawerToggle}
             handleIsolinesSettingsChange={this.handleIsolinesSettingsChange}

@@ -2,6 +2,7 @@ var ClusterConstants = require('../constants/ClusterConstants'),
     EventEmitter = require('events').EventEmitter,
     hereApi = require('../apis/here'),
     Q = require('q'),
+    L = require('leaflet'),
     dispatcher = require('../dispatcher'),
     d3 = require('d3'),
     _ = require('lodash');
@@ -91,10 +92,13 @@ function update(options) {
 */
 
 function loadClusters(options) {
+  var config = _.omit(options, 'mapBounds');
+
   return _.chain(_clusters)
     // filter for clusters inside viewport
-    .filter(function(cluster, key) {
+    .filter(function(cluster) {
       return true;
+      //return options.mapBounds.contains(L.latLng(cluster.properties.startLocation));
     })
     .groupBy(function(cluster) {
       var startLocation = cluster.properties.startLocation;
@@ -102,15 +106,14 @@ function loadClusters(options) {
     })
     .map(function(clusterGroup, key) {
       var deferred = Q.defer();
-      var cluster = _.findWhere(clusterGroup, {properties: options});
+      var cluster = _.findWhere(clusterGroup, {properties: config});
 
       if(!cluster) {
         var latLng = key.split(',').map(parseFloat);
-        var config = _.assign({}, options, {startLocation: latLng})
-        return hereApi.getCluster(config);
+        return hereApi.getCluster(_.assign({}, config, {startLocation: latLng}));
       }
 
-      deferred.resolve(cluster);
+      deferred.resolve(undefined);
       return deferred.promise;
     }).value();
 }

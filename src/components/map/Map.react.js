@@ -9,6 +9,7 @@ if(process.env.BROWSER) {
 var map;
 
 var Map = React.createClass({
+  mixins: [Router.Navigation],
   getDefaultProps: function() {
     return { 
       lat: 52.522644823574645,
@@ -16,19 +17,25 @@ var Map = React.createClass({
       zoom: 13
     }
   },
-  mixins: [Router.Navigation],
   componentDidMount: function() {
     var mapContainer = this.refs.mapContainer.getDOMNode();
-    map = L.map(mapContainer, {
-      center: [this.props.lat, this.props.lng],
-      zoom: this.props.zoom
-    })
+    map = L.map(mapContainer)
+      .on('load', this.handleMapBoundsChanged)
       .on('moveend', this.props.handleMapMoveEnd)
+      .on('moveend', this.handleMapBoundsChanged)
+      .on('zoomend', this.handleMapBoundsChanged)
       .on('click', this.props.handleClick);
+
+    map.setView(L.latLng([this.props.lat, this.props.lng]), this.props.zoom);
 
     L.tileLayer('https://{s}.tiles.mapbox.com/v4/flaviogortana.2efcca31/{z}/{x}/{y}.png?access_token=pk.eyJ1IjoiZmxhdmlvZ29ydGFuYSIsImEiOiJzalRHcS1JIn0.aeJmH09S2p_hjOSs3wuT3w', {
         id: 'examples.map-20v6611k',
     }).addTo(map);
+  },
+
+  handleMapBoundsChanged: function(e) {
+    var mapBounds = map.getBounds();
+    this.props.handleMapBoundsChanged(mapBounds);
   },
 
   getMap: function() {

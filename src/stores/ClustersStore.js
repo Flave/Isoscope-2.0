@@ -2,10 +2,14 @@ var ClusterConstants = require('../constants/ClusterConstants'),
     EventEmitter = require('events').EventEmitter,
     hereApi = require('../apis/here'),
     Q = require('q'),
-    L = require('leaflet'),
+    L,
     dispatcher = require('../dispatcher'),
     d3 = require('d3'),
     _ = require('lodash');
+
+if(process.env.BROWSER) {
+  L = require('leaflet');
+}
 
 var CHANGE_EVENT = 'change';
 

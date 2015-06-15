@@ -1,5 +1,6 @@
 var React = require('react'),
-    Timeline = require('./Timeline.react');
+    Timeline = require('./Timeline.react'),
+    d3 = require('d3');
 
 var App = React.createClass({
   getInitialState: function() {

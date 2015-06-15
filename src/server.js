@@ -27,7 +27,7 @@ if (server.get("env") === "production") {
 
 server.use(render);
 
-server.set("port", process.env.PORT || 3000);
+server.set("port", process.env.PORT || 3002);
 
 server.listen(server.get("port"), function() {
   console.log('Express' +  server.get("env") + 'server listening on' +  server.get("port"));

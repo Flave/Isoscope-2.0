@@ -9,7 +9,11 @@ var ViewSettings = React.createClass({
   },
 
   handleTravelTimeChange: function(value) {
-    this.props.handleIsolinesSettingsChange({travelTime: value});
+    this.props.handleTransition({travelTime: value});
+  },
+
+  handleTravelModeChange: function(value) {
+    this.props.handleTransition({travelMode: value});
   },
 
   render: function() {
@@ -18,8 +22,24 @@ var ViewSettings = React.createClass({
 
     return (
       <div className={className}>
-        <ReactSlider min={0} max={30} step={2} onAfterChange={this.handleTravelTimeChange} withBars={true}/>
-        <SegmentedControl items={[{value: 'car', label:'Car'}, {value: 'pdestrian', label:'Pedestrian'}]} />
+        <div className="settings-group">
+          <p className="title">Travel Time</p>
+          <ReactSlider 
+            min={2}
+            max={30} 
+            step={2}
+            value={this.props.state.travelTime}
+            onAfterChange={this.handleTravelTimeChange} 
+            withBars={true}/>
+        </div>
+        <div className="settings-group">
+          <p className="title">Travel Mode</p>
+          <SegmentedControl
+            name='travelMode'
+            handleChange={this.handleTravelModeChange}
+            value={this.props.state.travelMode}
+            items={[{value: 'car', label:'Car'}, {value: 'pdestrian', label:'Pedestrian'}]} />
+        </div>
       </div>
     );
   }

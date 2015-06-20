@@ -28,6 +28,7 @@ module.exports = {
     loaders: [
       { test: /\.js$/, exclude: /node_modules/, loaders: ["react-hot", "babel"] },
       { test: /\.scss$/, loader: 'style!css!autoprefixer?browsers=last 2 versions!sass?sourceMap=true&sourceMapContents=true' },
+      { test: /\.jpe?g$|\.svg$|\.gif$|\.png$|\.svg$|\.eot$|\.woff$|\.ttf$|\.wav$|\.mp3$/, loader: "file" },
       { test: /\.css$/, loader: 'style!css' }
     ]
   },

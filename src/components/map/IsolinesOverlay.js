@@ -75,6 +75,9 @@ function IsolinesOverlay() {
     isolines
       .transition()
       .duration(1000)
+      .delay(function(d, i) {
+        return i * 35;
+      })
       .attrTween('d', pathTween);
 
     // EXIT isolines

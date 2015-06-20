@@ -2,7 +2,6 @@ var React = require('react'),
     Router = require('react-router'),
     hereApi = require('../../apis/here'),
     IsolinesOverlay = require('./IsolinesOverlay'),
-    ClustersStore = require('../../stores/ClustersStore'),
     d3 = require('d3'),
     Map = require('./Map.react');
 
@@ -52,10 +51,12 @@ var MapController = React.createClass({
     var center = map.getCenter();
     var zoom = map.getZoom();
     var mapParams = `${center.lat},${center.lng},${zoom}`;
+  },
 
-    // FIX: The position seems to be a bit of when reloading
-    // TBD: Check if there are other params/queries and readd them
-    this.replaceWith('/', {}, {map: mapParams});
+  _handleMapClick: function(e) {
+    var clusters = this.props.state.clusters.slice();
+    clusters.push([e.latlng.lat, e.latlng.lng]);
+    this.props.handleStateChange({clusters: clusters});
   },
 
   render: function() {
@@ -64,7 +65,7 @@ var MapController = React.createClass({
         ref="map"
         handleMapBoundsChanged={this.props.handleMapBoundsChanged}
         handleMapMoveEnd={this.handleMapMoveEnd}
-        handleClick={this.props.handleMapClick}/>
+        handleClick={this._handleMapClick}/>
     )
   }
 });

@@ -31,6 +31,8 @@ var Map = React.createClass({
     L.tileLayer('https://{s}.tiles.mapbox.com/v4/flaviogortana.2efcca31/{z}/{x}/{y}.png?access_token=pk.eyJ1IjoiZmxhdmlvZ29ydGFuYSIsImEiOiJzalRHcS1JIn0.aeJmH09S2p_hjOSs3wuT3w', {
         id: 'examples.map-20v6611k',
     }).addTo(map);
+
+    map.zoomControl.setPosition('bottomright');
   },
 
   handleMapBoundsChanged: function(e) {

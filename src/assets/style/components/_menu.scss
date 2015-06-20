@@ -1,11 +1,45 @@
 .menu {
   position: absolute;
-  bottom: 0;
-  right: 0;
+  top: 0;
+  left: 0;
   padding: 20px;
   transition: $drawer-transition;
 
-  &.is-open {
-    right: $drawer-width;
+  &.is-active {
+    left: $drawer-width;
+  }
+
+  .menu-btn {
+    $menu-btn-size: 48px;
+
+    font-size: 16px;
+    display: block;
+    width: $menu-btn-size;
+    height: $menu-btn-size;
+    text-align: center;
+    line-height: $menu-btn-size;
+    border-radius: $menu-btn-size/2;
+    padding: 0;
+    margin-bottom: 10px;
+    box-shadow: $shadow-map-overlay;
+    border: none;
+    color: $c-primary;
+
+    &.is-active {
+      color: white;
+      background-color: $c-primary;      
+    }
+  }
+}
+
+.location-search {
+
+  .input {
+    border: none;
+    width: 300px;
+    line-height: 55px;
+    padding: 0px 20px;
+    font-size: 16px;
+    outline: none;
   }
 }

@@ -1,29 +1,35 @@
 .view-settings {
-  position: absolute; 
-  top: -40px;
   width: 280px;
-  background-color: #FFF;
-  padding: 25px;
-  visibility: hidden;
-  opacity: 0;
+  
+  .settings-group {
+    padding: 25px;
+    border-bottom: 1px solid $c-gray-tertiary;
 
-  &.is-open {
-    visibility: visible;
-    opacity: 1;
+    .title {
+      color: $c-primary;
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: .2;
+      margin-bottom: 10px;
+    }
   }
 }
 
 .slider {
+  padding: 10px;
+
   .bar {
-    height: 3px;
+    height: 1px;
   }
 
   .bar-0 {
-    background-color: red;
+    background-color: $c-gray-primary;
+    border-radius: 1px;
   } 
 
   .bar-1 {
-    background-color: green;
+    background-color: $c-gray-primary;
+    border-radius: 1px;
   }
 
   .handle {
@@ -31,6 +37,7 @@
     height: 20px;
     border-radius: 100%;
     transform: translate(0%, -50%);
-    background-color: blue;
+    background-color: $c-primary;
+    box-shadow: 0 0 5px rgba(0, 0, 0, .2);
   }
 }

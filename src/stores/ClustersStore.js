@@ -95,26 +95,29 @@ function update(options) {
 * exists in cache. If not fetches a new one.
 */
 
-function loadClusters(options) {
-  var config = _.omit(options, 'mapBounds');
+// 1. 
 
-  return _.chain(_clusters)
+function loadClusters(options) {
+  var config = _.omit(options, 'clusters');
+
+  var clusterGroups = _.groupBy(_clusters, function(cluster) {
+    var startLocation = cluster.properties.startLocation;
+    return startLocation[0] + ',' + startLocation[1];
+  });
+
+  return _.chain(options.clusters)
     // filter for clusters inside viewport
     .filter(function(cluster) {
       return true;
       //return options.mapBounds.contains(L.latLng(cluster.properties.startLocation));
     })
-    .groupBy(function(cluster) {
-      var startLocation = cluster.properties.startLocation;
-      return startLocation[0] + ',' + startLocation[1];
-    })
-    .map(function(clusterGroup, key) {
+    .map(function(clusterLatlng, key) {
       var deferred = Q.defer();
+      var clusterGroup = clusterGroups[clusterLatlng.join(',')];
       var cluster = _.findWhere(clusterGroup, {properties: config});
 
       if(!cluster) {
-        var latLng = key.split(',').map(parseFloat);
-        return hereApi.getCluster(_.assign({}, config, {startLocation: latLng}));
+        return hereApi.getCluster(_.assign({}, config, {startLocation: clusterLatlng}));
       }
 
       deferred.resolve(undefined);
@@ -122,6 +125,9 @@ function loadClusters(options) {
     }).value();
 }
 
+/*function loadClusters(options) {
+  var config = _.pick(options, ['clusters', 'travelTime', ''])
+}*/
 
 /**
 * Calculates distance properties for cluster passed as argument.
@@ -217,8 +223,9 @@ var ClustersStore = _.assign({}, EventEmitter.prototype, {
           });
         break;
       case ClusterConstants.CLUSTER_UPDATE:
-        update(action.data).then(function() {
-          ClustersStore.emitChange();
+        update(action.data).then(function(newClusters) {
+          if(newClusters.length)
+            ClustersStore.emitChange();
         }, function(err) {
           console.log(err);
         });

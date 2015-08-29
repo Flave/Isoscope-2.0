@@ -9,7 +9,6 @@ var api = {},
     app_code = 'mwkokcyyoCIfExsmQq0qIg',
     base = 'http://route.st.nlp.nokia.com/routing/6.2/calculateisoline.json';
 
-
 /*
 * Converts weird here response "lat,lng" format to {lat: lat, lng:lng}
 * and eliminates douplicate coodinates included in the response

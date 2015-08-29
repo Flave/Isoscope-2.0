@@ -1,6 +1,7 @@
 var React = require('react'),
     ViewSettings = require('app/components/menu/ViewSettings.react'),
     LocationSearch = require('app/components/menu/LocationSearch.react'),
+    _ = require('lodash'),
     Popover = require('app/components/common/Popover.react');
 
 

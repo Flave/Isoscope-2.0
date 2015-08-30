@@ -1,48 +1,52 @@
-.timeline {
-  .axis {
-    .tick {
-      font-size: 12px;
+.m-timeline {
+}
 
-      line {
-        stroke: #eee;
-        fill: none;
-      }
-    }
+.m-timeline__axis {
+  .tick {
+    font-size: 12px;
 
-    .domain {
+    line {
+      stroke: #eee;
       fill: none;
-      stroke: none;
     }
   }
 
-  .dot {
-    fill: #000000;
-    opacity: .3;
-    stroke: none;
-
-    &.is-above-average {
-      fill: #44ee99;
-    }
-
-    &.is-below-average {
-      fill: #ff8899;
-    }
-  }
-
-  .line {
+  .domain {
     fill: none;
-    stroke: #000000;
+    stroke: none;
+  }
+}
 
-    &.mean {
-      stroke: #888;
-    }
+.m-timeline__lines {
 
-    &.min {
-      stroke: #ff8899;
-    }
+}
 
-    &.max {
-      stroke: #44ee99;
-    }
+.m-timeline__line {
+  fill: none;
+  stroke: #000000;
+  stroke-width: 2;
+
+  &--car {
+    stroke: #FF6281;
+  }
+
+  &--truck {
+    stroke: #FAC25E;
+  }
+
+  &--pedestrian {
+    stroke: #5E94FA;
+  }
+
+  &.mean {
+    stroke: #888;
+  }
+
+  &.min {
+    stroke: #ff8899;
+  }
+
+  &.max {
+    stroke: #44ee99;
   }
 }

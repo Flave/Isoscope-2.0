@@ -33,52 +33,7 @@ function Timeline() {
     updateAxes();
 
     svg.datum(data);
-
-    drawDots();
     drawLines();
-  }
-
-  function drawDots() {
-    var isolineGroup = svg
-      .selectAll('g.isoline')
-      .data(function(cluster) {
-        return cluster.features;
-      });
-
-    isolineGroup
-      .enter()
-      .append('g')
-      .classed('isoline', true);
-
-    isolineGroup.each(function(isoline, isolineIndex) {
-      var dot = d3.select(this)
-        .selectAll('circle.dot')
-        .data(isoline.properties.distances);
-
-      dot
-        .enter()
-        .append('circle')
-        .classed('dot', true)
-        .attr('r', 3);
-
-      // ENTER + UPDATE dot
-      dot
-        .on('mouseover', function() {
-          console.log(isoline);
-        })
-        .classed('is-above-average', function(distance, i) {
-          if(distance > isoline.properties.meanDistance)
-            return true;
-        })
-        .classed('is-below-average', function(distance, i) {
-          if(distance < isoline.properties.meanDistance)
-            return true;
-        })
-        .transition()
-        .duration(500)
-        .attr('cx', function(distance, i) {return hour2X(isolineIndex); })
-        .attr('cy', function(distance) {return distance2Y(distance); });
-    });
   }
 
   /*
@@ -114,44 +69,41 @@ function Timeline() {
   */
   function drawLines() {
     var linesGroup = svg
-      .selectAll('g.lines')
-      .data(function(cluster) { return [cluster]; });
+      .selectAll('g.m-timeline__lines')
+      .data(function(clusters) { return [clusters]; });
 
     linesGroup
       .enter()
       .append('g')
       .attr('transform', `translate(${padding.left}, ${padding.top})`)
-      .classed('lines', true);
+      .classed('m-timeline__lines', true);
 
-    drawLine(linesGroup, 'meanDistance', 'mean');
-    drawLine(linesGroup, 'maxDistance', 'max');
-    drawLine(linesGroup, 'minDistance', 'min');
-
-    linesGroup
-      .exit()
-      .remove();
-  }
-
-  function drawLine(container, propertyName, className) {
-
-    var lineElement = container
-      .selectAll(`path.${className}`)
-      .data(function(cluster) {
-        return [cluster.features.map(function(isoline, i) {
-          return isoline.properties[propertyName];
-        })];     
-      });
-
+    var lineElement = linesGroup
+          .selectAll('path.m-timeline__line')
+          .data(function(clusters) {
+            // return [[23,432,123,44],[23,432,123,44]]
+            var lineData = _.map(clusters, function(cluster) {
+              return _.map(cluster.features, function(isoline) {
+                return isoline.properties.meanDistance;
+              })
+            });
+            return lineData;
+          });
 
     lineElement
       .enter()
       .append('path')
-      .classed(`${className} line`, true);
+      .classed('m-timeline__line', true);
 
     lineElement
-      .transition()
-      .duration(500)
+      .attr('class', function(lineData, i) {
+        return `m-timeline__line m-timeline__line--${data[i].properties.travelMode}`;
+      })
       .attr('d', line);
+
+    linesGroup
+      .exit()
+      .remove();
   }
 
   /*
@@ -172,13 +124,13 @@ function Timeline() {
     timeAxis.scale(hour2X);
 
     var timeAxisContainer = svg
-      .selectAll('g.x-axis')
+      .selectAll('g.m-timeline__axis--y')
       .data([1]);
 
     timeAxisContainer
       .enter()
       .append('g')
-      .classed('x-axis axis', true)
+      .classed('m-timeline__axis--x m-timeline__axis', true)
       .attr('transform', `translate(${padding.left}, ${padding.top})`);
 
     timeAxis
@@ -192,13 +144,13 @@ function Timeline() {
     distanceAxis.scale(distance2Y);
 
     var distanceAxisContainer = svg
-      .selectAll('g.y-axis')
+      .selectAll('g.m-timeline__axis--y')
       .data([1]);
 
     distanceAxisContainer
       .enter()
       .append('g')
-      .classed('y-axis axis', true)
+      .classed('m-timeline__axis--y m-timeline__axis', true)
       .attr('transform', `translate(0, ${padding.top})`);
 
     distanceAxis
@@ -206,24 +158,10 @@ function Timeline() {
       .ticks([5]);
 
     distanceAxisContainer
-      .transition()
-      .duration(500)
       .call(distanceAxis)
         .selectAll('text')
         .attr('x', 40)
         .attr('dy', -5);
-  }
-
-  /**
-  * Returns an array of reduced distance function of the isoline. Executes the reduceFunc function
-  * on the distance array of every isoline.
-  */
-  function reduceDistances(data, reduceFunc) {
-    return data.map(function(cluster) {
-      return cluster.features.map(function(isoline) {
-        return reduceFunc(isoline.properties.distances);
-      });
-    });
   }
 
   return _timeline;

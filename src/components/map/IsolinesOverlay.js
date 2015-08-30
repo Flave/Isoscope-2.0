@@ -10,8 +10,6 @@ function IsolinesOverlay() {
       map,
       data,
       cluster,
-      mean,
-      center,
       svg,
       transform = d3.geo.transform({point: streamProjectPoint}),
       path = d3.geo.path().projection(transform),
@@ -36,7 +34,6 @@ function IsolinesOverlay() {
       .classed('clusters-container', true);
 
     drawIsolines();
-    drawCenters();
   }
 
   function drawIsolines() {
@@ -89,19 +86,6 @@ function IsolinesOverlay() {
       .remove();
 
     resetContainers();
-  }
-
-  function drawCenters() {
-    // ENTER center circle
-    center = clusterGroup
-      .selectAll('circle.overlay-center')
-      .data(function(d){return d;});
-
-    center
-      .enter()
-      .append('circle')
-      .classed('overlay-center', true)
-      .attr('r', 3);
   }
 
 
@@ -225,15 +209,6 @@ function IsolinesOverlay() {
       isolines.attr('d', function(isoline) {
         return line(projectIsoline(isoline));
       });
-
-      mean
-        .attr('cx', function(cluster) { return projectPoint(cluster.properties.startLocation[0], cluster.properties.startLocation[1])[0]; })
-        .attr('cy', function(cluster) { return projectPoint(cluster.properties.startLocation[0], cluster.properties.startLocation[1])[1]; })
-        .attr('r', function(cluster) { return projectDistance(cluster.properties.meanDistance); });
-
-      center
-        .attr('cx', function(cluster) { return projectPoint(cluster.properties.startLocation[0], cluster.properties.startLocation[1])[0]; })
-        .attr('cy', function(cluster) { return projectPoint(cluster.properties.startLocation[0], cluster.properties.startLocation[1])[1]; });
     }
   }
 

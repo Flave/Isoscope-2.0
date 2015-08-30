@@ -18,7 +18,7 @@ var App = React.createClass({
   updateTimeline: function() {
     var svgNode = this.refs.timelineCanvas.getDOMNode(),
         componentNode = this.getDOMNode(),
-        size = [componentNode.offsetWidth, componentNode.offsetHeight],
+        size = [componentNode.offsetWidth, 100],
         svg = d3.select(svgNode);
 
     this.state.timeline
@@ -29,8 +29,12 @@ var App = React.createClass({
 
   render: function() {
 
-    return (<div className="timeline">
-        <svg ref="timelineCanvas"/>
+    return (
+      <div className="m-cluster-timeline">
+        <div className="m-cluster-timeline__meta">Location etc.</div>
+        <div className="m-cluster-timeline__chart">
+          <svg ref="timelineCanvas"/>
+        </div>
       </div>)
   }
 });

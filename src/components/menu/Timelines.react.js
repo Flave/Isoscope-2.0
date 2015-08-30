@@ -25,15 +25,13 @@ var App = React.createClass({
         .value(),
         maxDistance = d3.max(this.props.clusters, function(cluster) {
           return cluster.properties.maxDistance;
-        })/*,
-        timelines = _.map(clusters, function(cluster, i),
+        }),
+        timelines = _.map(clusters, function(cluster, i) {
           return <Timeline maxDistance={maxDistance} key={i} data={cluster} />
-        })*/;
-
-        //console.log(clusters);
+        });
 
     return (<div className='m-timelines'>
-        {/*timelines*/}
+        {timelines}
       </div>)
   }
 });

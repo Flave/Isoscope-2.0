@@ -1,0 +1,34 @@
+.m-accordeon {
+  background-color: white;
+}
+
+.m-accordeon__panel {
+  border-bottom: 1px solid #f4f4f4;
+
+  &:last-child {
+    border-bottom: none;
+  }
+
+  &--is-expanded {
+    .m-accordeon__panel-content {
+      display: block;
+    }
+  }
+}
+
+.m-accordeon__panel-header {
+  padding: 0 20px;
+  line-height: 65px;
+  cursor: pointer;
+  user-select: none;
+  color: $c-primary;
+  text-transform: uppercase;
+  letter-spacing: .05em;
+}
+
+.m-accordeon__panel-content {
+  display: none;
+  padding: 15px 20px;
+  background-color: #fafafa;
+  border-top: 1px solid #f4f4f4;
+}

@@ -1,16 +1,37 @@
-.segmented-control {
+.m-segmented-control {
 }
 
-.segmented-control__item {
-  padding: 10px 15px;
-  background-color: #eeeeee;
-  line-height: 40px;
+.m-segmented-control__segment {
+  padding: 10px 0;
+  display: inline-block;
+  background-color: $c-gray-primary;
+  color: white;
+  border-right: 1px solid lighten($c-gray-primary, 50);
+  text-align: center;
+  cursor: pointer;
+
+  &.is-selected {
+    background-color: $c-primary;
+
+    &:hover {
+      background-color: $c-primary;
+    }
+  }
+
+  &:hover {
+    background-color: darken($c-gray-primary, 10);
+  }
 
   &:last-child {
-    border-radius: 0 20px 20px 0;
+    border-radius: 0 1px 1px 0;
+    border-right: none;
   }
 
   &:first-child {
-    border-radius: 20px 0 0 20px;
+    border-radius: 1px 0 0 1px;
   }
+}
+
+.m-segmented-control__label {
+  font-size: 12px;
 }

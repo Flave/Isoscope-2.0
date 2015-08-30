@@ -37,7 +37,6 @@ var Map = React.createClass({
 
   handleMapBoundsChanged: function(e) {
     var mapBounds = map.getBounds();
-    this.props.handleMapBoundsChanged(mapBounds);
   },
 
   getMap: function() {

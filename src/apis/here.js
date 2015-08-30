@@ -30,12 +30,12 @@ function processIsolineValues(latLngValues) {
 */
 
 function processIsolineResponse(res) {
-  var isoline = res.Response.isolines[0];
-  var meta = res.Response.MetaInfo;
-  var params = util.queryStringToJSON(meta.RequestId);
-  var isoline = {
-    data: processIsolineValues(isoline.value)
-  }
+  var isoline = res.Response.isolines[0],
+      meta = res.Response.MetaInfo,
+      params = util.queryStringToJSON(meta.RequestId),
+      isoline = {
+        data: processIsolineValues(isoline.value)
+      };
 
   // split startLocation paramter into array of lat/lng
   params.startLocation = params.startLocation.split(',');
@@ -61,16 +61,19 @@ var hereApi = {
   * @return {promise}   promise                 A promise which resolves to the processed cluster
   */
   getCluster: function(options) {
-    options.hoursOfDay = _.range(24);
-    var promises = options.hoursOfDay.map(function(hour) {
-      return hereApi.get({
-        travelMode: options.travelMode,
-        travelTime: options.travelTime,
-        departureTime: hour,
-        weekday: options.weekday,
-        startLocation: options.startLocation
-      });
-    });
+
+    var promises = _(_.range(24))
+      .map(function(hour) {
+        return hereApi.get({
+          travelMode: options.travelMode,
+          travelTime: options.travelTime,
+          departureTime: hour,
+          weekday: options.weekday,
+          startLocation: options.startLocation
+        });
+      })
+      .value();
+
 
     return Q.all(promises)
       .spread(function() {
@@ -112,7 +115,7 @@ var hereApi = {
 
     var params = util.JSON2QueryString({
       departure: util.getXsDateTime(0, options.departureTime, 0), // = departureTime
-      mode: 'fastest;car;traffic:enabled',
+      mode: `fastest;${options.travelMode};traffic:enabled`,
       start: `${options.startLocation[0]},${options.startLocation[1]}`,
       time: `PT0H${zeroPad2(options.travelTime)}M`, // = travelTime
       app_id: app_id,

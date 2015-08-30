@@ -1,7 +1,7 @@
 var React = require('react'),
     Map = require('./map/MapController.react'),
     Drawer = require('./drawer/Drawer.react'),
-    Menu = require('./menu/Menu.react.js'),
+    UIPanel = require('./menu/UIPanel.react.js'),
     hereApi = require('../apis/here'),
     route360Api = require('../apis/route360'),
     _ = require('lodash'),
@@ -13,7 +13,7 @@ var React = require('react'),
 var _state = {
   clusters: [],
   travelTime: 2,
-  travelMode: 'car',
+  travelModes: ['car', 'truck'],
   weekday: 0,
   map: [52.522644823574645, 13.40628147125244, 14]
 }
@@ -33,6 +33,10 @@ var config = {
     'map': function(mapParams) {
       if(!mapParams) return undefined;
       return mapParams.split(',');
+    },
+    'travelModes': function(travelModes) {
+      if(!travelModes) return undefined;
+      return travelModes.split(',');
     }
   },
   stateComposeFunctions: {
@@ -43,6 +47,10 @@ var config = {
     'map': function(mapParams) {
       if(!mapParams) return undefined;
       return mapParams.join(',');
+    },
+    'travelModes': function(travelModes) {
+      if(!travelModes) return undefined;
+      return travelModes.join(',');
     }
   }
 }
@@ -64,7 +72,7 @@ var Component = React.createClass({
       clusters: [],
       travelTime: 2,
       weekday: 0,
-      travelMode: 'car',
+      travelModes: ['car', 'truck'],
       mapBounds: undefined
     }
   },
@@ -74,14 +82,6 @@ var Component = React.createClass({
     ClustersStore.addChangeListener(function() {
       that.forceUpdate();
     });
-  },
-
-  shouldComponentUpdate: function(nexProps, nextState) {
-    
-    return (true
-        // don't update if mapBounds changed
-        //this.props !== nextProps.mapBounds
-      )
   },
 
 
@@ -133,27 +133,6 @@ var Component = React.createClass({
   },
 
 
-  /**
-  * MAP INTERACTION
-  */
-
-  handleMapClick: function(e) {
-    var that = this;
-    var state = this.parseUrlState();
-    this._handleTransition(state);
-
-    ClusterActions.add({
-      travelMode: that.state.travelMode,
-      weekday: that.state.weekday,
-      travelTime: that.state.travelTime,
-      startLocation: [e.latlng.lat, e.latlng.lng]
-    });
-  },
-
-  handleMapBoundsChanged: function(mapBounds) {
-    
-  },
-
 
   /**
   * GENERAL INTERACTION
@@ -172,16 +151,6 @@ var Component = React.createClass({
     this.setState({drawerIsOpen: !this.state.drawerIsOpen});
   },
 
-  handleIsolinesSettingsChange: function(newState) {
-    var nextState = _.assign({}, this.state, _settings);
-    this.setState(nextState);
-
-    ClusterActions.update({
-      travelMode: nextState.travelMode,
-      weekday: nextState.weekday,
-      travelTime: nextState.travelTime
-    });
-  },
 
   render: function() {
     var clusters;
@@ -198,9 +167,8 @@ var Component = React.createClass({
           <Map
             state={_state}
             clusters={clusters}
-            handleStateChange={this._transitionTo}
-            handleMapBoundsChanged={this.handleMapBoundsChanged} />
-          <Menu 
+            handleStateChange={this._transitionTo} />
+          <UIPanel 
             state={_state}
             handleDrawerToggle={this.handleDrawerToggle}
             handleTransition={this._transitionTo}

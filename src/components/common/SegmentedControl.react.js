@@ -1,50 +1,68 @@
-var React = require('react');
+var React = require('react'),
+    classnames = require('classnames');
 
 var SegmentedControl = React.createClass({
-  getDefaultProps: function() {
-    return {
-      className: 'segmented-control',
-      itemClassName: 'segmented-control__item',
-      selectedClassName: 'segmented-control__item--active',
-      onChange: function() {},
-      items: []
-    }
-  },
-  getInitialState: function() {
-    return {
-      selected: this.props.selected || this.props.items[0].value
-    }
-  },
   propTypes: {
     className: React.PropTypes.string,
-    itemClassName: React.PropTypes.string,
+    segmentClassName: React.PropTypes.string,
     selectedClassName: React.PropTypes.string,
     onChange: React.PropTypes.func,
-    items: React.PropTypes.array
+    segments: React.PropTypes.array
   },
-  render: function() {
-    var that = this;
-    var itemsMarkup = this.props.items.map(function(item, i) {
-      var selectedClass = item.value === that.props.selected ? `${that.props.selectedClassName} ` : '';
-      return (
-          <span key={i} onClick={that.onChange.bind(that, item, i)} className={`${selectedClass}${that.props.itemClassName}`}>
-            <span className='label'>{item.label}</span>
-          </span>
-        )
 
-    });
+  getDefaultProps: function() {
+    return {
+      className: 'm-segmented-control',
+      segmentClassName: 'm-segmented-control__segment',
+      selectedClassName: 'is-selected',
+      onChange: function() {},
+      segments: []
+    }
+  },
+
+  getInitialState: function() {
+    return {
+      selected: this.props.selected || this.props.segments[0].value,
+      segmentWidth: 5
+    }
+  },
+
+  componentDidMount: function() {
+    var rootElement = this.refs.root.getDOMNode(),
+        rootWidth = rootElement.offsetWidth,
+        segmentWidth = rootWidth / this.props.segments.length;
+
+    this.setState({segmentWidth: segmentWidth});
+  },
+
+  render: function() {
+    var segmentsMarkup = this.props.segments.map(function(segment, i) {
+          var isSelected = (segment.value === this.props.selected);
+
+          return (
+            <span 
+              key={i}
+              style={
+                {width: this.state.segmentWidth}
+              }
+              onClick={this.onChange.bind(this, segment, i)} 
+              className={classnames({'is-selected': isSelected}, this.props.segmentClassName)}>
+              <span className='m-segmented-control__label'>{segment.label}</span>
+            </span>
+          )
+        }.bind(this));
 
     return (
-        <div className={this.props.className}>
-          {itemsMarkup}
+        <div ref="root" className={this.props.className}>
+          {segmentsMarkup}
         </div>
       )
   },
 
-  onChange: function(item, i) {
-    this.setState({selected: item.value}, function() {
+  onChange: function(segment, i) {
+    this.setState({selected: segment.value}, function() {
       if(this.props.onChange) {
-        this.props.onChange(item, i);
+        this.props.onChange(segment.value, segment.label, i);
       }
     });
 

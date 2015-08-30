@@ -3,6 +3,7 @@ var ClusterConstants = require('../constants/ClusterConstants'),
     hereApi = require('../apis/here'),
     Q = require('q'),
     L,
+    md5 = require('blueimp-md5'),
     dispatcher = require('../dispatcher'),
     d3 = require('d3'),
     _ = require('lodash');
@@ -51,40 +52,50 @@ var CHANGE_EVENT = 'change';
 * }
 */
 
-var _clusters = [];
+var _clusters = {};
 
-/**
-* Fetches and adds a new cluster to _clusters with the specified configuration
-* @param {object}   config          standard configuration of cluster with weekday, travelTime, startLocation, travelMode
-*/
-function add(config) {
-  return hereApi.getCluster(config)
-    .then(function(cluster) {
-      _clusters.push(calculateProperties(cluster));
-      return cluster;
-    }, function(err) {
-      console.log(err);
-    });
-}
 
 /*
 * Updates _clusters with the specified options.
-*  // 1. Group all clusters by start Location
-*  // 2. Get all clusters within viewport
-*  // 3. Check if there is a cluster with the specified configuration
-* {
-*   viewPort: [[52.3, 13.1],[51.3, 13.18]]
-* }
+*  1. Get promises for all clusters whether cached or not
+*  2. Store all new clusters with generated hash as key
+  {
+    clusters: [[]],
+    travelTime: 5,
+    travelDay: 0,
+    departureTime: 6,
+    modes: ['car', 'bike']
+  }
 */
 function update(options) {
-  return Q.all(loadClusters(options))
+  var clusterOptions = _.omit(options, 'clusters', 'travelModes'), // configuration applying to all clusters
+      clusters = _(options.clusters) // individual cluster config
+        .map(function(cluster) {
+          return _(options.travelModes)
+            .map(function(mode) {
+              return {
+                startLocation: cluster,
+                travelMode: mode
+              }
+            })
+            .value();
+        })
+        .flatten()
+        .value();
+
+  return Q.all(loadClusters(clusters, clusterOptions))
     .spread(function() {
       var newClusters = _.chain(Array.prototype.slice.call(arguments))
         .filter(_.negate(_.isUndefined))
         .forEach(calculateProperties)
         .value();
 
-      _clusters = _.uniq(_clusters.concat(newClusters));
+      _(newClusters).map(function(cluster) {
+        var clusterConfig = _.assign({}, clusterOptions, _.pick(cluster.properties, ['startLocation', 'travelMode'])),
+            hash = md5(JSON.stringify(clusterConfig));
+        _clusters[hash] = cluster;
+      })
+      .value();
       return newClusters;
     });
 }
@@ -95,39 +106,27 @@ function update(options) {
 * exists in cache. If not fetches a new one.
 */
 
-// 1. 
-
-function loadClusters(options) {
-  var config = _.omit(options, 'clusters');
-
-  var clusterGroups = _.groupBy(_clusters, function(cluster) {
-    var startLocation = cluster.properties.startLocation;
-    return startLocation[0] + ',' + startLocation[1];
-  });
-
-  return _.chain(options.clusters)
+function loadClusters(clusters, options) {
+  return _(clusters)
     // filter for clusters inside viewport
     .filter(function(cluster) {
       return true;
       //return options.mapBounds.contains(L.latLng(cluster.properties.startLocation));
     })
-    .map(function(clusterLatlng, key) {
-      var deferred = Q.defer();
-      var clusterGroup = clusterGroups[clusterLatlng.join(',')];
-      var cluster = _.findWhere(clusterGroup, {properties: config});
+    .map(function(cluster, key) {
+      var clusterConfig = _.assign({}, options, cluster),
+          hash = md5(JSON.stringify(clusterConfig)),
+          deferred = Q.defer(),
+          cluster = _clusters[hash];
 
       if(!cluster) {
-        return hereApi.getCluster(_.assign({}, config, {startLocation: clusterLatlng}));
+        return hereApi.getCluster(clusterConfig);
       }
 
       deferred.resolve(undefined);
       return deferred.promise;
     }).value();
 }
-
-/*function loadClusters(options) {
-  var config = _.pick(options, ['clusters', 'travelTime', ''])
-}*/
 
 /**
 * Calculates distance properties for cluster passed as argument.
@@ -191,8 +190,22 @@ function reduceDistancesOfClusters(cluster, reduceFunc, propertyName) {
 
 var ClustersStore = _.assign({}, EventEmitter.prototype, {
 
+  // 1. convert hash object to array
+  // 2. filter for matching clusters
   get: function(config) {
-    return _.filter(_clusters, _.matches({properties: config}));
+    var clusterConfig = _.omit(config, 'travelModes');
+
+    return _(config.travelModes)
+      .map(function(travelMode) {
+        return _(_clusters)
+          .map(function(cluster) {
+            return cluster;
+          })
+          .filter(_.matches({properties: _.assign({}, clusterConfig, {travelMode: travelMode})}))
+          .value();
+      })
+      .flatten()
+      .value();
   },
 
   getAll: function() {
@@ -214,14 +227,6 @@ var ClustersStore = _.assign({}, EventEmitter.prototype, {
   dispatcherIndex: dispatcher.register(function(payload) {
     var action = payload.action;
     switch(action.actionType) {
-      case ClusterConstants.CLUSTER_ADD:
-        add(action.data)
-          .then(function() {
-            ClustersStore.emitChange();
-          }, function(err) {
-            console.log(err);
-          });
-        break;
       case ClusterConstants.CLUSTER_UPDATE:
         update(action.data).then(function(newClusters) {
           if(newClusters.length)

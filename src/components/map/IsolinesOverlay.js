@@ -36,7 +36,6 @@ function IsolinesOverlay() {
       .classed('clusters-container', true);
 
     drawIsolines();
-    drawCircles();
     drawCenters();
   }
 
@@ -57,7 +56,7 @@ function IsolinesOverlay() {
 
     // DATA BINDING isolines
     isolines = cluster
-      .selectAll('path.isoline')
+      .selectAll('path.m-isoline')
       .data(function(cluster) { 
         return cluster.features;
       });
@@ -66,7 +65,10 @@ function IsolinesOverlay() {
     isolines
       .enter()
       .append('path')
-      .classed('isoline', true)
+      .attr('class', function(isoline) {
+        return `m-isoline--${isoline.properties.travelMode}`;
+      })
+      .classed('m-isoline', true)
       .attr('d', function(d) {
         var point = projectPoint(d.properties.startLocation[0], d.properties.startLocation[1]);
         return 'M' + point[0] + ',' + point[1];
@@ -74,9 +76,9 @@ function IsolinesOverlay() {
 
     isolines
       .transition()
-      .duration(1000)
+      .duration(400)
       .delay(function(d, i) {
-        return i * 35;
+        return i * 80;
       })
       .attrTween('d', pathTween);
 
@@ -87,18 +89,6 @@ function IsolinesOverlay() {
       .remove();
 
     resetContainers();
-  }
-
-  function drawCircles() {
-    mean = clusterGroup
-      .selectAll('circle.overlay-mean')
-      .data(function(clusters) { return clusters; });
-
-    mean
-      .enter()
-      .append('circle')
-      .classed('overlay-mean', true)
-      .attr('r', 10);
   }
 
   function drawCenters() {
@@ -178,7 +168,7 @@ function IsolinesOverlay() {
 //  function tween()
 
   function pathTween(isoline) {
-    var precision = 10;
+    var precision = 5;
 
     var d1 = line(projectIsoline(isoline));
     var path0 = this,
@@ -215,7 +205,7 @@ function IsolinesOverlay() {
 
       svg
         .transition()
-        .duration(1000)
+        .duration(400)
         .attr('width', bottomRight[0] - topLeft[0])
         .attr('height', bottomRight[1] - topLeft[1])
         .style('left', topLeft[0] + 'px')
@@ -223,7 +213,7 @@ function IsolinesOverlay() {
 
       clusterGroup
         .transition()
-        .duration(1000)
+        .duration(400)
         .attr("transform", "translate(" + -topLeft[0] + "," + -topLeft[1] + ")");
     }    
   }

@@ -1,8 +1,9 @@
 var React = require('react'),
     LocationSearch = require('app/components/menu/LocationSearch.react'),
     ViewSettings = require('./ViewSettings.react'),
+    Timelines = require('./Timelines.react'),
     TestPanel = require('./TestPanel.react'),
-    Accordeon = require('./Accordeon.react'),
+    Accordeon = require('app/components/common/Accordeon.react'),
     _ = require('lodash');
 
 
@@ -12,15 +13,18 @@ var UIPanel = React.createClass({
   var accordeonPanels = [
     {
       title: 'Settings',
-      value: 'test',
+      value: 'settings',
       component: <ViewSettings 
         handleTransition={this.props.handleTransition}
         state={this.props.state} />
     },
     {
-      title: 'Test',
-      value: 'test',
-      component: <TestPanel key={1}/>
+      title: 'Isolines',
+      value: 'isolines',
+      component: <Timelines 
+        clusters={this.props.clusters}
+        state={this.props.state}
+        handleTransition={this.props.handleTransition}/>
     }
   ]
 

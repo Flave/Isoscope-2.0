@@ -1,6 +1,5 @@
 var React = require('react'),
     Map = require('./map/MapController.react'),
-    Drawer = require('./drawer/Drawer.react'),
     UIPanel = require('./menu/UIPanel.react.js'),
     hereApi = require('../apis/here'),
     route360Api = require('../apis/route360'),
@@ -13,8 +12,9 @@ var React = require('react'),
 var _state = {
   clusters: [],
   travelTime: 2,
-  travelModes: ['car', 'truck'],
+  travelModes: ['car', 'truck', 'pedestrian'],
   weekday: 0,
+  departureTime: 0,
   map: [52.522644823574645, 13.40628147125244, 14]
 }
 
@@ -72,7 +72,8 @@ var Component = React.createClass({
       clusters: [],
       travelTime: 2,
       weekday: 0,
-      travelModes: ['car', 'truck'],
+      travelModes: ['car', 'truck', 'pedestrian'],
+      departureTime: 0,
       mapBounds: undefined
     }
   },
@@ -147,10 +148,6 @@ var Component = React.createClass({
     this.context.router.transitionTo(routes[routes.length - 1].path, params, query);
   },
 
-  handleDrawerToggle: function() {
-    this.setState({drawerIsOpen: !this.state.drawerIsOpen});
-  },
-
 
   render: function() {
     var clusters;
@@ -170,13 +167,9 @@ var Component = React.createClass({
             handleStateChange={this._transitionTo} />
           <UIPanel 
             state={_state}
-            handleDrawerToggle={this.handleDrawerToggle}
+            clusters={clusters}
             handleTransition={this._transitionTo}
             isOpen={this.state.drawerIsOpen} />
-          <Drawer
-            travelTime={this.state.travelTime}
-            isOpen={this.state.drawerIsOpen} 
-            clusters={clusters}/>
         </div>
       )
   }

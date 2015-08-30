@@ -1,12 +1,4 @@
 .map-container {
-  .isoline {
-    opacity: 0.05;
-    fill: #FF6281;
-    stroke-opacity: 0.1;
-    stroke: #FF6281;
-    stroke-width: 1;
-  }
-
   .overlay-mean {
     fill: none;
     stroke: #444;
@@ -15,5 +7,26 @@
 
   .overlay-center {
     fill: #fff;
+  }
+}
+
+.m-isoline {
+  opacity: 0.8;
+  fill: #FF6281;
+  stroke-opacity: 0.4;
+  stroke-width: 1;
+
+  &--car {
+    fill: #FF6281;
+    stroke: #FF6281;
+  }
+
+  &--truck {
+    fill: #FAC25E;
+    stroke: #FAC25E;
+  }
+
+  &--pedestrian {
+    fill: #5E94FA;
   }
 }

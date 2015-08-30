@@ -64,7 +64,7 @@ var _clusters = {};
     travelTime: 5,
     travelDay: 0,
     departureTime: 6,
-    modes: ['car', 'bike']
+    travelModes: ['car', 'bike']
   }
 */
 function update(options) {

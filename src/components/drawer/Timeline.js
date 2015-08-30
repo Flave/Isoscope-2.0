@@ -1,10 +1,5 @@
 var d3 = require('d3'),
-    _ = require('lodash'),
-    L;
-
-if(process.env.BROWSER) {
-  L = require('leaflet');
-}
+    _ = require('lodash');
 
 
 function Timeline() {

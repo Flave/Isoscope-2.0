@@ -32,13 +32,22 @@ function processIsolineValues(latLngValues) {
 function processIsolineResponse(res) {
   var isoline = res.Response.isolines[0],
       meta = res.Response.MetaInfo,
-      params = util.queryStringToJSON(meta.RequestId),
+      params = _(util.queryStringToJSON(meta.RequestId))
+        .map(function(param, key) {
+          var value;
+          // split startLocation paramter into array of lat/lng
+          if(key === 'startLocation')
+            value = param.split(',');
+          else
+            value = isNaN(parseInt(param)) ? param : parseFloat(param);
+
+          return [key, value];
+        })
+        .object()
+        .value(),
       isoline = {
         data: processIsolineValues(isoline.value)
       };
-
-  // split startLocation paramter into array of lat/lng
-  params.startLocation = params.startLocation.split(',');
 
   return _.assign({}, params, isoline);
 }

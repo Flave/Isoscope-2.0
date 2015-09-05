@@ -11,22 +11,34 @@
 }
 
 .m-isoline {
-  opacity: 0.8;
-  fill: #FF6281;
+  //opacity: 0.8;
+  //fill: #FF6281;
+  fill: transparent;
   stroke-opacity: 0.4;
-  stroke-width: 1;
+  stroke-width: 3;
 
   &--car {
-    fill: #FF6281;
+    //fill: #FF6281;
     stroke: #FF6281;
   }
 
   &--truck {
-    fill: #FAC25E;
+    //fill: #FAC25E;
+    stroke: #FAC25E;
+  }
+
+  &--publicTransport {
+    //fill: #FAC25E;
     stroke: #FAC25E;
   }
 
   &--pedestrian {
-    fill: #5E94FA;
+    //fill: #5E94FA;
+    stroke: #5E94FA;
+  }
+
+  &--bike {
+    //fill: #5E94FA;
+    stroke: #5E94FA;
   }
 }

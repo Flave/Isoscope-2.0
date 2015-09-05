@@ -69,11 +69,11 @@ var hereApi = {
   * @param  {array}     options.hoursOfDay      An array of hours which isolines should be loaded for
   * @return {promise}   promise                 A promise which resolves to the processed cluster
   */
-  getCluster: function(options) {
+  getClusters: function(options) {
 
     var promises = _(_.range(24))
       .map(function(hour) {
-        return hereApi.get({
+        return hereApi.getIsoline({
           travelMode: options.travelMode,
           travelTime: options.travelTime,
           departureTime: hour,
@@ -93,8 +93,10 @@ var hereApi = {
           features: isolines.map(function(isoline) {
             return {
               geometry: {
-                type: "Polygon",
-                coordinates: [isoline.data]
+                type: "MultiPolygon",
+                coordinates: [
+                  [isoline.data]
+                ]
               },
               properties: _.omit(isoline, 'data')
             }
@@ -118,7 +120,7 @@ var hereApi = {
   * TBD
   * - make departureTime generic to work with any date/time
   */
-  get: function(options) {
+  getIsoline: function(options) {
     var deferred = Q.defer(),
         zeroPad2 = d3.format('02');
 

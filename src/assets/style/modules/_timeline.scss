@@ -3,7 +3,11 @@
 
 .m-timeline__axis {
   .tick {
-    font-size: 12px;
+
+    text {
+      font-size: 10px;
+      text-anchor: end;
+    }
 
     line {
       stroke: #eee;
@@ -36,17 +40,5 @@
 
   &--pedestrian {
     stroke: #5E94FA;
-  }
-
-  &.mean {
-    stroke: #888;
-  }
-
-  &.min {
-    stroke: #ff8899;
-  }
-
-  &.max {
-    stroke: #44ee99;
   }
 }

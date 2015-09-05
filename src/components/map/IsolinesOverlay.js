@@ -106,10 +106,14 @@ function IsolinesOverlay() {
   }
 
   function projectIsoline(feature) {
-    return feature.geometry.coordinates[0].map(function(latLng) {
-      var point = map.latLngToLayerPoint(new L.LatLng(latLng[0], latLng[1]))
-      return [point.x, point.y]
-    });
+    return _(feature.geometry.coordinates)
+      .map(function(polygon) {
+        return _.map(polygon[0], function(latLng) {
+          var point = map.latLngToLayerPoint(new L.LatLng(latLng[0], latLng[1]))
+          return [point.x, point.y];
+        });
+      })
+      .value();
   }
 
   function projectPoint(x, y)  {
@@ -148,14 +152,19 @@ function IsolinesOverlay() {
     return [[left, top], [right, bottom]];
   }
 
+  function createDAttribute(projectedIsoline) {
+    return _(projectedIsoline)
+      .reduce(function(dAttribute, polygon) {
+        return dAttribute + line(polygon);
+      }, '');
+  }
 
-//  function tween()
 
   function pathTween(isoline) {
-    var precision = 5;
-
-    var d1 = line(projectIsoline(isoline));
-    var path0 = this,
+    var precision = 5,
+        projectedIsoline = projectIsoline(isoline),
+        d1 = createDAttribute(projectedIsoline),
+        path0 = this,
         path1 = path0.cloneNode(),
         n0 = path0.getTotalLength(),
         n1 = (path1.setAttribute("d", d1), path1).getTotalLength();
@@ -205,9 +214,9 @@ function IsolinesOverlay() {
   function resetDrawings() {
     // only render stuff if there is actually some geometry
     if(data.length) {
-
       isolines.attr('d', function(isoline) {
-        return line(projectIsoline(isoline));
+        var projectedIsoline = projectIsoline(isoline);
+        return createDAttribute(projectedIsoline);
       });
     }
   }

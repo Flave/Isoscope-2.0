@@ -25,19 +25,43 @@ var MapController = React.createClass({
   /**
   * @return {array} An array of FeatureCollections with one isoline for every travelmode as feature
   */
+
+  /*
+  [ // clusters
+    [ // modeClusters
+      {
+        properties: { mode: x, startLocation: z }
+        features: [
+          {
+            properties: { departureTime: y }
+          }
+        ]
+      }
+    ]
+  ]
+
+  [
+    {
+      properties: { startLocation: z },
+      features: [
+        properties: { departureTime: y, mode: x }
+      ]
+    }
+  ]
+  */
   getModesCluster: function() {
     var that = this;
     return _(that.props.clusters)
-      .map(function(cluster) {
-        return  _.findWhere(cluster.features, { properties: {departureTime: that.props.state.departureTime} });
-      })
-      .groupBy(function(isoline) {
-        return isoline.properties.startLocation.toString();
-      })
-      .map(function(isolines) {
+      .map(function(clusterGroup) {
+        var modeIsolines = _(clusterGroup)
+          .map(function(modeCluster) {
+            return _.findWhere(modeCluster.features, { properties: {departureTime: that.props.state.departureTime} });
+          })
+          .value();
+
         return {
           type: 'FeatureCollection',
-          features: isolines
+          features: modeIsolines
         }
       })
       .value();

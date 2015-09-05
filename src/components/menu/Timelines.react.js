@@ -17,16 +17,18 @@ var App = React.createClass({
   },
 
   render: function() {
-    var clusters = _(this.props.clusters)
+    var /*clusters = _(this.props.clusters)
         .groupBy(function(cluster) {
           return cluster.properties.startLocation.toString();
         })
         .map(_.identity)
-        .value(),
+        .value(),*/
         maxDistance = d3.max(this.props.clusters, function(cluster) {
-          return cluster.properties.maxDistance;
+          return d3.max(cluster, function(modeCluster) {
+            return modeCluster.properties.maxDistance;
+          });
         }),
-        timelines = _.map(clusters, function(cluster, i) {
+        timelines = _.map(this.props.clusters, function(cluster, i) {
           return <Timeline maxDistance={maxDistance} key={i} data={cluster} />
         });
 

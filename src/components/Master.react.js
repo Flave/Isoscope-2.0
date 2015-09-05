@@ -11,10 +11,10 @@ var React = require('react'),
 
 var _state = {
   clusters: [],
-  travelTime: 2,
-  travelModes: ['car', 'truck', 'pedestrian'],
+  travelTime: 25,
+  travelModes: ['car', 'bike', 'publicTransport'],
   weekday: 0,
-  departureTime: 0,
+  departureTime: 12,
   map: [52.522644823574645, 13.40628147125244, 14]
 }
 
@@ -65,17 +65,6 @@ function getClusters(config) {
 var Component = React.createClass({
   contextTypes: {
     router: React.PropTypes.func.isRequired,
-  },
-  getInitialState: function() {
-    return {
-      drawerIsOpen: false,
-      clusters: [],
-      travelTime: 2,
-      weekday: 0,
-      travelModes: ['car', 'truck', 'pedestrian'],
-      departureTime: 0,
-      mapBounds: undefined
-    }
   },
 
   componentDidMount: function() {
@@ -133,6 +122,9 @@ var Component = React.createClass({
       .value();
   },
 
+  componentWillReceiveProps: function(nextState) {
+    
+  },
 
 
   /**
@@ -150,26 +142,35 @@ var Component = React.createClass({
 
 
   render: function() {
-    var clusters;
+    var newState = this.parseUrlState(), // get new state
+        clusters,
+        isLoading;
 
-    // merge last state with new state parsed from URL
-    _.merge(_state, this.parseUrlState());
-    // get current clusters...
-    clusters = getClusters(_.omit(_state, ['clusters', 'map']));
+
+    clusters = getClusters(_.omit(newState, ['clusters', 'map'])); // get current clusters...
+
+    // if clusters are not available yet get old clusters again
+    if(clusters.length === 0) {
+      clusters = getClusters(_.omit(_state, ['clusters', 'map']));
+      isLoading = true;
+    }
+
     // ...and update clusters so new ones will be loaded
-    ClusterActions.update(_.omit(_state, ['map']));
+    ClusterActions.update(_.omit(newState, ['map']));
+
+    // merge last state with new state parsed from URL for next transition
+    _.merge(_state, newState);
 
     return (
         <div className="controller-view">
           <Map
-            state={_state}
+            state={newState}
             clusters={clusters}
             handleStateChange={this._transitionTo} />
-          <UIPanel 
-            state={_state}
-            clusters={clusters}
-            handleTransition={this._transitionTo}
-            isOpen={this.state.drawerIsOpen} />
+          {/*<UIPanel 
+                      state={newState}
+                      clusters={clusters}
+                      handleTransition={this._transitionTo} />*/}
         </div>
       )
   }

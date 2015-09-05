@@ -1,6 +1,7 @@
 var ClusterConstants = require('../constants/ClusterConstants'),
     EventEmitter = require('events').EventEmitter,
     hereApi = require('../apis/here'),
+    api = require('app/apis'),
     Q = require('q'),
     L,
     md5 = require('blueimp-md5'),
@@ -69,27 +70,26 @@ var _clusters = {};
 */
 function update(options) {
   var clusterOptions = _.omit(options, 'clusters', 'travelModes'), // configuration applying to all clusters
-      clusters = _(options.clusters) // individual cluster config
+      clusters = _(options.clusters) // create individual cluster config for every mode and startLocation in options
         .map(function(cluster) {
           return _(options.travelModes)
             .map(function(mode) {
-              return {
-                startLocation: cluster,
-                travelMode: mode
-              }
+              return _.merge({}, clusterOptions, { startLocation: cluster, travelMode: mode });
             })
             .value();
         })
         .flatten()
         .value();
 
-  return Q.all(loadClusters(clusters, clusterOptions))
+
+  return Q.all(loadClusters(clusters))
     .spread(function() {
+      // find the newly fetched clusters
       var newClusters = _.chain(Array.prototype.slice.call(arguments))
         .filter(_.negate(_.isUndefined))
-        .forEach(calculateProperties)
+        /*.forEach(calculateProperties)*/
         .value();
-
+      // save newly fetched clusters to _clusters
       _(newClusters).map(function(cluster) {
         var clusterConfig = _.assign({}, clusterOptions, _.pick(cluster.properties, ['startLocation', 'travelMode'])),
             hash = md5(JSON.stringify(clusterConfig));
@@ -106,21 +106,17 @@ function update(options) {
 * exists in cache. If not fetches a new one.
 */
 
-function loadClusters(clusters, options) {
-  return _(clusters)
+function loadClusters(clusterConfigs) {
+  return _(clusterConfigs)
     // filter for clusters inside viewport
-    .filter(function(cluster) {
-      return true;
-      //return options.mapBounds.contains(L.latLng(cluster.properties.startLocation));
-    })
-    .map(function(cluster, key) {
-      var clusterConfig = _.assign({}, options, cluster),
-          hash = md5(JSON.stringify(clusterConfig)),
+    .map(function(clusterConfig) {
+      var hash = md5(JSON.stringify(clusterConfig)),
           deferred = Q.defer(),
           cluster = _clusters[hash];
 
       if(!cluster) {
-        return hereApi.getCluster(clusterConfig);
+        return api.get(clusterConfig);
+        //return hereApi.getClusters(clusterConfig);
       }
 
       deferred.resolve(undefined);
@@ -190,12 +186,11 @@ function reduceDistancesOfClusters(cluster, reduceFunc, propertyName) {
 
 var ClustersStore = _.assign({}, EventEmitter.prototype, {
 
-  // 1. convert hash object to array
-  // 2. filter for matching clusters
   get: function(config) {
     var clusterConfig = _.omit(config, 'travelModes');
 
-    return _(config.travelModes)
+    var clusters =  _(config.travelModes)
+      // for every travelMode get the clusters with the right configuration
       .map(function(travelMode) {
         return _(_clusters)
           .map(function(cluster) {
@@ -205,7 +200,21 @@ var ClustersStore = _.assign({}, EventEmitter.prototype, {
           .value();
       })
       .flatten()
+      // group clusters by start location
+      .groupBy(function(cluster) {
+        return cluster.properties.startLocation.toString();
+      })
+      .map(_.identity)
       .value();
+
+    var isComplete = _.every(clusters, function(clusterGroup) {
+      return clusterGroup.length === config.travelModes.length;
+    });
+
+    if(!isComplete)
+      return [];
+
+    return clusters;
   },
 
   getAll: function() {
@@ -228,12 +237,13 @@ var ClustersStore = _.assign({}, EventEmitter.prototype, {
     var action = payload.action;
     switch(action.actionType) {
       case ClusterConstants.CLUSTER_UPDATE:
-        update(action.data).then(function(newClusters) {
-          if(newClusters.length)
-            ClustersStore.emitChange();
-        }, function(err) {
-          console.log(err);
-        });
+        update(action.data)
+          .then(function(newClusters) {
+            if(newClusters.length)
+              ClustersStore.emitChange();
+          }, function(err) {
+            console.log(err);
+          });
         break;
       default:
         break;

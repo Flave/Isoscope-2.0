@@ -7,7 +7,7 @@ var util = {};
 */
 util.getXsDateTime = function(weekday, hourOfTheDay, timeZoneOffset) {
   var baseDate = '2015-04-',
-      day = d3.format('02')(6 + weekday),
+      day = d3.format('02')(6 + weekday), // +6 because 2015.04.06 was a monday
       hour = d3.format('02')(hourOfTheDay),
       time = `T${hour}:00:00`,
       timeZone;

@@ -31,7 +31,7 @@ var App = React.createClass({
 
     return (
       <div className="m-cluster-timeline">
-        <div className="m-cluster-timeline__meta">Location etc.</div>
+        <div className="m-cluster-timeline__meta"></div>
         <div className="m-cluster-timeline__chart">
           <svg ref="timelineCanvas"/>
         </div>

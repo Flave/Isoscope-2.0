@@ -11,10 +11,10 @@ var React = require('react'),
 
 var _state = {
   clusters: [],
-  travelTime: 25,
+  travelTime: 10,
   travelModes: ['car', 'bike', 'publicTransport'],
   weekday: 0,
-  departureTime: 12,
+  departureTime: 8,
   map: [52.522644823574645, 13.40628147125244, 14]
 }
 
@@ -22,7 +22,8 @@ var config = {
   stateParseFunctions: {
     'clusters': function(clusters) {
       if(!clusters) return undefined;
-      return _(clusters.split(',')).groupBy(function(coordinate, i){
+      return _(clusters.split(','))
+        .groupBy(function(coordinate, i){
           return Math.floor(i/2);
         })
         .map(function(val, key) {

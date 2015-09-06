@@ -10,11 +10,14 @@ function IsolinesOverlay() {
       map,
       data,
       cluster,
+      isolines,
       svg,
       transform = d3.geo.transform({point: streamProjectPoint}),
-      path = d3.geo.path().projection(transform),
-      line = d3.svg.line().x(function(d){ return d[0]}).y(function(d){return d[1]}).interpolate('basis-closed'),
-      isolines;
+      path = d3.geo.path().projection(transform), // only used for bounds calculation
+      line = d3.svg.line()
+        .x(function(d){ return d[0]})
+        .y(function(d){return d[1]})
+        .interpolate('basis-closed');
 
 
   function _isolinesOverlay(_svg) {
@@ -73,7 +76,7 @@ function IsolinesOverlay() {
 
     isolines
       .transition()
-      .duration(400)
+      .duration(600)
       .delay(function(d, i) {
         return i * 80;
       })
@@ -198,7 +201,7 @@ function IsolinesOverlay() {
 
       svg
         .transition()
-        .duration(400)
+        .duration(600)
         .attr('width', bottomRight[0] - topLeft[0])
         .attr('height', bottomRight[1] - topLeft[1])
         .style('left', topLeft[0] + 'px')
@@ -206,7 +209,7 @@ function IsolinesOverlay() {
 
       clusterGroup
         .transition()
-        .duration(400)
+        .duration(600)
         .attr("transform", "translate(" + -topLeft[0] + "," + -topLeft[1] + ")");
     }    
   }

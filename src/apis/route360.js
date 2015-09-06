@@ -6,7 +6,8 @@ var jsonp = require('jsonp'),
 
 var api = {},
     apiKey = 'PFHFE67HTWKLOR6R8QTI',
-    base = 'http://api.route360.net/api_dev/v1/polygon';
+    base = 'http://api.route360.net/api_dev/v1/polygon',
+    pointReduction = 25;
 
 if(process.env.BROWSER) {
   L = require('leaflet');
@@ -18,7 +19,11 @@ function webMercatorToLatLng(point){
 };
 
 
-function processPolygons(polygonsJson, options) {
+/*
+* Returns a geojson feature object for the polygons given
+*/
+
+function getIsolineGeoJSON(polygonsJson, options) {
            
     if ( polygonsJson.error ) return errorMessage;
 
@@ -33,9 +38,11 @@ function processPolygons(polygonsJson, options) {
     var coordinates = _(polygonsJson[0].polygons)
       .map(function (polygonJson) {
           var points = _(polygonJson.outerBoundary)
-            .map(function(point) {
+            .map(function(point, i) {
+              if(i % pointReduction !== 0) return undefined;
               return webMercatorToLatLng({x: point[0], y: point[1]})
             })
+            .compact()
             .value();
 
           return [points];
@@ -45,6 +52,10 @@ function processPolygons(polygonsJson, options) {
     return feature;
 }
 
+
+/*
+* Create the api config object for the given options
+*/
 function createIsolineConfig(options) {
   var travelModeConfig;
   switch(options.travelMode) {
@@ -80,26 +91,41 @@ function createIsolineConfig(options) {
   };
 }
 
+function duplicateIsolines(isolines, wantedIsolines) {
+  var duplicationRatio = isolines.length / wantedIsolines;
+  return _(_.range(wantedIsolines))
+    .map(function(wantedIndex) {
+      var isolineIndex = Math.floor(wantedIndex * duplicationRatio),
+          isoline = _.cloneDeep(isolines[isolineIndex]);
+      isoline.properties.departureTime = wantedIndex;
+      return isoline;
+    })
+    .value();
+}
+
 var route360Api = {
 
-
   getClusters: function(options) {
-    var deferred = Q.defer();
-    var promises = _(_.range(24))
-      .map(function(hour) {
-        return route360Api.getIsoline({
-          travelMode: options.travelMode,
-          travelTime: options.travelTime,
-          departureTime: hour,
-          weekday: options.weekday,
-          startLocation: options.startLocation
-        })
-      })
-      .value();
+    var deferred = Q.defer(),
+        wantedIsolines = 24,
+        requestedIsolines = 1,
+        promises = _(_.range(requestedIsolines))
+          .map(function(hour) {
+            return route360Api.getIsoline({
+              travelMode: options.travelMode,
+              travelTime: options.travelTime,
+              departureTime: hour * (wantedIsolines/requestedIsolines),
+              weekday: options.weekday,
+              startLocation: options.startLocation
+            })
+          })
+          .value();
 
     return Q.all(promises)
       .spread(function() {
-        var isolines = Array.prototype.slice.call(arguments);
+        var receivedIsolines = Array.prototype.slice.call(arguments),
+            isolines = duplicateIsolines(receivedIsolines, wantedIsolines);
+
         return {
             type: "FeatureCollection",
             properties: options,
@@ -128,7 +154,7 @@ var route360Api = {
       else if(res.Details)
         deferred.reject(res);
       else {
-        deferred.resolve(processPolygons(res.data, options));
+        deferred.resolve(getIsolineGeoJSON(res.data, options));
       }
     });
 

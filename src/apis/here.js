@@ -2,7 +2,7 @@ var jsonp = require('jsonp'),
     _ = require('lodash'),
     Q = require('q'),
     d3 = require('d3'),
-    util = require('../utility');
+    util = require('app/utility').apiUtility;
 
 var api = {},
     app_id = 'bVQHRXUn6uNHP3B24bdt',

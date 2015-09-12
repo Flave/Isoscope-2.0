@@ -39,6 +39,13 @@ function IsolinesOverlay() {
     drawIsolines();
   }
 
+
+  // 1. create a path def for every isoline with id isoline-mode-startlocation
+  // 2. create a mask for every transport mode combination of every cluster
+  // 3. create a group for every cluster
+  // 4. create a use element for every isoline
+  // 5. create a use element for every isoline with a mask of the other two transport mod applied to it
+
   function drawIsolines() {
     // DATA BINDING of clusters
     cluster = clusterGroup
@@ -77,9 +84,6 @@ function IsolinesOverlay() {
     isolines
       .transition()
       .duration(600)
-      .delay(function(d, i) {
-        return i * 80;
-      })
       .attrTween('d', pathTween);
 
     // EXIT isolines
@@ -98,6 +102,7 @@ function IsolinesOverlay() {
     return _isolinesOverlay;
   }
 
+
   _isolinesOverlay.map = function(_map) {
     if(!arguments.length) return map;
     !map && _map.on('viewreset', function() {
@@ -107,6 +112,7 @@ function IsolinesOverlay() {
     map = _map;
     return _isolinesOverlay;
   }
+
 
   function projectIsoline(feature) {
     return _(feature.geometry.coordinates)
@@ -119,15 +125,18 @@ function IsolinesOverlay() {
       .value();
   }
 
+
   function projectPoint(x, y)  {
     var point = map.latLngToLayerPoint(new L.LatLng(x, y))
     return [point.x, point.y];
   }
 
+
   function streamProjectPoint(x, y) {
     var point = map.latLngToLayerPoint(new L.LatLng(x, y));
     this.stream.point(point.x, point.y);
   }
+
 
   function projectDistance(distance) {
     var centerLatLng = map.getCenter();
@@ -137,6 +146,7 @@ function IsolinesOverlay() {
     var unitDistance = centerLatLng.distanceTo(xLatLng); // meters per pixel
     return distance / unitDistance;
   }
+
 
   function getBounds(geoDataArray) {
     var top = Infinity,
@@ -154,6 +164,7 @@ function IsolinesOverlay() {
 
     return [[left, top], [right, bottom]];
   }
+
 
   function createDAttribute(projectedIsoline) {
     return _(projectedIsoline)
@@ -192,6 +203,7 @@ function IsolinesOverlay() {
     };
   }
 
+
   function resetContainers() {
     // only render stuff if there is actually some geometry
     if(data.length) {
@@ -213,6 +225,7 @@ function IsolinesOverlay() {
         .attr("transform", "translate(" + -topLeft[0] + "," + -topLeft[1] + ")");
     }    
   }
+
 
   function resetDrawings() {
     // only render stuff if there is actually some geometry

@@ -11,7 +11,7 @@
 </mask>
 <mask id="path-mask">
     <rect id="bg" x="0" y="0" width="100%" height="100%" fill="white"/>
-    <use xlink:href="#mask-path" fill="Black"/>
+    <use xlink:href="#sa12" fill="Black"/>
 </mask>
 <!-- <use xlink:href="#sa11" fill="ForestGreen"/>
 <use xlink:href="#sa12" fill="ForestGreen"/>
@@ -21,4 +21,10 @@
 
 <path d="M50 50 C 0 100, 0 150, 100 200 S 250 300, 280 0M400 400 C 450 400, 500 550, 600 600" stroke="black" fill="transparent"/> -->
 <path d="M0,0L10,0L10,10L0,10L0,0 M15,0L25,0L25,10L15,10L15,0" id="multi-path"/>
+<g mask="url(#path-mask)">
+  <use xlink:href="#mask-path" fill="#33ffcc" transform="translate(100, 120)"/>
+  <use xlink:href="#mask-path" fill="#33eecc" transform="translate(100, 100)"/>
+  <use xlink:href="#mask-path" fill="#ff0000" />
+  <use xlink:href="#mask-path" fill="#ff00ff" transform="translate(200, 0)"/>
+</g>
 </svg>

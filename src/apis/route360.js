@@ -1,13 +1,13 @@
 var jsonp = require('jsonp'),
     _ = require('lodash'),
     L,
-    util = require('../utility'),
+    util = require('app/utility').apiUtility,
+    simplify = require('simplify-js'),
     Q = require('q');
 
 var api = {},
     apiKey = 'PFHFE67HTWKLOR6R8QTI',
-    base = 'http://api.route360.net/api_dev/v1/polygon',
-    pointReduction = 25;
+    base = 'http://api.route360.net/api_dev/v1/polygon';
 
 if(process.env.BROWSER) {
   L = require('leaflet');
@@ -37,9 +37,9 @@ function getIsolineGeoJSON(polygonsJson, options) {
 
     var coordinates = _(polygonsJson[0].polygons)
       .map(function (polygonJson) {
-          var points = _(polygonJson.outerBoundary)
-            .map(function(point, i) {
-              if(i % pointReduction !== 0) return undefined;
+          var pointsSimplified = simplify(polygonJson.outerBoundary, 500);
+          var points = _(pointsSimplified)
+            .map(function(point) {
               return webMercatorToLatLng({x: point[0], y: point[1]})
             })
             .compact()

@@ -2,13 +2,13 @@
 }
 
 .m-segmented-control__segment {
-  padding: 10px 0;
   display: inline-block;
   background-color: $c-gray-primary;
   color: white;
-  border-right: 1px solid lighten($c-gray-primary, 50);
+  border-right: 1px solid white;
   text-align: center;
   cursor: pointer;
+  min-width: 41px;
 
   &.is-selected {
     background-color: $c-primary;
@@ -34,4 +34,9 @@
 
 .m-segmented-control__label {
   font-size: 12px;
+  line-height: 36px;
+
+  &.icon {
+    font-size: 20px;
+  }
 }

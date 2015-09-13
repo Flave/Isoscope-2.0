@@ -42,11 +42,13 @@ var SegmentedControl = React.createClass({
             <span 
               key={i}
               style={
-                {width: this.state.segmentWidth}
+                {
+                  maxWidth: this.state.segmentWidth
+                }
               }
               onClick={this.onChange.bind(this, segment, i)} 
               className={classnames({'is-selected': isSelected}, this.props.segmentClassName)}>
-              <span className='m-segmented-control__label'>{segment.label}</span>
+              <span className={`m-segmented-control__label icon icon-${segment.value}`}></span>
             </span>
           )
         }.bind(this));

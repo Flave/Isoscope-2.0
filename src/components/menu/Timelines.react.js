@@ -23,8 +23,13 @@ var App = React.createClass({
           });
         }),
         timelines = _.map(this.props.clusters, function(cluster, i) {
-          return <Timeline maxDistance={maxDistance} key={i} data={cluster} />
-        });
+          return <Timeline 
+            maxDistance={maxDistance} 
+            key={i} 
+            state={this.props.state}
+            handleTransition={this.props.handleTransition}
+            data={cluster} />
+        }, this);
 
     if(!timelines.length) return <div/>
 

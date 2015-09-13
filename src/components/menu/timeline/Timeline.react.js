@@ -40,11 +40,22 @@ var App = React.createClass({
           <span className="m-timeline__meta m-timeline__meta--primary">Location Name,</span>
           <span className="m-timeline__meta m-timeline__meta--secondary">Street Name</span>
         </div>
+        {/*<button onClick={this._handleDeleteClick}>Delete</button>*/}
         <div className="m-timeline__chart">
           <svg ref="timelineCanvas"/>
         </div>
       </div>)
-  }
+  },
+
+  _handleDeleteClick: function(e) {
+    console.log(this.props.data);
+    var startLocation = this.props.data[0].properties.startLocation;
+    var clusters = _.filter(this.props.state.clusters, function(cluster) {
+
+      return !((startLocation[0] == cluster[0]) && (startLocation[1] == cluster[1]));
+    });
+    this.props.handleTransition({clusters: clusters});
+  },
 });
 
 module.exports = App;

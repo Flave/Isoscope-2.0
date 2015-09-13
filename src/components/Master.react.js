@@ -37,7 +37,16 @@ var config = {
     },
     'travelModes': function(travelModes) {
       if(!travelModes) return undefined;
-      return travelModes.split(',');
+      var order = ['car', 'bike', 'publicTransport'];
+      var parsedTravelModes = travelModes.split(',');
+
+      return travelModes = _(order)
+        .map(function(travelMode) {
+          var index = parsedTravelModes.indexOf(travelMode)
+          return index === -1 ? undefined : travelMode;
+        })
+        .compact()
+        .value();
     }
   },
   stateComposeFunctions: {
@@ -129,7 +138,7 @@ var Component = React.createClass({
   */
 
   _transitionTo: function(newState) {
-    var nextState = _.merge({}, _state, newState),
+    var nextState = _.assign({}, _state, newState),
         routes = this.context.router.getCurrentRoutes(),
         params = this.context.router.getCurrentParams(),
         query = this.composeUrlState(nextState);
@@ -156,7 +165,7 @@ var Component = React.createClass({
     ClusterActions.update(_.omit(newState, ['map']));
 
     // merge last state with new state parsed from URL for next transition
-    _.merge(_state, newState);
+    _state = _.assign({}, _state, newState);
 
     return (
         <div className="controller-view">

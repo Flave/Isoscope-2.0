@@ -2,6 +2,7 @@
   &--plain {
     fill: transparent;
     stroke-width: 1;
+    transition: .05s;
 
     &:hover {
       stroke-width: 5;

@@ -1,7 +1,8 @@
 var React = require('react'),
     ReactSlider = require('react-slider'),
     classnames = require('classnames'),
-    SegmentedControl = require('../common/SegmentedControl.react');
+    SegmentedControl = require('../common/SegmentedControl.react'),
+    SegmentedMultiControl = require('../common/SegmentedMultiControl.react');
 
 var daySegments = [
   {value: 0, label: 'MO'},
@@ -13,6 +14,11 @@ var daySegments = [
   {value: 6, label: 'SO'}
 ]
 
+var transportModeSegments = [
+  {value: 'car', label: 'Car'},
+  {value: 'publicTransport', label: 'Public Transport'},
+  {value: 'bike', label: 'Bike'}
+]
 
 var ViewSettings = React.createClass({
   handleTravelTimeChange: function(value) {
@@ -21,6 +27,10 @@ var ViewSettings = React.createClass({
 
   handleDayChange: function(value, label, index) {
     this.props.handleTransition({weekday: value});
+  },
+
+  handleTransportModeChange: function(value, label, index) {
+    this.props.handleTransition({travelModes: value});
   },
 
   render: function() {
@@ -46,10 +56,20 @@ var ViewSettings = React.createClass({
           <div className="m-view-settings__group-title">Day of the week</div>
           <div className="m-view-settings__group-input">
             <SegmentedControl
-              name='travelMode'
+              name='weekday'
               onChange={this.handleDayChange}
               selected={this.props.state.weekday}
               segments={daySegments} />
+          </div>
+        </div>
+        <div className="m-view-settings__group">
+          <div className="m-view-settings__group-title">Day of the week</div>
+          <div className="m-view-settings__group-input">
+            <SegmentedMultiControl
+              name='travelMode'
+              onChange={this.handleTransportModeChange}
+              selected={this.props.state.travelModes}
+              segments={transportModeSegments} />
           </div>
         </div>
       </div>

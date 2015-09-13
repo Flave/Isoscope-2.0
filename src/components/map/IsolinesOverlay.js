@@ -60,38 +60,43 @@ function IsolinesOverlay() {
 
 
   function createIsolineDefs() {
-
-    // DATA BINDING of container for all clusters
+    // DATA for defs per cluster
     var clusterDefs = clusterGroup
       .selectAll('defs.m-clusters__defs')
       .data(function(clusters) { return clusters; });
 
+    // ENTER of clusters defs
     clusterDefs
       .enter()
       .append('svg:defs')
       .classed('m-clusters__defs', true);
 
+    // DATA for isolines path
     isolineDefs = clusterDefs
       .selectAll('path.m-clusters__isoline-path')
       .data(function(cluster) {
         return cluster.features;
       });
 
+    // ENTER of isolines path
     isolineDefs
       .enter()
       .append('svg:path')
       .classed('m-clusters__isoline-path', true);
 
+    // UPDATE of isolines path
     isolineDefs
       .attr('id', createIsolineId)
       .attr('d', function(feature){
         return createDAttribute(projectIsoline(feature));
       });
 
+    // EXIT of isolines path
     isolineDefs
       .exit()
       .remove();
 
+    // EXIT of clusters defs
     clusterDefs
       .exit()
       .remove();
@@ -99,61 +104,93 @@ function IsolinesOverlay() {
 
 
   function createIsolineMasks() {
+    // DATA for one group of masks per cluster
     clusterMasks = clusterGroup
       .selectAll('g.m-clusters__masks-group')
       .data(function(clusters) { return clusters; });
 
+    // ENTER for one group of masks per cluster
     clusterMasks
       .enter()
       .append('g')
       .classed('m-clusters__masks-group', true);
 
+    // UPDATE for one group of masks per cluster
     clusterMasks
       .each(function(cluster) {
         var maskData = getMaskData(cluster);
 
+        // DATA for one mask per isoline grouping
         var masks = d3.select(this)
           .selectAll('mask.m-clusters__isolines-mask')
           .data(maskData);
 
+        // ENTER for one mask per isoline grouping
         masks
           .enter()
           .append('svg:mask')
           .classed('m-clusters__isolines-mask', true)
-          .attr('id', createMaskId)
-          .append('rect')
+          .append('rect') // ENTER  of one rect per mask
           .attr('width', '100%')
           .attr('height', '100%')
           .attr('x', '0')
           .attr('y', '0')
           .attr('fill', '#fff');
 
+        // UPDATE of one mask per isoline grouping
+        masks
+          .attr('id', createMaskId);
+
+        // DATA for one use per isoline in isoline grouping
         var maskUses = masks
           .selectAll('use')
           .data(function(isolines) { return isolines; });
 
+
+        // ENTER of one use per isoline in isoline grouping
         maskUses
           .enter()
-          .append('svg:use')
+          .append('svg:use');
+
+        // UPDATE for one use per isoline in isoline grouping
+        maskUses
           .attr('xlink:href', function(isoline) {
             return `#${createIsolineId(isoline)}`;
           });
+
+        // EXIT for one use per isoline in isoline grouping
+        maskUses
+          .exit()
+          .remove();
+
+        // EXIT of one mask per isoline grouping
+        masks
+          .exit()
+          .remove();
       });
+
+    // EXIT for one group of masks per cluster
+    clusterMasks
+      .exit()
+      .remove();
   }
 
 
   function drawIsolines() {
-    // DATA BINDING isolines
+    // DATA for one use per isoline per cluster
     var isolines = cluster
       .selectAll('use.m-clusters__isoline--plain')
       .data(function(cluster) { 
         return cluster.features;
       });
 
-    // ENTER isolines
+    // ENTER for one use per isoline per cluster
     isolines
       .enter()
-      .append('use')
+      .append('use');
+
+    // UPDATE of one use per isoline per cluster
+    isolines
       .attr('class', function(isoline) {
         return `m-clusters__isoline--${isoline.properties.travelMode}`;
       })
@@ -169,11 +206,9 @@ function IsolinesOverlay() {
 
         d3.select(this)
           .classed('m-clusters__isoline--hovered');
-
-        console.log(isoline.properties.travelMode);
       });
 
-    // EXIT isolines
+    // EXIT of one use per isoline per cluster
     isolines
       .exit()
       .attr('opacity', 0)
@@ -182,7 +217,7 @@ function IsolinesOverlay() {
 
 
   function drawMaskedIsolines() {
-    // DATA BINDING of clusters
+    // UPDATE of clusters
     cluster
       .each(function(clusterData) {
         var maskData = getMaskData(clusterData),
@@ -193,6 +228,8 @@ function IsolinesOverlay() {
         isolineMaskGroups
           .enter()
           .append('use')
+
+        isolineMaskGroups
           .attr('class', function(isoline) {
             return `m-clusters__isoline--${isoline.properties.travelMode}`;
           })
@@ -207,8 +244,13 @@ function IsolinesOverlay() {
                 return isoline.properties.travelMode === maskIsoline.properties.travelMode;
               });
             });
+            if(!maskIsolines) return '';
             return `url(#${createMaskId(maskIsolines)})`;
           });
+
+        isolineMaskGroups
+          .exit()
+          .remove();
       });
   }
 
@@ -242,6 +284,7 @@ function IsolinesOverlay() {
     return `isoline-def__${isoline.properties.travelMode}__${isoline.properties.startLocation.toString()}`;
   }
 
+
   function createMaskId(isolines) {
     var modes = _.pluck(isolines, 'properties.travelMode').join('__');
     return `isoline-mask__${modes}__${isolines[0].properties.startLocation.toString()}`
@@ -249,6 +292,7 @@ function IsolinesOverlay() {
 
 
   function getMaskData(cluster) {
+    if(cluster.features.length <= 1) return [];
     return _.map(cluster.features, function(feature1, featureIndex1) {
       return _(cluster.features)
         .map(function(feature2, featureIndex2) {

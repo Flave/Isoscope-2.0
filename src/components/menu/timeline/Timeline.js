@@ -101,6 +101,10 @@ function Timeline() {
       })
       .attr('d', line);
 
+    lineElement
+      .exit()
+      .remove();
+
     linesGroup
       .exit()
       .remove();

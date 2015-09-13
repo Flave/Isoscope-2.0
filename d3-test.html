@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title></title>
+  <meta charset="utf-8">
+  <style>
+    span {
+      opacity: .5;
+    }
+  </style>
+</head>
+<body>
+  <div id="container"></div>
+  <script type="text/javascript" src="node_modules/d3/d3.js"></script>
+
+  <script type="text/javascript">
+    var data = [
+      [
+        [1,2,3],
+        [5,6,7]
+      ],
+
+      [
+        [1,2,3],
+        [5,6,7,8]
+      ]
+
+    ];
+
+    var counter = 0;
+
+
+    function update() {
+      var container = d3.select('#container');
+      // DATA lvl1
+      var lvl1 = container
+        .selectAll('div.lvl1')
+        .data(data[counter % 2]);
+
+      // ENTER lvl1
+      lvl1
+        .enter()
+        .append('div')
+        .classed('lvl1', true);
+
+      // UPDATE lvl1
+      lvl1
+        .text(' --> lvl1 ' + counter)
+
+      lvl1
+        .append('b')
+        .text('bla');
+
+      lvl1
+        .exit()
+        .remove();
+
+      // DATA lvl2
+      var lvl2 = lvl1
+        .selectAll('span.lvl2')
+        .data(function(d) { return d; });
+
+      // ENTER lvl2
+      lvl2
+        .enter()
+        .append('span')
+        .classed('lvl2', true);
+
+      // UPDATE lvl2
+      lvl2
+        .text(' -> lvl2 ' + counter);
+
+      lvl2
+        .exit()
+        .remove();
+    }
+
+    update();
+    document.addEventListener('click', function() {
+      counter++;
+      update();
+    })
+
+  </script>
+
+</body>
+</html>

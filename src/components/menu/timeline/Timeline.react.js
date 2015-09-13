@@ -36,10 +36,13 @@ var App = React.createClass({
 
     return (
       <div style={style} className="m-timeline">
+        <div className="m-timeline__header">
+          <span className="m-timeline__meta m-timeline__meta--primary">Location Name,</span>
+          <span className="m-timeline__meta m-timeline__meta--secondary">Street Name</span>
+        </div>
         <div className="m-timeline__chart">
           <svg ref="timelineCanvas"/>
         </div>
-        <div className="m-timeline__meta">Location Name <span>Street Name</span></div>
       </div>)
   }
 });

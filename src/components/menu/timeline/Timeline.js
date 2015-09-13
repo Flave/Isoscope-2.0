@@ -5,7 +5,7 @@ var d3 = require('d3'),
 function Timeline() {
   var data, // geoJSONs of cluster
       size = [0, 0],
-      margin = {top: 0, right: 0, bottom: 0, left: 1},
+      margin = {top: 0, right: 1, bottom: 0, left: 1},
       chartSize = [],
       hour2X = d3.scale.linear().domain([0, 23]),
       distance2Y = d3.scale.linear().nice(),
@@ -134,15 +134,12 @@ function Timeline() {
       .attr('transform', `translate(${margin.left}, ${margin.top})`);
 
     timeAxis
+      .tickValues([0, 6, 12, 18, 23])
       .tickFormat('')
-      .tickSize(-chartSize[1])
-      .ticks([5]);
+      .tickSize(-chartSize[1]);
 
     timeAxisContainer.call(timeAxis);
 
-
-    // DISTANCE AXIS
-/*    distanceAxis.scale(distance2Y);
 
     var distanceAxisContainer = svg
       .selectAll('g.m-timeline-chart__axis--y')
@@ -151,18 +148,13 @@ function Timeline() {
     distanceAxisContainer
       .enter()
       .append('g')
+      .attr('transform', `translate(${chartSize[0] - 5}, 0)`)
       .classed('m-timeline-chart__axis--y m-timeline-chart__axis', true)
-      .attr('transform', `translate(0, ${margin.top})`);
-
-    distanceAxis
-      .tickSize(-size[0])
-      .ticks([5]);
+      .append('text');
 
     distanceAxisContainer
-      .call(distanceAxis)
-        .selectAll('text')
-        .attr('x', 40)
-        .attr('dy', -5);*/
+      .selectAll('text')
+      .text(d3.round(distance2Y.domain()[0]/1000, 1) + " km");
   }
 
   return _timeline;

@@ -3,16 +3,38 @@
   width: 100%;
   border-radius: 2px;
   cursor: pointer;
+  margin-bottom: 15px;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
 
   &:hover {
     background-color: #ececec;
   }
 }
 
+.m-timeline__header{
+  margin-bottom: 15px;
+}
+
 .m-timeline__meta {
-  font-size: 10px;
+  font-size: 12px;
+  margin-bottom: 15px;
+  font-weight: 600;
+  margin-right: 10px;
+}
+
+.m-timeline__meta--primary {
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.m-timeline__meta--secondary {
+  color: #999;
+  font-weight: 400;
 }
 
 .m-timeline__chart {
-  margin-bottom: 10px;
+  
 }

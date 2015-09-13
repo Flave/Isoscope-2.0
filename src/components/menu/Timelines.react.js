@@ -31,7 +31,9 @@ var App = React.createClass({
     return (
       <div className='m-timelines m-ui-panel__section'>
         <h3 className="m-ui-panel__section-title">Distance Averages (M)</h3>
-        {timelines}
+        <div>
+          {timelines}
+        </div>
       </div>)
   }
 });

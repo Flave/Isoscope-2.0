@@ -1,3 +1,23 @@
+.m-timeline {
+  .m-timeline-chart__axis--y {
+    text {
+      alignment-baseline: hanging;
+      text-anchor: end;
+      font-size: 10px;
+      fill: #999;
+      opacity: 0;
+    }
+  }
+
+  &:first-child {
+    .m-timeline-chart__axis--y {
+      text {
+        opacity: 1;
+      }
+    }
+  }
+}
+
 .m-timeline-chart__axis {
   .tick {
 
@@ -16,6 +36,15 @@
   .domain {
     fill: none;
     stroke: none;
+  }
+}
+
+.m-timeline-chart__axis--y {
+  text {
+    alignment-baseline: hanging;
+    text-anchor: end;
+    font-size: 10px;
+    fill: #999;
   }
 }
 

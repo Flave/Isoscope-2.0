@@ -1,6 +1,11 @@
 var React = require('react'),
     Timeline = require('./Timeline');
 
+var style = {
+  marginLeft: "-10px",
+  padding: "10px"
+}
+
 var App = React.createClass({
   getInitialState: function() {
     return {
@@ -18,7 +23,7 @@ var App = React.createClass({
   updateTimeline: function() {
     var svgNode = this.refs.timelineCanvas.getDOMNode(),
         componentNode = this.getDOMNode(),
-        size = [componentNode.offsetWidth, 100],
+        size = [componentNode.offsetWidth - 20, 80],
         svg = d3.select(svgNode);
 
     this.state.timeline
@@ -30,11 +35,11 @@ var App = React.createClass({
   render: function() {
 
     return (
-      <div className="m-cluster-timeline">
-        <div className="m-cluster-timeline__meta"></div>
-        <div className="m-cluster-timeline__chart">
+      <div style={style} className="m-timeline">
+        <div className="m-timeline__chart">
           <svg ref="timelineCanvas"/>
         </div>
+        <div className="m-timeline__meta">Location Name <span>Street Name</span></div>
       </div>)
   }
 });

@@ -37,7 +37,7 @@ function getIsolineGeoJSON(polygonsJson, options) {
 
     var coordinates = _(polygonsJson[0].polygons)
       .map(function (polygonJson) {
-          var pointsSimplified = simplify(polygonJson.outerBoundary, 500);
+          var pointsSimplified = simplify(polygonJson.outerBoundary, 300);
           var points = _(pointsSimplified)
             .map(function(point) {
               return webMercatorToLatLng({x: point[0], y: point[1]})

@@ -1,0 +1,18 @@
+.m-timeline {
+  box-sizing: content-box;
+  width: 100%;
+  border-radius: 2px;
+  cursor: pointer;
+
+  &:hover {
+    background-color: #ececec;
+  }
+}
+
+.m-timeline__meta {
+  font-size: 10px;
+}
+
+.m-timeline__chart {
+  margin-bottom: 10px;
+}

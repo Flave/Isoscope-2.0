@@ -1,5 +1,5 @@
 var React = require('react'),
-    Timeline = require('../drawer/Timeline.react'),
+    Timeline = require('./timeline/Timeline.react'),
     _ = require('lodash'),
     d3 = require('d3');
 
@@ -17,13 +17,7 @@ var App = React.createClass({
   },
 
   render: function() {
-    var /*clusters = _(this.props.clusters)
-        .groupBy(function(cluster) {
-          return cluster.properties.startLocation.toString();
-        })
-        .map(_.identity)
-        .value(),*/
-        maxDistance = d3.max(this.props.clusters, function(cluster) {
+    var maxDistance = d3.max(this.props.clusters, function(cluster) {
           return d3.max(cluster, function(modeCluster) {
             return modeCluster.properties.maxDistance;
           });
@@ -32,7 +26,11 @@ var App = React.createClass({
           return <Timeline maxDistance={maxDistance} key={i} data={cluster} />
         });
 
-    return (<div className='m-timelines'>
+    if(!timelines.length) return <div/>
+
+    return (
+      <div className='m-timelines m-ui-panel__section'>
+        <h3 className="m-ui-panel__section-title">Distance Averages (M)</h3>
         {timelines}
       </div>)
   }

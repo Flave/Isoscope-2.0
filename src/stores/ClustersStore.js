@@ -87,7 +87,7 @@ function update(options) {
       // find the newly fetched clusters
       var newClusters = _.chain(Array.prototype.slice.call(arguments))
         .filter(_.negate(_.isUndefined))
-        /*.forEach(calculateProperties)*/
+        .forEach(calculateProperties)
         .value();
       // save newly fetched clusters to _clusters
       _(newClusters).map(function(cluster) {
@@ -145,10 +145,22 @@ function calculateProperties(cluster) {
   return cluster;
 }
 
+
+/*
+
+  coordinates: [ // shape
+    [ // partial shape
+      [ [x1,y1], [x2,y2] ], // outer
+      [ [x3,y3], [x4,y4] ]  // innter
+    ]
+  ]
+
+*/
+
 function calculateDistances(cluster) {
   var startLocation = cluster.properties.startLocation;
   cluster.features.forEach(function(isoline) {
-    var points = isoline.geometry.coordinates[0];
+    var points = _(isoline.geometry.coordinates).flatten().flatten().value();
     isoline.properties.distances = getDistances(startLocation, points);
   });
 }

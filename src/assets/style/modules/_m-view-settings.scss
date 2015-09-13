@@ -1,9 +1,10 @@
 .m-view-settings {
-  
+  background-color: #fff;
+  border-bottom: 1px solid $c-gray-tertiary;
 }
 
 .m-view-settings__group {
-  padding: 25px 0;
+  padding: 15px 0;
   //border-bottom: 1px solid $c-gray-tertiary;
   display: flex;
   align-items: center;

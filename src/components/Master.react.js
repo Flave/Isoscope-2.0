@@ -123,10 +123,6 @@ var Component = React.createClass({
       .value();
   },
 
-  componentWillReceiveProps: function(nextState) {
-    
-  },
-
 
   /**
   * GENERAL INTERACTION
@@ -168,10 +164,10 @@ var Component = React.createClass({
             state={newState}
             clusters={clusters}
             handleStateChange={this._transitionTo} />
-          {/*<UIPanel 
-                      state={newState}
-                      clusters={clusters}
-                      handleTransition={this._transitionTo} />*/}
+          <UIPanel 
+            state={newState}
+            clusters={clusters}
+            handleTransition={this._transitionTo} />
         </div>
       )
   }

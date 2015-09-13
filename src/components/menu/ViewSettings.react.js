@@ -28,7 +28,8 @@ var ViewSettings = React.createClass({
     var className = isOpenClassName + ' view-settings';
 
     return (
-      <div ref="root" className='m-view-settings'>
+      <div ref="root" className='m-view-settings m-ui-panel__section'>
+        <h3 className="m-ui-panel__section-title">Settings</h3>
         <div className="m-view-settings__group">
           <div className="m-view-settings__group-title">Travel Time</div>
           <div className="m-view-settings__group-input">

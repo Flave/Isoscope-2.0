@@ -71,7 +71,8 @@ var MapController = React.createClass({
     var that = this,
         map = this.refs.map.getMap(),
         overlaySvg = d3.select(map.getPanes().overlayPane)
-          .append('svg')
+          .append('svg:svg')
+          .attr("xmlns", "http://www.w3.org/2000/svg")
           .style('position', 'relative');
 
     this.state.isolinesOverlay

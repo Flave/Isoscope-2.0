@@ -1,0 +1,46 @@
+.m-clusters__isoline {
+  &--plain {
+    fill: transparent;
+    stroke-width: 1;
+
+    &:hover {
+      stroke-width: 5;
+    }
+  }
+
+  &--car {
+    stroke: $c-car;
+  }
+
+  &--publicTransport {
+    stroke: $c-public-transport;
+  }
+
+  &--bike {
+    stroke: $c-bike;
+  }
+
+
+
+  &--masked {
+    fill-opacity: .3;
+    stroke-width: 3;
+
+    &.m-clusters__isoline {
+      &--car {
+        fill: $c-car;
+        stroke: $c-car;
+      }
+
+      &--publicTransport {
+        fill: $c-public-transport;
+        stroke: $c-public-transport;
+      }
+
+      &--bike {
+        fill: $c-bike;
+        stroke: $c-bike;
+      }
+    }
+  }
+}

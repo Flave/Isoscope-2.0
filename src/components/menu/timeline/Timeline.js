@@ -5,8 +5,8 @@ var d3 = require('d3'),
 function Timeline() {
   var data, // geoJSONs of cluster
       size = [0, 0],
-      padding = {top: 10, right: 10, bottom: 10, left: 10},
-      chartSize = [size[0] - padding.right - padding.left, size[1] - padding.top - padding.bottom],
+      margin = {top: 0, right: 0, bottom: 0, left: 1},
+      chartSize = [],
       hour2X = d3.scale.linear().domain([0, 23]),
       distance2Y = d3.scale.linear().nice(),
       maxDistance,
@@ -22,7 +22,7 @@ function Timeline() {
   function _timeline(_svg) {
     if(!data) return;
     svg = _svg;
-    chartSize = [size[0] - padding.right - padding.left, size[1] - padding.top - padding.bottom];
+    chartSize = [size[0] - margin.right - margin.left, size[1] - margin.top - margin.bottom];
 
     svg.attr({
       width: size[0],
@@ -69,17 +69,17 @@ function Timeline() {
   */
   function drawLines() {
     var linesGroup = svg
-      .selectAll('g.m-timeline__lines')
+      .selectAll('g.m-timeline-chart__lines')
       .data(function(clusters) { return [clusters]; });
 
     linesGroup
       .enter()
       .append('g')
-      .attr('transform', `translate(${padding.left}, ${padding.top})`)
-      .classed('m-timeline__lines', true);
+      .attr('transform', `translate(${margin.left}, ${margin.top})`)
+      .classed('m-timeline-chart__lines', true);
 
     var lineElement = linesGroup
-          .selectAll('path.m-timeline__line')
+          .selectAll('path.m-timeline-chart__line')
           .data(function(clusters) {
             // return [[23,432,123,44],[23,432,123,44]]
             var lineData = _.map(clusters, function(cluster) {
@@ -93,11 +93,11 @@ function Timeline() {
     lineElement
       .enter()
       .append('path')
-      .classed('m-timeline__line', true);
+      .classed('m-timeline-chart__line', true);
 
     lineElement
       .attr('class', function(lineData, i) {
-        return `m-timeline__line m-timeline__line--${data[i].properties.travelMode}`;
+        return `m-timeline-chart__line m-timeline-chart__line--${data[i].properties.travelMode}`;
       })
       .attr('d', line);
 
@@ -124,34 +124,35 @@ function Timeline() {
     timeAxis.scale(hour2X);
 
     var timeAxisContainer = svg
-      .selectAll('g.m-timeline__axis--y')
+      .selectAll('g.m-timeline-chart__axis--x')
       .data([1]);
 
     timeAxisContainer
       .enter()
       .append('g')
-      .classed('m-timeline__axis--x m-timeline__axis', true)
-      .attr('transform', `translate(${padding.left}, ${padding.top})`);
+      .classed('m-timeline-chart__axis--x m-timeline-chart__axis', true)
+      .attr('transform', `translate(${margin.left}, ${margin.top})`);
 
     timeAxis
-      .tickPadding(20)
+      .tickFormat('')
       .tickSize(-chartSize[1])
-      .ticks([24]);;
+      .ticks([5]);
 
     timeAxisContainer.call(timeAxis);
 
+
     // DISTANCE AXIS
-    distanceAxis.scale(distance2Y);
+/*    distanceAxis.scale(distance2Y);
 
     var distanceAxisContainer = svg
-      .selectAll('g.m-timeline__axis--y')
+      .selectAll('g.m-timeline-chart__axis--y')
       .data([1]);
 
     distanceAxisContainer
       .enter()
       .append('g')
-      .classed('m-timeline__axis--y m-timeline__axis', true)
-      .attr('transform', `translate(0, ${padding.top})`);
+      .classed('m-timeline-chart__axis--y m-timeline-chart__axis', true)
+      .attr('transform', `translate(0, ${margin.top})`);
 
     distanceAxis
       .tickSize(-size[0])
@@ -161,7 +162,7 @@ function Timeline() {
       .call(distanceAxis)
         .selectAll('text')
         .attr('x', 40)
-        .attr('dy', -5);
+        .attr('dy', -5);*/
   }
 
   return _timeline;

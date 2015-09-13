@@ -2,7 +2,6 @@ var React = require('react'),
     LocationSearch = require('app/components/menu/LocationSearch.react'),
     ViewSettings = require('./ViewSettings.react'),
     Timelines = require('./Timelines.react'),
-    TestPanel = require('./TestPanel.react'),
     Accordeon = require('app/components/common/Accordeon.react'),
     _ = require('lodash');
 
@@ -30,8 +29,18 @@ var UIPanel = React.createClass({
 
     return (
       <div className="m-ui-panel">
-        <LocationSearch />
-        <Accordeon panels={accordeonPanels}/>
+        <div className="m-ui-panel__group">
+          <LocationSearch />
+        </div>
+        <div className="m-ui-panel__group">
+          <ViewSettings 
+            handleTransition={this.props.handleTransition}
+            state={this.props.state} />
+          <Timelines 
+            clusters={this.props.clusters}
+            state={this.props.state}
+            handleTransition={this.props.handleTransition}/>
+        </div>
       </div>
     )
   }

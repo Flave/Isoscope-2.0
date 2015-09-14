@@ -1,0 +1,24 @@
+.m-slider {
+
+}
+
+.m-slider__svg {
+  overflow: visible !important;
+}
+
+.m-slider__group {
+  .background {
+    cursor: pointer !important;
+  }
+
+  .handle {
+    cursor: pointer;
+    fill: $c-primary;
+
+    text {
+      text-anchor: middle;
+
+      fill: #fff;
+    }
+  }
+}

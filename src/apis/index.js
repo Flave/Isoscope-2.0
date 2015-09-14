@@ -23,7 +23,6 @@ var travelModeApis = {
 
 api.get = function(config) {
   var travelModeApi = travelModeApis[config.travelMode];
-  console.log('fetching clusters for ' + config.travelMode);
   return travelModeApi.getClusters(config);
 }
 

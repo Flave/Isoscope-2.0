@@ -69,7 +69,7 @@ var _clusters = {};
   }
 */
 function update(options) {
-  var clusterOptions = _.omit(options, 'clusters', 'travelModes'), // configuration applying to all clusters
+  var clusterOptions = _.omit(options, 'clusters', 'travelModes', 'departureTime'), // configuration applying to all clusters
       clusters = _(options.clusters) // create individual cluster config for every mode and startLocation in options
         .map(function(cluster) {
           return _(options.travelModes)
@@ -199,7 +199,7 @@ function reduceDistancesOfClusters(cluster, reduceFunc, propertyName) {
 var ClustersStore = _.assign({}, EventEmitter.prototype, {
 
   get: function(config) {
-    var clusterConfig = _.omit(config, 'travelModes');
+    var clusterConfig = _.omit(config, 'travelModes', 'departureTime');
 
     var clusters =  _(config.travelModes)
       // for every travelMode get the clusters with the right configuration

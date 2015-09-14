@@ -40,7 +40,6 @@ var App = React.createClass({
           <span className="m-timeline__meta m-timeline__meta--primary">Location Name,</span>
           <span className="m-timeline__meta m-timeline__meta--secondary">Street Name</span>
         </div>
-        {/*<button onClick={this._handleDeleteClick}>Delete</button>*/}
         <div className="m-timeline__chart">
           <svg ref="timelineCanvas"/>
         </div>

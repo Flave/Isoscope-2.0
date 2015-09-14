@@ -1,5 +1,6 @@
 var React = require('react'),
     Timeline = require('./timeline/Timeline.react'),
+    Slider = require('app/components/common/Slider.react'),
     _ = require('lodash'),
     d3 = require('d3');
 
@@ -36,10 +37,19 @@ var App = React.createClass({
     return (
       <div className='m-timelines m-ui-panel__section'>
         <h3 className="m-ui-panel__section-title">Distance Averages (M)</h3>
+        <Slider 
+          scale={d3.scale.linear().domain([0, 23]).clamp(true)}
+          value={this.props.state.departureTime}
+          onChange={this._handleDepartureTimeChange}/>
         <div>
           {timelines}
         </div>
       </div>)
+  },
+
+  _handleDepartureTimeChange: function(value) {
+    console.log(value);
+    this.props.handleTransition({ departureTime: value });
   }
 });
 

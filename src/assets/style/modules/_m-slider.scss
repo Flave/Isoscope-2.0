@@ -1,5 +1,5 @@
 .m-slider {
-
+  margin-top: 20px;
 }
 
 .m-slider__svg {
@@ -14,11 +14,17 @@
   .handle {
     cursor: pointer;
     fill: $c-primary;
-
-    text {
-      text-anchor: middle;
-
-      fill: #fff;
-    }
   }
+}
+
+.m-slider__handle-text {
+  text-anchor: middle;
+  fill: #fff;
+  font-size: 15px;
+}
+
+.m-slider__handle-deco-text {
+  text-anchor: middle;
+  fill: #fff;
+  font-size: 10px;
 }

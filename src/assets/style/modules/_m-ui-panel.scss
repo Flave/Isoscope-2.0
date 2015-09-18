@@ -12,6 +12,10 @@
 
 .m-ui-panel__section {
   padding: 20px;
+
+  &--timelines {
+    background-color: #f8f8f8;
+  }
 }
 
 .m-ui-panel__section-title {

@@ -7,7 +7,7 @@ var jsonp = require('jsonp'),
 
 var api = {},
     apiKey = 'PFHFE67HTWKLOR6R8QTI',
-    base = 'http://api.route360.net/api_dev/v1/polygon';
+    base = 'http://api.route360.net/api_brandenburg/v1/polygon';
 
 if(process.env.BROWSER) {
   L = require('leaflet');
@@ -21,10 +21,11 @@ function webMercatorToLatLng(point){
 
 /*
 * Returns a geojson feature object for the polygons given
+*
 */
 
 function getIsolineGeoJSON(polygonsJson, options) {
-           
+      
     if ( polygonsJson.error ) return errorMessage;
 
     var feature = { 
@@ -37,6 +38,7 @@ function getIsolineGeoJSON(polygonsJson, options) {
 
     var coordinates = _(polygonsJson[0].polygons)
       .map(function (polygonJson) {
+
           var pointsSimplified = simplify(polygonJson.outerBoundary, 300);
           var points = _(pointsSimplified)
             .map(function(point) {
@@ -58,13 +60,14 @@ function getIsolineGeoJSON(polygonsJson, options) {
 */
 function createIsolineConfig(options) {
   var travelModeConfig;
+  console.log(options.weekday);
   switch(options.travelMode) {
     case "publicTransport":
       travelModeConfig = {
         "transit":{
           "frame":{
             "time": options.departureTime * 360, // hour of the day in seconds
-            "date": `201504${options.weekday + 6}`
+            "date": `201507${options.weekday + 20}`
           }
         }
       }

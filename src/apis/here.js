@@ -126,12 +126,13 @@ var hereApi = {
   getIsoline: function(options) {
     var deferred = Q.defer(),
         zeroPad2 = d3.format('02');
+        console.log(typeof options.travelTime)
 
     var params = util.JSON2QueryString({
-      departure: util.getXsDateTime(0, options.departureTime, 0), // = departureTime
+      departure: util.getXsDateTime(options.weekday, options.departureTime, 0), // = departureTime
       mode: `fastest;${options.travelMode};traffic:enabled`,
       start: `${options.startLocation[0]},${options.startLocation[1]}`,
-      time: `PT0H${zeroPad2(options.travelTime)}M`, // = travelTime
+      time: `PT0H${zeroPad2(Math.floor(options.travelTime))}M`, // = travelTime
       app_id: app_id,
       app_code: app_code,
       requestId: util.JSON2QueryString(options) // requestId: start=lat,lng&mode=mode&weekday=weekday&departureTime=departureTime&travelTime=travelTime&

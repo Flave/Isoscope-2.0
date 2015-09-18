@@ -29,6 +29,7 @@ var App = React.createClass({
     this.state.timeline
       .data(this.props.data)
       .maxDistance(this.props.maxDistance)
+      .cursorPosition(this.props.state.departureTime)
       .size(size)(svg);
   },
 

@@ -10,6 +10,7 @@ function Timeline() {
       hour2X = d3.scale.linear().domain([0, 23]),
       distance2Y = d3.scale.linear().nice(),
       maxDistance,
+      cursorPosition,
       svg,
       timeAxis = d3.svg.axis().orient('top'),
       distanceAxis = d3.svg.axis().orient('left'),
@@ -31,6 +32,7 @@ function Timeline() {
 
     updateScales();
     updateAxes();
+    drawCursorLine();
 
     svg.datum(data);
     drawLines();
@@ -51,6 +53,12 @@ function Timeline() {
     return _timeline;
   }
 
+  _timeline.cursorPosition = function(_) {
+    if(!arguments.length) return cursorPosition;
+    cursorPosition = _;
+    return _timeline;
+  }
+
   _timeline.map = function(_) {
     if(!arguments.length) return map;
     map = _;
@@ -63,6 +71,23 @@ function Timeline() {
     return _timeline;
   }
 
+
+  function drawCursorLine() {
+    var cursorLine = svg
+      .selectAll('line.m-timeline-chart__cursor')
+      .data([1]);
+
+    var cursorLineEnter = cursorLine
+      .enter()
+      .append('line')
+      .classed('m-timeline-chart__cursor', true);
+
+    cursorLine
+      .attr('x1', hour2X(cursorPosition))
+      .attr('x2', hour2X(cursorPosition))
+      .attr('y1', margin.top)
+      .attr('y2', margin.top + chartSize[1]);
+  }
 
   /*
   * Draws max, min and average lines

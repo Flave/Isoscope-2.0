@@ -51,9 +51,8 @@ var Slider = React.createClass({
 
 
     var handle = slider
-
         .attr("transform", "translate(0," + this.props.height / 2 + ")")
-        .attr("r", 9)
+        .attr("r", 20)
         .attr("cx", this.props.scale(this.props.value));
   },
 
@@ -85,11 +84,21 @@ var Slider = React.createClass({
 
     handleEnter
       .append('circle')
-      .attr("r", 13);
+      .attr("r", 22);
 
     handleEnter
       .append('text')
+      .classed('m-slider__handle-text', true)
+      .attr('y', 6)
+      .attr('x', -7)
       .text(this.props.value);
+
+    handleEnter
+      .append('text')
+      .classed('m-slider__handle-deco-text', true)
+      .attr('y', 3)
+      .attr('x', 9)
+      .text('00');
 
     handle
       .attr("transform", `translate(${this.props.scale(this.props.value)},${this.props.height / 2})`);
@@ -108,10 +117,10 @@ var Slider = React.createClass({
           </defs>
           <rect 
             ref="domain"
-            transform={`translate(0, ${this.props.height/2 - 3})`}
+            transform={`translate(0, ${this.props.height/2 - 4})`}
             style={{fill: 'url(#bg-pattern) transparent'}} 
             width={this.state.width} 
-            height={6}/>
+            height={8}/>
           <g ref="slider" className="m-slider__group"/>
         </svg>
       </div>
@@ -147,7 +156,7 @@ var Slider = React.createClass({
       .attr("transform", `translate(${this.props.scale(value)},${this.props.height / 2})`);
 
     handle
-      .selectAll('text')
+      .selectAll('text.m-slider__handle-text')
       .text(value);
 
     return value;

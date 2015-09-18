@@ -35,20 +35,20 @@ var App = React.createClass({
     if(!timelines.length) return <div/>
 
     return (
-      <div className='m-timelines m-ui-panel__section'>
+      <div className='m-ui-panel__section m-ui-panel__section--timelines'>
         <h3 className="m-ui-panel__section-title">Distance Averages (M)</h3>
         <Slider 
           scale={d3.scale.linear().domain([0, 23]).clamp(true)}
           value={this.props.state.departureTime}
+          height={40}
           onChange={this._handleDepartureTimeChange}/>
-        <div>
+        <div className="m-timelines">
           {timelines}
         </div>
       </div>)
   },
 
   _handleDepartureTimeChange: function(value) {
-    console.log(value);
     this.props.handleTransition({ departureTime: value });
   }
 });

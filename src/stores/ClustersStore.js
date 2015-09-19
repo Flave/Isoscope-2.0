@@ -2,6 +2,7 @@ var ClusterConstants = require('../constants/ClusterConstants'),
     EventEmitter = require('events').EventEmitter,
     hereApi = require('../apis/here'),
     api = require('app/apis'),
+    reverseGeoCodeApi = require('app/apis/reverseGeoCode'),
     Q = require('q'),
     L,
     md5 = require('blueimp-md5'),
@@ -53,7 +54,9 @@ var CHANGE_EVENT = 'change';
 * }
 */
 
-var _clusters = {};
+var _clusters = {},
+    _locationInfos = [],
+    isLoading = false;
 
 
 /*
@@ -67,22 +70,73 @@ var _clusters = {};
     departureTime: 6,
     travelModes: ['car', 'bike']
   }
+
 */
+
+
 function update(options) {
-  var clusterOptions = _.omit(options, 'clusters', 'travelModes', 'departureTime'), // configuration applying to all clusters
-      clusters = _(options.clusters) // create individual cluster config for every mode and startLocation in options
+  var clusterPromise = updateClusters(options);
+  var locationInfoPromise = updateLocationInfo(options.clusters);
+
+  return Q.all([clusterPromise, locationInfoPromise])
+    .spread(function(newClusters, locationInfo) {
+      addLocationInfo(newClusters);
+    });
+}
+
+
+function addLocationInfo(clusters) {
+  _.forEach(clusters, function(cluster) {
+    var clusterLocation = cluster.properties.startLocation.toString(),
+        locationInfo = _locationInfos[clusterLocation];
+
+      cluster.properties.location = locationInfo;
+  });
+}
+
+
+function updateLocationInfo(clusters) {
+  var infoConfigs = _(clusters)
+    .filter(function(cluster) {
+      return !_locationInfos[cluster.toString()]
+    })
+    .map(function(cluster) {
+      return reverseGeoCodeApi.get(cluster);
+    })
+    .value();
+
+  return Q.all(infoConfigs)
+    .spread(function() {
+      var locationInfos = Array.prototype.slice.call(arguments);
+        _.forEach(infoConfigs, function(locationInfo) {
+          _locationInfos[locationInfo.latlng.toString()] = locationInfo;
+        });
+
+      return infoConfigs;
+    });
+}
+
+
+function updateClusters(options) {
+  var clusterConfigs = _(options.clusters) // create individual cluster config for every mode and startLocation in options
         .map(function(cluster) {
           return _(options.travelModes)
             .map(function(mode) {
-              return _.merge({}, clusterOptions, { startLocation: cluster, travelMode: mode });
+              return {
+                startLocation: cluster,
+                travelMode: mode,
+                weekday: options.weekday,
+                travelTime: options.travelTime
+              };
             })
             .value();
         })
         .flatten()
         .value();
 
+  isLoading = true;
 
-  return Q.all(loadClusters(clusters))
+  return Q.all(loadClusters(clusterConfigs))
     .spread(function() {
       // find the newly fetched clusters
       var newClusters = _.chain(Array.prototype.slice.call(arguments))
@@ -91,15 +145,20 @@ function update(options) {
         .value();
       // save newly fetched clusters to _clusters
       _(newClusters).map(function(cluster) {
-        var clusterConfig = _.assign({}, clusterOptions, _.pick(cluster.properties, ['startLocation', 'travelMode'])),
-            hash = md5(JSON.stringify(clusterConfig));
+        var clusterConfig = {
+          startLocation: cluster.properties.startLocation,
+          travelMode: cluster.properties.travelMode,
+          weekday: options.weekday,
+          travelTime: options.travelTime
+        },
+        hash = md5(JSON.stringify(clusterConfig));
+
         _clusters[hash] = cluster;
       })
       .value();
       return newClusters;
     });
 }
-
 
 /**
 * Returns a promise for all the clusters with the same startLocation. For each location checks if a cluster with specified options
@@ -108,7 +167,6 @@ function update(options) {
 
 function loadClusters(clusterConfigs) {
   return _(clusterConfigs)
-    // filter for clusters inside viewport
     .map(function(clusterConfig) {
       var hash = md5(JSON.stringify(clusterConfig)),
           deferred = Q.defer(),
@@ -123,6 +181,7 @@ function loadClusters(clusterConfigs) {
       return deferred.promise;
     }).value();
 }
+
 
 /**
 * Calculates distance properties for cluster passed as argument.
@@ -199,16 +258,22 @@ function reduceDistancesOfClusters(cluster, reduceFunc, propertyName) {
 var ClustersStore = _.assign({}, EventEmitter.prototype, {
 
   get: function(config) {
-    var clusterConfig = _.omit(config, 'travelModes', 'departureTime');
-
     var clusters =  _(config.travelModes)
       // for every travelMode get the clusters with the right configuration
       .map(function(travelMode) {
-        return _(_clusters)
-          .map(function(cluster) {
-            return cluster;
+        return _(config.clusters)
+          .map(function(startLocation){
+
+            var clusterConfig = {
+              startLocation: startLocation,
+              travelMode: travelMode,
+              weekday: config.weekday,
+              travelTime: config.travelTime
+            },
+            hash = md5(JSON.stringify(clusterConfig));
+
+            return _clusters[hash];
           })
-          .filter(_.matches({properties: _.assign({}, clusterConfig, {travelMode: travelMode})}))
           .value();
       })
       .flatten()
@@ -218,13 +283,6 @@ var ClustersStore = _.assign({}, EventEmitter.prototype, {
       })
       .map(_.identity)
       .value();
-
-    var isComplete = _.every(clusters, function(clusterGroup) {
-      return clusterGroup.length === config.travelModes.length;
-    });
-
-    if(!isComplete)
-      return [];
 
     return clusters;
   },
@@ -245,14 +303,19 @@ var ClustersStore = _.assign({}, EventEmitter.prototype, {
     this.removeListener(CHANGE_EVENT, callback);
   },
 
+  isLoading: function() {
+    return isLoading;
+  },
+
   dispatcherIndex: dispatcher.register(function(payload) {
     var action = payload.action;
     switch(action.actionType) {
       case ClusterConstants.CLUSTER_UPDATE:
+        isLoading = true;
         update(action.data)
           .then(function(newClusters) {
-            if(newClusters.length)
-              ClustersStore.emitChange();
+            isLoading = false;
+            ClustersStore.emitChange();
           }, function(err) {
             console.log(err);
           });

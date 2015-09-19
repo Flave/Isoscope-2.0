@@ -22,9 +22,7 @@ function IsolinesOverlay() {
 
 
   function _isolinesOverlay(_svg) {
-    if(!data.length) return;
     svg = _svg;
-
 
     // DATA BINDING of container for all clusters
     clusterGroup = svg

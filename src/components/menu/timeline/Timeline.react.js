@@ -34,12 +34,13 @@ var App = React.createClass({
   },
 
   render: function() {
-
+    var locationInfo = this.props.data[0].properties.location;
     return (
       <div style={style} className="m-timeline">
         <div className="m-timeline__header">
-          <span className="m-timeline__meta m-timeline__meta--primary">Location Name,</span>
-          <span className="m-timeline__meta m-timeline__meta--secondary">Street Name</span>
+          <span className="m-timeline__meta m-timeline__meta--primary">{locationInfo.city}, </span>
+          <span className="m-timeline__meta m-timeline__meta--secondary">{locationInfo.address}</span>
+          <button onClick={this._handleDeleteClick}>Delete</button>
         </div>
         <div className="m-timeline__chart">
           <svg ref="timelineCanvas"/>
@@ -51,7 +52,6 @@ var App = React.createClass({
     console.log(this.props.data);
     var startLocation = this.props.data[0].properties.startLocation;
     var clusters = _.filter(this.props.state.clusters, function(cluster) {
-
       return !((startLocation[0] == cluster[0]) && (startLocation[1] == cluster[1]));
     });
     this.props.handleTransition({clusters: clusters});

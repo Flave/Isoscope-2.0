@@ -2,6 +2,13 @@ var React = require('react'),
     d3 = require('d3'),
     classnames = require('classnames');
 
+var patternLineStyle = {
+  stroke: "#777" ,
+  strokeWidth: ".75" ,
+  fill: "transparent",
+  strokeLinecap: "square"
+}
+
 var Slider = React.createClass({
   propTypes: {
     onChange: React.PropTypes.func,
@@ -111,8 +118,9 @@ var Slider = React.createClass({
       <div className="m-slider">
         <svg className="m-slider__svg" width={this.state.width} height={this.props.height}>
           <defs> 
-            <pattern id="bg-pattern" patternUnits="userSpaceOnUse" width="6" height="6">
-              <line x1="0" y1="6" x2="6" y2="0" stroke="#777" strokeWidth=".75" fill="transparent"/>
+            <pattern id="bg-pattern" patternUnits="userSpaceOnUse" width="7" height="7">
+              <line x1="0" y1="7.5" x2="7.5" y2="0" style={patternLineStyle} />
+              <line x1="0" y1="0.5" x2="0.5" y2="0" style={patternLineStyle} />
             </pattern> 
           </defs>
           <rect 

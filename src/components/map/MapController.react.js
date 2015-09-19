@@ -51,6 +51,7 @@ var MapController = React.createClass({
   */
   getModesCluster: function() {
     var that = this;
+
     return _(that.props.clusters)
       .map(function(clusterGroup) {
         var modeIsolines = _(clusterGroup)

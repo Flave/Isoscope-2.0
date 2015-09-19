@@ -60,7 +60,6 @@ function getIsolineGeoJSON(polygonsJson, options) {
 */
 function createIsolineConfig(options) {
   var travelModeConfig;
-  console.log(options.weekday);
   switch(options.travelMode) {
     case "publicTransport":
       travelModeConfig = {

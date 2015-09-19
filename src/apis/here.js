@@ -58,10 +58,6 @@ function processIsolineResponse(res) {
 
 var hereApi = {
 
-  update: function(options) {
-
-  },
-
   /**
   * Get a complete cluster of 
   *
@@ -126,7 +122,6 @@ var hereApi = {
   getIsoline: function(options) {
     var deferred = Q.defer(),
         zeroPad2 = d3.format('02');
-        console.log(typeof options.travelTime)
 
     var params = util.JSON2QueryString({
       departure: util.getXsDateTime(options.weekday, options.departureTime, 0), // = departureTime

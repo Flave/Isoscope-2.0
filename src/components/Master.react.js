@@ -3,6 +3,7 @@ var React = require('react'),
     UIPanel = require('./menu/UIPanel.react'),
     _ = require('lodash'),
     State = require('app/stores/StateStore'),
+    classNames = require('classnames'),
     ClustersStore = require('app/stores/ClustersStore');
 
 
@@ -76,9 +77,8 @@ var Component = React.createClass({
 
 
   render: function() {
-
     return (
-        <div className="controller-view">
+        <div className={classNames("controller-view", {"is-loading": this.state.isLoading})}>
           <Map
             state={this.state.state}
             clusters={this.state.clusters}
@@ -86,6 +86,7 @@ var Component = React.createClass({
           <UIPanel 
             state={this.state.state}
             clusters={this.state.clusters}
+            isLoading={this.state.isLoading}
             handleTransition={this._transitionTo} />
         </div>
       )

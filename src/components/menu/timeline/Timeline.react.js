@@ -36,7 +36,7 @@ var App = React.createClass({
   render: function() {
     var locationInfo = this.props.data[0].properties.location;
     return (
-      <div style={style} className="m-timeline">
+      <div style={style} onClick={this._handleTimelineClick} className="m-timeline">
         <div className="m-timeline__header">
           <span className="m-timeline__meta m-timeline__meta--primary">{locationInfo.city}, </span>
           <span className="m-timeline__meta m-timeline__meta--secondary">{locationInfo.address}</span>
@@ -48,8 +48,15 @@ var App = React.createClass({
       </div>)
   },
 
+  _handleTimelineClick: function(e) {
+    var startLocation = this.props.data[0].properties.startLocation,
+        mapState = [startLocation[0], startLocation[1], this.props.state.map[2]];
+    
+    this.props.handleTransition({map: mapState});
+  },
+
   _handleDeleteClick: function(e) {
-    console.log(this.props.data);
+    e.stopPropagation();
     var startLocation = this.props.data[0].properties.startLocation;
     var clusters = _.filter(this.props.state.clusters, function(cluster) {
       return !((startLocation[0] == cluster[0]) && (startLocation[1] == cluster[1]));

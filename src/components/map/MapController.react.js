@@ -91,11 +91,13 @@ var MapController = React.createClass({
   /*
   * Gets the state of the map and adds it to the router state
   */
-  handleMapMoveEnd: function(event) {
-    var map = event.target;
-    var center = map.getCenter();
-    var zoom = map.getZoom();
-    var mapParams = `${center.lat},${center.lng},${zoom}`;
+  handleMapBoundsChanged: function(event) {
+    var map = event.target,
+        center = map.getCenter(),
+        zoom = map.getZoom(),
+        mapParams = [center.lat, center.lng, zoom];
+
+    this.props.handleStateChange({map: mapParams});
   },
 
   _handleMapClick: function(e) {
@@ -108,8 +110,9 @@ var MapController = React.createClass({
     return (
       <Map 
         ref="map"
-        handleMapBoundsChanged={this.props.handleMapBoundsChanged}
-        handleMapMoveEnd={this.handleMapMoveEnd}
+        center={this.props.state.map.slice(0,2)}
+        zoom={this.props.state.map[2]}
+        onMapBoundsChanged={this.handleMapBoundsChanged}
         handleClick={this._handleMapClick}/>
     )
   }

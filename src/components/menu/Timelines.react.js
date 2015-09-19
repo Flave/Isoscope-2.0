@@ -1,5 +1,6 @@
 var React = require('react'),
     Timeline = require('./timeline/Timeline.react'),
+    classNames = require('classnames'),
     Slider = require('app/components/common/Slider.react'),
     _ = require('lodash'),
     d3 = require('d3');
@@ -45,6 +46,10 @@ var App = React.createClass({
         <div className="m-timelines">
           {timelines}
         </div>
+        {/*<div className={classNames(
+                  "m-loading-indicator", 
+                  {"is-loading": this.props.isLoading}
+                )}><span className="m-loading-indicator__spinner"></span></div>*/}
       </div>)
   },
 

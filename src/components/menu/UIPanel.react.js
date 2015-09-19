@@ -37,6 +37,7 @@ var UIPanel = React.createClass({
             handleTransition={this.props.handleTransition}
             state={this.props.state} />
           <Timelines 
+            isLoading={this.props.isLoading}
             clusters={this.props.clusters}
             state={this.props.state}
             handleTransition={this.props.handleTransition}/>

@@ -7,7 +7,7 @@ var ClusterActions = require('app/actions/ClusterActions'),
 
 var CHANGE_EVENT = 'change',
     _defaultState = {
-      map: [52,13,11],
+      map: [52.5,13.4,10],
       clusters: [],
       departureTime: 0,
       weekday: 0,
@@ -49,7 +49,8 @@ var config = {
     },
     'map': function(mapParams) {
       if(!mapParams) return undefined;
-      return mapParams.split(',');
+      var params = _.map(mapParams.split(','), parseFloat);
+      return params;
     },
     'travelModes': function(travelModes) {
       if(!travelModes) return undefined;

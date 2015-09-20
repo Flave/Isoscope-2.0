@@ -56,7 +56,7 @@ function IsolinesOverlay() {
     createIsolineMasks();
     drawMaskedIsolines();
     drawIsolines();
-    //drawStartLocation();
+    drawStartLocation();
     resetContainers();
 
     cluster

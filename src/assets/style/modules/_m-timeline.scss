@@ -9,7 +9,8 @@
     margin-bottom: 0;
   }
 
-  &:hover {
+  &:hover,
+  &.is-highlighted {
     background-color: #ececec;
   }
 }

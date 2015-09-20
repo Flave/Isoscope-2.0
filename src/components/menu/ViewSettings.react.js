@@ -21,8 +21,26 @@ var transportModeSegments = [
 ]
 
 var ViewSettings = React.createClass({
-  handleTravelTimeChange: function(value) {
+  getInitialState: function() {
+    return {
+      travelTime: 5
+    }
+  },
+
+  componentWillReceiveProps: function(nextProps) {
+    this.setState({
+      travelTime: nextProps.state.travelTime
+    })
+  },
+
+  handleTravelTimeAfterChange: function(value) {
     this.props.handleTransition({travelTime: value});
+  },
+
+  handleTravelTimeChange: function(value) {
+    this.setState({
+      travelTime: value
+    })
   },
 
   handleDayChange: function(value, label, index) {
@@ -37,18 +55,24 @@ var ViewSettings = React.createClass({
     var isOpenClassName = this.props.isOpen ? 'is-open' : '';
     var className = isOpenClassName + ' view-settings';
 
+
     return (
       <div ref="root" className='m-view-settings m-ui-panel__section'>
         <h3 className="m-ui-panel__section-title">Settings</h3>
         <div className="m-view-settings__group">
-          <div className="m-view-settings__group-title">Travel Time</div>
+          <div className="m-view-settings__group-title">
+            Travel Time
+            <br/>
+            <span className="m-view-settings__group-value">{this.state.travelTime}</span>
+          </div>
           <div className="m-view-settings__group-input">
             <ReactSlider 
               min={2}
               max={30} 
               step={2}
-              value={this.props.state.travelTime}
-              onAfterChange={this.handleTravelTimeChange} 
+              value={this.state.travelTime}
+              onChange={this.handleTravelTimeChange}
+              onAfterChange={this.handleTravelTimeAfterChange}
               withBars={true}/>
           </div>
         </div>

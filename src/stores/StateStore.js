@@ -1,4 +1,5 @@
 var ClusterActions = require('app/actions/ClusterActions'),
+    ClustersStore = require('app/stores/ClustersStore'),
     EventEmitter = require('events').EventEmitter,
     dispatcher = require('../dispatcher'),
     Q = require('q'),
@@ -14,7 +15,7 @@ var CHANGE_EVENT = 'change',
       travelModes: ['car', 'publicTransport', 'bike'],
       travelTime: 6,
       hoveredCluster: undefined,
-      focusedCluster: undefined
+      hoveredIsoline: undefined
     },
     _state = _.clone(_defaultState),
     _urlState = {},
@@ -85,12 +86,19 @@ var config = {
 
 function set(values) {
   var newState = _.assign({}, _defaultState, _state, values),
-      newUrlState = _.assign({}, _urlState, values);
+      newUrlState = _.assign({}, _urlState, _.pick(values, _clusterKeys));
 
   _state = newState;
   _urlState = newUrlState;
 
+  // clusters shouldn't be undefined otherwise we have to check for that later on
   if(!_state.clusters) _state.clusters = [];
+
+  // check if a property that requires a update of clusters has changed and update accordingly
+  var clustersNeedUpdate = _.any(values, function(value, key) {
+    return _clusterKeys.indexOf(key) !== -1;
+  });
+  if(clustersNeedUpdate) update();
 }
 
 
@@ -162,13 +170,11 @@ var ClustersStore = _.assign({}, EventEmitter.prototype, {
 
   set: function(values) {
     set(values);
-    update();
     this.emitChange();
   },
 
   setFromUrl: function(urlState) {
     fromUrl(urlState);
-    update();
     this.emitChange();
   },
 
@@ -183,6 +189,10 @@ var ClustersStore = _.assign({}, EventEmitter.prototype, {
   removeChangeListener: function(callback) {
     this.removeListener(CHANGE_EVENT, callback);
   }
+});
+
+ClustersStore.addChangeListener(function() {
+  
 });
 
 module.exports = ClustersStore;

@@ -88,6 +88,10 @@ var Component = React.createClass({
             clusters={this.state.clusters}
             isLoading={this.state.isLoading}
             handleTransition={this._transitionTo} />
+          <div className="m-loading-indicator">
+            <span className="m-loading-indicator__ant"></span>
+            <span className="m-loading-indicator__ant"></span>
+          </div>
         </div>
       )
   }

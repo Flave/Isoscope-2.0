@@ -18,6 +18,15 @@ var MapController = React.createClass({
     this.initializeIsolinesOverlay();
   },
 
+  shouldComponentUpdate: function(nextProps, nextState) {
+    if(nextProps.state.hoveredCluster === this.props.state.hoveredCluster && nextProps.state.hoveredCluster !== undefined)
+      return false;
+    if(nextProps.state.hoveredIsoline === this.props.state.hoveredIsoline && nextProps.state.hoveredIsoline !== undefined)
+      return false;
+
+    return true;
+  },
+
   componentDidUpdate: function() {
     this.renderOverlays();
   },
@@ -76,7 +85,12 @@ var MapController = React.createClass({
           .attr("xmlns", "http://www.w3.org/2000/svg")
           .style('position', 'relative');
 
-    this.state.isolinesOverlay
+    this.state.isolinesOverlay/*
+      .on('click:startlocation', this._handleClickClusterStartLocation)
+      .on('mouseenter:cluster', this._handleMouseenterCluster)
+      .on('mouseleave:cluster', this._handleMouseleaveCluster)
+      .on('mouseenter:isoline', this._handleMouseenterIsoline)
+      .on('mouseleave:isoline', this._handleMouseleaveIsoline)*/
       .map(map)
       .data(this.getModesCluster());
 
@@ -84,8 +98,10 @@ var MapController = React.createClass({
   },
 
   renderOverlays: function() {
-    this.state.isolinesOverlay
-      .data(this.getModesCluster())(this.state.overlaySvg);
+    _.defer(function() {
+      this.state.isolinesOverlay
+        .data(this.getModesCluster())(this.state.overlaySvg);
+      }.bind(this));
   },
 
   /*
@@ -104,6 +120,27 @@ var MapController = React.createClass({
     var clusters = this.props.state.clusters.slice();
     clusters.push([e.latlng.lat, e.latlng.lng]);
     this.props.handleStateChange({clusters: clusters});
+  },
+
+  _handleClickClusterStartLocation: function(cluster, i) {
+    
+  },
+
+  _handleMouseenterCluster: function(cluster, i) {
+    var startLocation = cluster.features[0].properties.startLocation.toString();
+    this.props.handleStateChange({hoveredCluster: startLocation});
+  },
+
+  _handleMouseleaveCluster: function(cluster, i) {
+    this.props.handleStateChange({hoveredCluster: undefined});
+  },
+
+  _handleMouseenterIsoline: function(isoline, i) {
+    this.props.handleStateChange({hoveredIsoline: isoline.properties.mode});
+  },
+
+  _handleMouseleaveIsoline: function(isoline, i) {
+    this.props.handleStateChange({hoveredIsoline: undefined});
   },
 
   render: function() {

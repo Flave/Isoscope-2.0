@@ -74,7 +74,7 @@ var _clusters = {},
 */
 
 
-function update(options) {
+var update = _.throttle(function(options) {
   var clusterPromise = updateClusters(options);
   var locationInfoPromise = updateLocationInfo(options.clusters);
 
@@ -82,7 +82,7 @@ function update(options) {
     .spread(function(newClusters, locationInfo) {
       addLocationInfo(newClusters);
     });
-}
+}, 100);
 
 
 function addLocationInfo(clusters) {

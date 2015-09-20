@@ -1,5 +1,6 @@
 var React = require('react'),
-    Timeline = require('./Timeline');
+    Timeline = require('./Timeline'),
+    classNames = require('classnames');
 
 var style = {
   marginLeft: "-10px",
@@ -34,9 +35,14 @@ var App = React.createClass({
   },
 
   render: function() {
-    var locationInfo = this.props.data[0].properties.location;
+    var locationInfo = this.props.data[0].properties.location,
+        isHighlighted = this.props.state.hoveredCluster === this.props.data[0].properties.startLocation.toString();
+
     return (
-      <div style={style} onClick={this._handleTimelineClick} className="m-timeline">
+      <div 
+        style={style} 
+        onClick={this._handleTimelineClick} 
+        className={classNames('m-timeline', {'is-highlighted': isHighlighted})}>
         <div className="m-timeline__header">
           <span className="m-timeline__meta m-timeline__meta--primary">{locationInfo.city}, </span>
           <span className="m-timeline__meta m-timeline__meta--secondary">{locationInfo.address}</span>

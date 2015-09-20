@@ -2,6 +2,7 @@ var jsonp = require('jsonp'),
     _ = require('lodash'),
     Q = require('q'),
     d3 = require('d3'),
+    md5 = require('blueimp-md5'),
     util = require('app/utility').apiUtility;
 
 var api = {},
@@ -37,7 +38,7 @@ function processIsolineResponse(res) {
           var value;
           // split startLocation paramter into array of lat/lng
           if(key === 'startLocation')
-            value = param.split(',');
+            value = _.map(param.split(','), parseFloat);
           else
             value = isNaN(parseInt(param)) ? param : parseFloat(param);
 
@@ -47,7 +48,17 @@ function processIsolineResponse(res) {
         .value(),
       isoline = {
         data: processIsolineValues(isoline.value)
-      };
+      },
+
+    idConfig = {
+      startLocation: params.startLocation,
+      travelTime: params.travelTime,
+      departureTime: params.departureTime,
+      travelMode: params.travelMode,
+      weekday: params.weekday
+    };
+
+    params.id = md5(JSON.stringify(idConfig));
 
   return _.assign({}, params, isoline);
 }
@@ -86,6 +97,7 @@ var hereApi = {
     return Q.all(promises)
       .spread(function() {
         var isolines = Array.prototype.slice.call(arguments);
+        
         var geoJSON = {
           type: "FeatureCollection",
           properties: options,
@@ -102,6 +114,10 @@ var hereApi = {
           })
         };
         return geoJSON;
+      }, function(err) {
+        console.log(err)
+      }, function() {
+        console.log('making progress');
       });
   },
 

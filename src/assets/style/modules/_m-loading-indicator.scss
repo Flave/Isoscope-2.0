@@ -1,64 +1,55 @@
-.m-loading-indicator {
-  visibility: hidden;
-  opacity: 0;
-  position: absolute;
-  background-color: rgba(255, 255, 255, .6);
-  text-align: center;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  left: 0;
-  transition: all .2s;
-  transition-delay: .4s;
-
-  &.is-loading {
+.is-loading {
+  .m-loading-indicator {
     visibility: visible;
     opacity: 1;
   }
 }
 
-.m-loading-indicator__spinner,
-.m-loading-indicator__spinner:before,
-.m-loading-indicator__spinner:after {
-  background: #777;
-  animation: load1 1s infinite ease-in-out;
-  width: 1em;
-  height: 4em;
-}
-
-.m-loading-indicator__spinner:before,
-.m-loading-indicator__spinner:after {
-  position: relative;
+.m-loading-indicator {
+  visibility: hidden;
+  opacity: 0;
+  position: fixed;
+  background-color: rgba(255, 255, 255, 0);
   top: 0;
-  content: '';
+  left: 0;
+  width: 100%;
+  height: 2px;
+  transition: all .2s;
+  transition-delay: .4s;
 }
 
-.m-loading-indicator__spinner:before {
-  left: -1.5em;
-  animation-delay: -0.32s;
+$ant-width: 8%;
+
+.m-loading-indicator__ant {
+  display: inline-block;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: -$ant-width;
+  width: $ant-width;
+  background: $c-primary;
+  animation: load1 2.5s infinite ease-in-out;
+
+  &:nth-child(2) {
+    animation-delay: 1s;
+  }
 }
 
-.m-loading-indicator__spinner {
-  text-indent: -9999em;
-  display: block;
-  font-size: 11px;
-  transform: translateZ(0);
-  animation-delay: -0.16s;
-}
 
-.m-loading-indicator__spinner:after {
-  left: 1.5em;
-}
 
 @keyframes load1 {
-  0%,
-  80%,
-  100% {
-    box-shadow: 0 0 #ffffff;
-    height: 4em;
+  0% {
+    left: -$ant-width;
+    width: $ant-width;
   }
-  40% {
-    box-shadow: 0 -2em #ffffff;
-    height: 5em;
+
+  50% {
+    width: 50%;
+  }
+
+
+  100% {
+    left: 100%;
+    width: $ant-width;
   }
 }

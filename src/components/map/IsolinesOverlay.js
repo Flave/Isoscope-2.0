@@ -11,8 +11,10 @@ function IsolinesOverlay() {
       svg,
       clusterGroup,
       cluster, // g elements for clusters
+      clusterEnter,
       isolineDefs, // path definisions
       clusterMasks,
+      dispatch = d3.dispatch(_isolinesOverlay, 'click:startlocation', 'mouseenter:cluster', 'mouseleave:cluster', 'mouseenter:isoline', 'mouseleave:isoline'),
       transform = d3.geo.transform({point: streamProjectPoint}),
       path = d3.geo.path().projection(transform), // only used for bounds calculation
       line = d3.svg.line()
@@ -40,20 +42,26 @@ function IsolinesOverlay() {
       .selectAll('g.m-clusters__cluster')
       .data(function(clusters) { return clusters; });
 
-    // ENTER clusters
-    cluster
+    clusterEnter = cluster
       .enter()
       .append('g')
       .classed('m-clusters__cluster', true)
-      .on('click', function() {
-        d3.event.stopPropagation();
-      });
+      .on('click', handleClickCluster)
+      .on('mouseenter', handleMouseenterCluster)
+      .on('mouseleave', handleMouseleaveCluster);
+
+    // ENTER clusters
 
     createIsolineDefs();
     createIsolineMasks();
     drawMaskedIsolines();
     drawIsolines();
+    //drawStartLocation();
     resetContainers();
+
+    cluster
+      .exit()
+      .remove();
   }
 
 
@@ -197,14 +205,8 @@ function IsolinesOverlay() {
       })
       .classed('m-clusters__isoline', true)
       .classed('m-clusters__isoline--plain', true)
-      .on('mouseover', function(isoline) {
-        handleIsolineMouseover.call(this, isoline);
-      })
-      .on('mouseout', function(isoline) {
-
-        d3.select(this)
-          .classed('m-clusters__isoline--hovered');
-      });
+      .on('mouseenter', handleMouseenterIsoline)
+      .on('mouseleave', handleMouseleaveIsoline);
 
     // EXIT of one use per isoline per cluster
     isolines
@@ -252,12 +254,29 @@ function IsolinesOverlay() {
       });
   }
 
+  function drawStartLocation() {
+    clusterEnter
+      .append('circle')
+      .attr('r', 5)
+      .classed('m-clusters__start-location', true)
+      .on('click', handleClickStartLocation);
 
-  function handleIsolineMouseover(isoline) {
-    d3
-      .selectAll('use.m-clusters__isoline')
-      .classed('is-in-background', true);
+    cluster
+      .selectAll('circle.m-clusters__start-location')
+      .attr('cx', function(cluster) {
+        var startLocation = cluster.features[0].properties.startLocation;
+        return projectPoint(startLocation[0], startLocation[1])[0];
+      })
+      .attr('cy', function(cluster) {
+        var startLocation = cluster.features[0].properties.startLocation;
+        return projectPoint(startLocation[0], startLocation[1])[1];
+      });
   }
+
+
+  /*
+  * HANDLERS
+  */
 
 
   _isolinesOverlay.data = function(_data) {
@@ -277,6 +296,47 @@ function IsolinesOverlay() {
     return _isolinesOverlay;
   }
 
+
+
+  function handleClickStartLocation(cluster, i) {
+    d3.event.stopPropagation();
+    dispatch['click:startlocation'](cluster, i);
+  }
+
+
+  function handleClickCluster(cluster, i) {
+    d3.event.stopPropagation();
+  }
+
+
+  function handleMouseenterCluster(cluster, i) {
+    dispatch['mouseenter:cluster'](cluster, i);
+  }
+
+
+  function handleMouseleaveCluster(cluster, i) {
+    dispatch['mouseleave:cluster'](cluster, i); 
+  }
+
+
+  function handleMouseenterIsoline(isoline, i) {
+    d3
+      .selectAll('use.m-clusters__isoline')
+      .classed('is-in-background', true);
+    dispatch['mouseenter:isoline'](isoline, i);
+  }
+
+
+  function handleMouseleaveIsoline(isoline, i) {
+    dispatch['mouseleave:isoline'](isoline, i);
+    d3.select(this)
+      .classed('m-clusters__isoline--hovered');
+  }
+
+
+  /*
+  * HELPERS
+  */
 
   function createIsolineId(isoline) {
     return `isoline-def__${isoline.properties.travelMode}__${isoline.properties.startLocation.toString()}`;
@@ -431,7 +491,7 @@ function IsolinesOverlay() {
     }
   }
 
-  return _isolinesOverlay;
+  return d3.rebind(_isolinesOverlay, dispatch, 'on');
 }
 
 module.exports = IsolinesOverlay;

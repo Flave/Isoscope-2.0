@@ -143,6 +143,7 @@ function updateClusters(options) {
         .filter(_.negate(_.isUndefined))
         .forEach(calculateProperties)
         .value();
+
       // save newly fetched clusters to _clusters
       _(newClusters).map(function(cluster) {
         var clusterConfig = {
@@ -156,6 +157,7 @@ function updateClusters(options) {
         _clusters[hash] = cluster;
       })
       .value();
+
       return newClusters;
     });
 }
@@ -263,7 +265,7 @@ var ClustersStore = _.assign({}, EventEmitter.prototype, {
       .map(function(travelMode) {
         return _(config.clusters)
           .map(function(startLocation){
-
+            
             var clusterConfig = {
               startLocation: startLocation,
               travelMode: travelMode,

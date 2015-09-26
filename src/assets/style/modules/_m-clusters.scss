@@ -26,33 +26,46 @@
 .m-clusters__isoline {
   cursor: pointer;
   fill: transparent;
+  fill-opacity: 0;
 
   &--plain {
     stroke-width: .75;
     transition: .05s;
 
+    &.is-not-hovered {
+      opacity: 0.1;
+    }
+
     &:hover {
-      stroke-width: 5;
+      stroke-width: 4;
+      fill-opacity: .5;
     }
   }
 
-  &--masked {
-    stroke-width: 6;
+  &--masked-outer {
+    stroke-width: 5;
   }
 
   &--masked-inner {
     stroke-width: 3;
+
+    &.is-not-hovered {
+      opacity: 0.1;
+    }
   }
 
   &--car {
     stroke: $c-car;
+    fill: $c-car;
   }
 
   &--publicTransport {
     stroke: $c-public-transport;
+    fill: $c-public-transport;
   }
 
   &--bike {
     stroke: $c-bike;
+    fill: $c-bike;
   }
 }

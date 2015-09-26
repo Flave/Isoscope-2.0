@@ -25,6 +25,7 @@ function IsolinesOverlay() {
 
 
   function _isolinesOverlay(_svg) {
+
     svg = _svg;
 
     // DATA BINDING of container for all clusters
@@ -43,6 +44,7 @@ function IsolinesOverlay() {
       .selectAll('g.m-clusters__cluster')
       .data(function(clusters) { return clusters; });
 
+    // ENTER clusters
     clusterEnter = cluster
       .enter()
       .append('g')
@@ -50,8 +52,6 @@ function IsolinesOverlay() {
       .on('click', handleClickCluster)
       .on('mouseenter', handleMouseenterCluster)
       .on('mouseleave', handleMouseleaveCluster);
-
-    // ENTER clusters
 
     createIsolineDefs();
     createOuterIsolineMasks();
@@ -262,7 +262,14 @@ function IsolinesOverlay() {
       .classed('m-clusters__isoline', true)
       .classed('m-clusters__isoline--plain', true)
       .on('mouseenter', handleMouseenterIsoline)
-      .on('mouseleave', handleMouseleaveIsoline);
+      .on('mouseleave', handleMouseleaveIsoline)
+      .sort(function(isolineA, isolineB) {
+        if(isolineA.properties.meanDistance > isolineB.properties.meanDistance)
+          return -1;
+        if(isolineA.properties.meanDistance < isolineB.properties.meanDistance)
+          return 1;
+        return 0;
+      });
 
     // EXIT of one use per isoline per cluster
     isolines
@@ -278,7 +285,7 @@ function IsolinesOverlay() {
       .each(function(clusterData) {
         var maskData = getMaskData(clusterData),
             isolineMaskGroups = d3.select(this)
-              .selectAll('use.m-clusters__isoline--masked')
+              .selectAll('use.m-clusters__isoline--masked-outer')
               .data(function(cluster) { return cluster.features; });
 
         isolineMaskGroups
@@ -289,7 +296,7 @@ function IsolinesOverlay() {
           .attr('class', function(isoline) {
             return `m-clusters__isoline--${isoline.properties.travelMode}`;
           })
-          .classed('m-clusters__isoline--masked', true)
+          .classed('m-clusters__isoline--masked-outer', true)
           .classed('m-clusters__isoline', true)
           .attr('xlink:href', function(isoline) {
             return `#${createIsolineId(isoline)}`
@@ -392,29 +399,10 @@ function IsolinesOverlay() {
   }
 
 
+
   /*
   * HANDLERS
   */
-
-
-  _isolinesOverlay.data = function(_data) {
-    if(!arguments.length) return data;
-    data = _data;
-    return _isolinesOverlay;
-  }
-
-
-  _isolinesOverlay.map = function(_map) {
-    if(!arguments.length) return map;
-    !map && _map.on('viewreset', function() {
-      resetContainers();
-      resetDrawings();
-    });
-    map = _map;
-    return _isolinesOverlay;
-  }
-
-
 
   function handleClickStartLocation(cluster, i) {
     d3.event.stopPropagation();
@@ -438,17 +426,60 @@ function IsolinesOverlay() {
 
 
   function handleMouseenterIsoline(isoline, i) {
-    d3
-      .selectAll('use.m-clusters__isoline')
-      .classed('is-in-background', true);
+    var element = d3.select(this),
+        parent = d3.select(element.node().parentNode),
+        clusterData = _.find(data, function(cluster){ 
+          return _.isEqual(cluster.features[0].properties.startLocation, isoline.properties.startLocation);
+        }),
+        travelMode = isoline.properties.travelMode,
+        start = isoline.properties.startLocation.toString(),
+        maskData = clusterData && getMaskData(clusterData),
+        wasHovered = element.classed('is-hovered'),
+        maskIsolines = getMaskIsolines(maskData, isoline);
+
+
+    // set secondary that are masked by hovered isolines to not-hovered
+    _.forEach(maskIsolines, function(maskingIsoline) {
+      var maskingTravelMode = maskingIsoline.properties.travelMode,
+          maskingStart = maskingIsoline.properties.startLocation.toString();
+      parent
+        .selectAll(`use.m-clusters__isoline--masked-inner.m-clusters__isoline--${maskingTravelMode}`)
+        .classed('is-not-hovered', true);
+
+      parent
+        .selectAll(`use.m-clusters__isoline--masked-inner[mask="url(#isoline__inner-mask__${travelMode}__${start})"]`)
+        .classed('is-not-hovered', false);
+    });
+
+    // set all plain isolines to not-hovered
+    parent
+      .selectAll('use.m-clusters__isoline--plain')
+      .classed('is-not-hovered', true);
+
+    // set hovered to is-hovered
+    element
+      .classed('is-not-hovered', false)
+      .classed('is-hovered', true);
+
     dispatch['mouseenter:isoline'](isoline, i);
   }
 
 
   function handleMouseleaveIsoline(isoline, i) {
+    var element = d3.select(this),
+        parent = d3.select(element.node().parentNode);
+
+    // reset all hover classes
+    parent
+      .selectAll(`use.m-clusters__isoline--masked-inner`)
+      .classed('is-not-hovered', false);
+
+    parent
+      .selectAll('use.m-clusters__isoline--plain')
+      .classed('is-not-hovered', false)
+      .classed('is-hovered', false);
+
     dispatch['mouseleave:isoline'](isoline, i);
-    d3.select(this)
-      .classed('m-clusters__isoline--hovered');
   }
 
 
@@ -483,6 +514,18 @@ function IsolinesOverlay() {
       })
       .compact()
       .value();
+    });
+  }
+
+
+  /**
+  * Returns the isolines data of the isolines that is not the isoline passed as parameter
+  */
+  function getMaskIsolines(maskData, isoline) {
+    return _.find(maskData, function(isolines) {
+      return !_.any(isolines, function(maskIsoline) {
+        return isoline.properties.travelMode === maskIsoline.properties.travelMode;
+      });
     });
   }
 
@@ -618,6 +661,28 @@ function IsolinesOverlay() {
         return createDAttribute(projectIsoline(feature))
       });
     }
+  }
+
+
+  /**
+  * PUBLIC FUNCTIONS
+  */
+
+  _isolinesOverlay.data = function(_data) {
+    if(!arguments.length) return data;
+    data = _data;
+    return _isolinesOverlay;
+  }
+
+
+  _isolinesOverlay.map = function(_map) {
+    if(!arguments.length) return map;
+    !map && _map.on('viewreset', function() {
+      resetContainers();
+      resetDrawings();
+    });
+    map = _map;
+    return _isolinesOverlay;
   }
 
   return d3.rebind(_isolinesOverlay, dispatch, 'on');

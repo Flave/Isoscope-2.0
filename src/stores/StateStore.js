@@ -43,8 +43,8 @@ var config = {
         .groupBy(function(coordinate, i){
           return Math.floor(i/2);
         })
-        .map(function(val, key) {
-          return val;
+        .map(function(coordinates, key) {
+          return _.map(coordinates, parseFloat);
         })
         .value();
     },

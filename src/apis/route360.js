@@ -110,7 +110,7 @@ var route360Api = {
   getClusters: function(options) {
     var deferred = Q.defer(),
         wantedIsolines = 24,
-        requestedIsolines = 1,
+        requestedIsolines = 8,
         promises = _(_.range(requestedIsolines))
           .map(function(hour) {
             return route360Api.getIsoline({
@@ -127,7 +127,8 @@ var route360Api = {
       .spread(function() {
         var receivedIsolines = Array.prototype.slice.call(arguments),
             isolines = duplicateIsolines(receivedIsolines, wantedIsolines);
-
+            
+        options.startLocation = _.map(options.startLocation, parseFloat)
         return {
             type: "FeatureCollection",
             properties: options,

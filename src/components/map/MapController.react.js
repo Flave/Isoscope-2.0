@@ -101,6 +101,7 @@ var MapController = React.createClass({
     _.defer(function() {
       this.state.isolinesOverlay
         .data(this.getModesCluster())(this.state.overlaySvg);
+
       }.bind(this));
   },
 
@@ -118,7 +119,7 @@ var MapController = React.createClass({
 
   _handleMapClick: function(e) {
     var clusters = this.props.state.clusters.slice();
-    clusters.push([e.latlng.lat, e.latlng.lng]);
+    clusters.push(_.map([e.latlng.lat, e.latlng.lng], parseFloat));
     this.props.handleStateChange({clusters: clusters});
   },
 

@@ -77,6 +77,7 @@ var Component = React.createClass({
 
 
   render: function() {
+
     return (
         <div className={classNames("controller-view", {"is-loading": this.state.isLoading})}>
           <Map

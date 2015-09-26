@@ -23,6 +23,11 @@ var Slider = React.createClass({
       segments: [],
       value: 0,
       scale: d3.scale.linear().range([0,1]).domain([0,1]),
+      xAxis: d3.svg.axis()
+        .tickValues([0, 6, 12, 18, 23])
+        .orient('top')
+        .tickSize(3)
+        .tickPadding(5),
       height: 30
     }
   },
@@ -46,10 +51,12 @@ var Slider = React.createClass({
 
     this.setState({width: rootWidth});
     this.updateSlider();
+    this.updateAxis();
   },
 
   componentDidUpdate: function() {
     this.updateSlider();
+    this.updateAxis();
   },
 
   initSlider: function() {
@@ -71,7 +78,6 @@ var Slider = React.createClass({
     var slider = d3.select(this.refs.slider.getDOMNode());
 
     slider
-      .transition()
       .call(this.brush);
 
     slider.selectAll(".extent,.resize")
@@ -91,25 +97,54 @@ var Slider = React.createClass({
 
     handleEnter
       .append('circle')
-      .attr("r", 22);
+      .attr("r", 12);
 
     handleEnter
       .append('text')
       .classed('m-slider__handle-text', true)
-      .attr('y', 6)
-      .attr('x', -7)
+      .attr('y', 30)
+      .attr('x', -1)
       .text(this.props.value);
 
     handleEnter
       .append('text')
-      .classed('m-slider__handle-deco-text', true)
-      .attr('y', 3)
-      .attr('x', 9)
+      .classed('m-slider__handle-suffix', true)
+      .attr('y', 26)
+      .attr('x', 7)
       .text('00');
 
     handle
       .attr("transform", `translate(${this.props.scale(this.props.value)},${this.props.height / 2})`);
   },
+
+
+  updateAxis: function() {
+    var xAxisElement = d3.select(this.refs.xAxis.getDOMNode());
+
+    this.props.xAxis.scale(this.props.scale);
+    xAxisElement.call(this.props.xAxis);
+
+    var tickLabelDy = xAxisElement
+      .selectAll('.tick text')
+      .attr('dy');
+
+    var tickLabelY = xAxisElement
+      .selectAll('.tick text')
+      .attr('y');
+
+    xAxisElement
+      .selectAll('.tick')
+      .selectAll('text.m-slider__axis-suffix')
+      .data([1])
+      .enter()
+      .append('text')
+      .classed('m-slider__axis-suffix', true)
+      .text('00')
+      .attr('dy', tickLabelDy)
+      .attr('y', tickLabelY)
+      .attr('x', 13);
+  },
+
 
   render: function() {
     this.props.scale.range([0, this.state.width]);
@@ -123,12 +158,15 @@ var Slider = React.createClass({
               <line x1="0" y1="0.5" x2="0.5" y2="0" style={patternLineStyle} />
             </pattern> 
           </defs>
+          <g
+            className="m-slider__axis"
+            ref="xAxis"/>
           <rect 
             ref="domain"
-            transform={`translate(0, ${this.props.height/2 - 4})`}
+            transform={`translate(0, ${this.props.height/2 - 2})`}
             style={{fill: 'url(#bg-pattern) transparent'}} 
             width={this.state.width} 
-            height={8}/>
+            height={4}/>
           <g ref="slider" className="m-slider__group"/>
         </svg>
       </div>

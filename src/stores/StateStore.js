@@ -8,7 +8,7 @@ var ClusterActions = require('app/actions/ClusterActions'),
 
 var CHANGE_EVENT = 'change',
     _defaultState = {
-      map: [52.5,13.4,10],
+      map: [52.5,13.4,12],
       clusters: [],
       departureTime: 0,
       weekday: 0,

@@ -97,7 +97,7 @@ var hereApi = {
     return Q.all(promises)
       .spread(function() {
         var isolines = Array.prototype.slice.call(arguments);
-        
+
         var geoJSON = {
           type: "FeatureCollection",
           properties: options,

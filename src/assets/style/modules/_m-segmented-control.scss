@@ -13,8 +13,32 @@
   &.is-selected {
     background-color: $c-primary;
 
+    &.m-segmented-control__segment--car {
+      background-color: $c-car;
+    }
+
+    &.m-segmented-control__segment--bike {
+      background-color: $c-bike;
+    }
+
+    &.m-segmented-control__segment--publicTransport {
+      background-color: $c-public-transport;
+    }
+
     &:hover {
       background-color: $c-primary;
+
+      &.m-segmented-control__segment--car {
+        background-color: $c-car;
+      }
+
+      &.m-segmented-control__segment--bike {
+        background-color: $c-bike;
+      }
+
+      &.m-segmented-control__segment--publicTransport {
+        background-color: $c-public-transport;
+      }
     }
   }
 

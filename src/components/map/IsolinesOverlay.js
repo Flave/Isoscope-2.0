@@ -13,7 +13,8 @@ function IsolinesOverlay() {
       cluster, // g elements for clusters
       clusterEnter,
       isolineDefs, // path definisions
-      clusterMasks,
+      outerClusterMasks,
+      innerClusterMasks,
       dispatch = d3.dispatch(_isolinesOverlay, 'click:startlocation', 'mouseenter:cluster', 'mouseleave:cluster', 'mouseenter:isoline', 'mouseleave:isoline'),
       transform = d3.geo.transform({point: streamProjectPoint}),
       path = d3.geo.path().projection(transform), // only used for bounds calculation
@@ -53,8 +54,10 @@ function IsolinesOverlay() {
     // ENTER clusters
 
     createIsolineDefs();
-    createIsolineMasks();
-    drawMaskedIsolines();
+    createOuterIsolineMasks();
+    createInnerIsolineMasks();
+    drawInnerMaskedIsolines();
+    drawOuterMaskedIsolines();
     drawIsolines();
     drawStartLocation();
     resetContainers();
@@ -109,20 +112,73 @@ function IsolinesOverlay() {
   }
 
 
-  function createIsolineMasks() {
+  function createInnerIsolineMasks() {
+    var innerMasks,
+      innerMasksEnter,
+      innerClusterMasksEnter;
+
+    innerClusterMasks = clusterGroup
+      .selectAll('g.m-cluster__inner-mask-group')
+      .data(function(clusters) { return clusters; });
+
+    innerClusterMasksEnter = innerClusterMasks
+      .enter()
+      .append('g')
+      .classed('m-cluster__inner-mask-group', true);
+
+    var innerMasks = innerClusterMasksEnter
+      .selectAll('mask.m-cluster__inner-mask')
+      .data(function(cluster) {return cluster.features; });
+
+    innerMasksEnter = innerMasks
+      .enter()
+      .append('svg:mask')
+      .attr('class', function(isoline) {
+        return `m-cluster__inner-mask--${isoline.properties.travelMode}`
+      })
+      .classed('m-cluster__inner-mask', true)
+      .attr('id', function(isoline) {
+        return createInnerMaskId(isoline);
+      });
+
+    innerMasksEnter
+      .append('rect') // ENTER  of one rect per mask
+      .attr('width', '100%')
+      .attr('height', '100%')
+      .attr('x', '0')
+      .attr('y', '0')
+      .attr('fill', '#fff');
+
+    innerMasksEnter
+      .append('use') // ENTER  of one rect per mask
+      .attr('xlink:href', function(isoline) {
+        return `#${createIsolineId(isoline)}`;
+      });
+
+    innerMasks
+      .exit()
+      .remove();
+
+    innerClusterMasks
+      .exit()
+      .remove();
+  }
+
+
+  function createOuterIsolineMasks() {
     // DATA for one group of masks per cluster
-    clusterMasks = clusterGroup
+    outerClusterMasks = clusterGroup
       .selectAll('g.m-clusters__masks-group')
       .data(function(clusters) { return clusters; });
 
     // ENTER for one group of masks per cluster
-    clusterMasks
+    outerClusterMasks
       .enter()
       .append('g')
       .classed('m-clusters__masks-group', true);
 
     // UPDATE for one group of masks per cluster
-    clusterMasks
+    outerClusterMasks
       .each(function(cluster) {
         var maskData = getMaskData(cluster);
 
@@ -145,7 +201,7 @@ function IsolinesOverlay() {
 
         // UPDATE of one mask per isoline grouping
         masks
-          .attr('id', createMaskId);
+          .attr('id', createOuterMaskId);
 
         // DATA for one use per isoline in isoline grouping
         var maskUses = masks
@@ -176,7 +232,7 @@ function IsolinesOverlay() {
       });
 
     // EXIT for one group of masks per cluster
-    clusterMasks
+    outerClusterMasks
       .exit()
       .remove();
   }
@@ -216,7 +272,7 @@ function IsolinesOverlay() {
   }
 
 
-  function drawMaskedIsolines() {
+  function drawOuterMaskedIsolines() {
     // UPDATE of clusters
     cluster
       .each(function(clusterData) {
@@ -245,7 +301,7 @@ function IsolinesOverlay() {
               });
             });
             if(!maskIsolines) return '';
-            return `url(#${createMaskId(maskIsolines)})`;
+            return `url(#${createOuterMaskId(maskIsolines)})`;
           });
 
         isolineMaskGroups
@@ -254,22 +310,84 @@ function IsolinesOverlay() {
       });
   }
 
+
+  function drawInnerMaskedIsolines() {
+    // UPDATE of clusters
+    cluster
+      .each(function(clusterData) {
+        var maskGroupData = getMaskData(clusterData),
+            isolines,
+            isolinesGroups = d3.select(this)
+              .selectAll('g.m-clusters__masked-isoline-group')
+              .data(function(cluster) { return cluster.features; });
+
+        isolinesGroups
+          .enter()
+          .append('g')
+          .classed('m-clusters__masked-isoline-group', true);
+
+        // append masked isolines for each travelmode and mask them
+        // with the other isolines 
+        isolinesGroups
+          .each(function(isolineData) {
+            var isolinesGroup = d3.select(this),
+                maskData,
+                isolines;
+
+            maskData = _.find(maskGroupData, function(isolines) {
+              return !_.any(isolines, function(maskIsoline) {
+                return isolineData.properties.travelMode === maskIsoline.properties.travelMode;
+              });
+            });
+
+            isolines = isolinesGroup
+              .selectAll('use.m-clusters__isoline--masked-inner')
+              .data(maskData);
+
+            isolines
+              .enter()
+              .append('use');
+
+            isolines
+              .attr('class', function() {
+                return `m-clusters__isoline--${isolineData.properties.travelMode}`;
+              })
+              .classed('m-clusters__isoline--masked-inner', true)
+              .classed('m-clusters__isoline', true)
+              .attr('xlink:href', function() {
+                return `#${createIsolineId(isolineData)}`
+              })
+              .attr('mask', function(maskIsoline) {
+                return `url(#${createInnerMaskId(maskIsoline)})`;
+              });
+
+            isolines
+              .exit()
+              .remove();
+          });
+
+        isolinesGroups
+          .exit()
+          .remove();
+      });
+  }
+
+
   function drawStartLocation() {
     clusterEnter
-      .append('circle')
-      .attr('r', 5)
+      .append('g')
+      .attr('fill-rule', 'evenodd')
       .classed('m-clusters__start-location', true)
-      .on('click', handleClickStartLocation);
+      .on('click', handleClickStartLocation)
+      .append('path')
+      .attr('d', 'M9,29 C9,29 18,14.1923177 18,9.14285714 C18,4.09339657 13.9705627,0 9,0 C4.02943725,0 0,4.09339657 0,9.14285714 C0,14.1923177 9,29 9,29 Z M9,13 C10.6568542,13 12,11.6568542 12,10 C12,8.34314575 10.6568542,7 9,7 C7.34314575,7 6,8.34314575 6,10 C6,11.6568542 7.34314575,13 9,13 Z');
 
     cluster
-      .selectAll('circle.m-clusters__start-location')
-      .attr('cx', function(cluster) {
-        var startLocation = cluster.features[0].properties.startLocation;
-        return projectPoint(startLocation[0], startLocation[1])[0];
-      })
-      .attr('cy', function(cluster) {
-        var startLocation = cluster.features[0].properties.startLocation;
-        return projectPoint(startLocation[0], startLocation[1])[1];
+      .selectAll('g.m-clusters__start-location')
+      .attr('transform', function(cluster) {
+        var startLocation = cluster.features[0].properties.startLocation,
+            projectedPoint = projectPoint(startLocation[0], startLocation[1]);
+        return `translate(${projectedPoint[0] - 10}, ${projectedPoint[1] - 20})`
       });
   }
 
@@ -343,9 +461,15 @@ function IsolinesOverlay() {
   }
 
 
-  function createMaskId(isolines) {
+  function createOuterMaskId(isolines) {
     var modes = _.pluck(isolines, 'properties.travelMode').join('__');
     return `isoline-mask__${modes}__${isolines[0].properties.startLocation.toString()}`
+  }
+
+  function createInnerMaskId(isoline) {
+    var travelMode = isoline.properties.travelMode,
+        startLocation = isoline.properties.startLocation.toString();
+    return `isoline__inner-mask__${travelMode}__${startLocation}`;
   }
 
 
@@ -473,7 +597,12 @@ function IsolinesOverlay() {
         // .duration(600)
         .attr("transform", "translate(" + -topLeft[0] + "," + -topLeft[1] + ")");
 
-      clusterMasks
+      outerClusterMasks
+        .selectAll('rect')
+        .attr('x', topLeft[0])
+        .attr('y', topLeft[1]);
+
+      innerClusterMasks
         .selectAll('rect')
         .attr('x', topLeft[0])
         .attr('y', topLeft[1]);

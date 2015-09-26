@@ -19,7 +19,6 @@
     line {
       stroke: #d8d8d8;
       fill: none;
-      stroke-dasharray: 3, 3;
     }
   }
 
@@ -45,7 +44,8 @@
 
 .m-timeline-chart__cursor {
   fill: transparent;
-  stroke: #d8d8d8;
+  stroke: #d0d0d0;
+  stroke-dasharray: 1, 2;
 }
 
 .m-timeline-chart__line {

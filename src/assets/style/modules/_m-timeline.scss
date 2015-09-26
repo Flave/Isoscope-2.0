@@ -12,6 +12,10 @@
   &:hover,
   &.is-highlighted {
     background-color: #ececec;
+
+    .m-timeline__delete {
+      visibility: visible;
+    }
   }
 }
 
@@ -32,10 +36,22 @@
 }
 
 .m-timeline__meta--secondary {
-  color: #999;
+  color: $c-gray-secondary;
   font-weight: 400;
 }
 
 .m-timeline__chart {
   
+}
+
+.m-timeline__delete {
+  background-color: transparent;
+  border: none;
+  color: $c-primary;
+  text-transform: uppercase;
+  letter-spacing: .05em;
+  float: right;
+  font-family: Montserrat;
+  visibility: hidden;
+  cursor: pointer;
 }

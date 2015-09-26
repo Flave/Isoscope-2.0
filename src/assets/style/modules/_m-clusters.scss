@@ -17,16 +17,31 @@
 }
 
 
+.m-clusters__start-location {
+  path {
+    fill: #333;
+  }
+}
+
 .m-clusters__isoline {
   cursor: pointer;
+  fill: transparent;
+
   &--plain {
-    fill: transparent;
-    stroke-width: 1;
+    stroke-width: .75;
     transition: .05s;
 
     &:hover {
       stroke-width: 5;
     }
+  }
+
+  &--masked {
+    stroke-width: 6;
+  }
+
+  &--masked-inner {
+    stroke-width: 3;
   }
 
   &--car {
@@ -39,29 +54,5 @@
 
   &--bike {
     stroke: $c-bike;
-  }
-
-
-
-  &--masked {
-    fill-opacity: .3;
-    stroke-width: 3;
-
-    &.m-clusters__isoline {
-      &--car {
-        fill: $c-car;
-        stroke: $c-car;
-      }
-
-      &--publicTransport {
-        fill: $c-public-transport;
-        stroke: $c-public-transport;
-      }
-
-      &--bike {
-        fill: $c-bike;
-        stroke: $c-bike;
-      }
-    }
   }
 }

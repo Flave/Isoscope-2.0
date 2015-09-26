@@ -84,4 +84,38 @@
   &--publicTransport {
     stroke: $c-public-transport;
   }
+
+  &:hover {
+    stroke-width: 3;
+
+    ~ .m-timeline-chart__area {
+      opacity: 1;
+    }
+  }
+}
+
+.m-timeline-chart__area {
+  fill: none;
+  stroke-width: 0;
+  fill-opacity: .4;
+  opacity: 0;
+
+  &--car {
+    stroke: $c-car;
+    fill: $c-car;
+  }
+
+  &--bike {
+    stroke: $c-bike;
+    fill: $c-bike;
+  }
+
+  &--publicTransport {
+    stroke: $c-public-transport;
+    fill: $c-public-transport;
+  }
+
+  &.is-hovered {
+    opacity: 1;
+  }
 }

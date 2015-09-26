@@ -11,12 +11,19 @@ function Timeline() {
       distance2Y = d3.scale.linear().nice(),
       maxDistance,
       cursorPosition,
+      linesGroup,
+      linesGroupEnter,
       svg,
       timeAxis = d3.svg.axis().orient('top'),
       distanceAxis = d3.svg.axis().orient('left'),
       line = d3.svg.line()
-        .x(function(d, i){ return hour2X(i); })
-        .y(function(d, i){ return distance2Y(d); })
+        .x(function(feature, i){ return hour2X(i); })
+        .y(function(feature, i){ return distance2Y(feature.properties.meanDistance); })
+        .interpolate('basis'),
+      area = d3.svg.area()
+        .x(function(feature, i){ return hour2X(i)})
+        .y0(function(feature, i){ return distance2Y(feature.properties.minDistance)})
+        .y1(function(feature, i){ return distance2Y(feature.properties.maxDistance)})
         .interpolate('basis');
 
 
@@ -34,6 +41,19 @@ function Timeline() {
     updateAxes();
 
     svg.datum(data);
+
+    linesGroup = svg
+      .selectAll('g.m-timeline-chart__lines')
+      .data(function(clusters) { return [clusters]; });
+
+    linesGroupEnter = linesGroup
+      .enter()
+      .append('g')
+      .attr('transform', `translate(${margin.left}, ${margin.top})`)
+      .classed('m-timeline-chart__lines', true);
+
+
+    drawAreas();
     drawLines();
     drawCursorLine();
   }
@@ -94,19 +114,10 @@ function Timeline() {
   * Draws max, min and average lines
   */
   function drawLines() {
-    var linesGroup = svg
-      .selectAll('g.m-timeline-chart__lines')
-      .data(function(clusters) { return [clusters]; });
-
-    linesGroup
-      .enter()
-      .append('g')
-      .attr('transform', `translate(${margin.left}, ${margin.top})`)
-      .classed('m-timeline-chart__lines', true);
-
     var lineElement = linesGroup
           .selectAll('path.m-timeline-chart__line')
           .data(function(clusters) {
+            return _.pluck(clusters, 'features');
             // return [[23,432,123,44],[23,432,123,44]]
             var lineData = _.map(clusters, function(cluster) {
               return _.map(cluster.features, function(isoline) {
@@ -119,7 +130,9 @@ function Timeline() {
     lineElement
       .enter()
       .append('path')
-      .classed('m-timeline-chart__line', true);
+      .classed('m-timeline-chart__line', true)
+      .on('mouseenter', handleMouseEnterLine)
+      .on('mouseleave', handleMouseLeaveLine);
 
     lineElement
       .attr('class', function(lineData, i) {
@@ -135,6 +148,28 @@ function Timeline() {
       .exit()
       .remove();
   }
+
+
+  function drawAreas() {
+    var areas = linesGroup
+      .selectAll('path.m-timeline-chart__area')
+      .data(function(clusters) {
+        return _.pluck(clusters, 'features');
+      });
+
+    areas
+      .enter()
+      .append('path')
+      .classed('m-timeline-chart__area', true);
+
+    areas
+      .attr('class', function(features, i) {
+        return `m-timeline-chart__area--${features[0].properties.travelMode}`
+      })
+      .classed('m-timeline-chart__area', true)
+      .attr('d', area);
+  }
+
 
   function drawCursorLine() {
     var cursorGroup = svg
@@ -194,6 +229,18 @@ function Timeline() {
       .remove();
   }
 
+
+  function handleMouseEnterLine(features, i) {
+    svg
+      .selectAll(`.m-timeline-chart__area--${features[0].properties.travelMode}`)
+      .classed('is-hovered', true);
+  }
+
+  function handleMouseLeaveLine(features, i) {
+    svg
+      .selectAll(`.m-timeline-chart__area--${features[0].properties.travelMode}`)
+      .classed('is-hovered', false);
+  }
 
 
   /*

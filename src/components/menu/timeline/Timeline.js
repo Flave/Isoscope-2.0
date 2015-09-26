@@ -32,108 +32,12 @@ function Timeline() {
 
     updateScales();
     updateAxes();
-    drawCursorLine();
 
     svg.datum(data);
     drawLines();
+    drawCursorLine();
   }
 
-  /*
-  * Public functions for Timeline component
-  */
-  _timeline.size = function(_) {
-    if(!arguments.length) return size;
-    size = _;
-    return _timeline;
-  }
-
-  _timeline.data = function(_) {
-    if(!arguments.length) return data;
-    data = _;
-    return _timeline;
-  }
-
-  _timeline.cursorPosition = function(_) {
-    if(!arguments.length) return cursorPosition;
-    cursorPosition = _;
-    return _timeline;
-  }
-
-  _timeline.map = function(_) {
-    if(!arguments.length) return map;
-    map = _;
-    return _timeline;
-  }
-
-  _timeline.maxDistance = function(_) {
-    if(!arguments.length) return maxDistance;
-    maxDistance = _;
-    return _timeline;
-  }
-
-
-  function drawCursorLine() {
-    var cursorLine = svg
-      .selectAll('line.m-timeline-chart__cursor')
-      .data([1]);
-
-    var cursorLineEnter = cursorLine
-      .enter()
-      .append('line')
-      .classed('m-timeline-chart__cursor', true);
-
-    cursorLine
-      .attr('x1', hour2X(cursorPosition))
-      .attr('x2', hour2X(cursorPosition))
-      .attr('y1', margin.top)
-      .attr('y2', margin.top + chartSize[1]);
-  }
-
-  /*
-  * Draws max, min and average lines
-  */
-  function drawLines() {
-    var linesGroup = svg
-      .selectAll('g.m-timeline-chart__lines')
-      .data(function(clusters) { return [clusters]; });
-
-    linesGroup
-      .enter()
-      .append('g')
-      .attr('transform', `translate(${margin.left}, ${margin.top})`)
-      .classed('m-timeline-chart__lines', true);
-
-    var lineElement = linesGroup
-          .selectAll('path.m-timeline-chart__line')
-          .data(function(clusters) {
-            // return [[23,432,123,44],[23,432,123,44]]
-            var lineData = _.map(clusters, function(cluster) {
-              return _.map(cluster.features, function(isoline) {
-                return isoline.properties.meanDistance;
-              })
-            });
-            return lineData;
-          });
-
-    lineElement
-      .enter()
-      .append('path')
-      .classed('m-timeline-chart__line', true);
-
-    lineElement
-      .attr('class', function(lineData, i) {
-        return `m-timeline-chart__line m-timeline-chart__line--${data[i].properties.travelMode}`;
-      })
-      .attr('d', line);
-
-    lineElement
-      .exit()
-      .remove();
-
-    linesGroup
-      .exit()
-      .remove();
-  }
 
   /*
   * Updates x and y scales
@@ -184,6 +88,145 @@ function Timeline() {
     distanceAxisContainer
       .selectAll('text')
       .text(d3.round(distance2Y.domain()[0]/1000, 1) + " km");
+  }
+
+  /*
+  * Draws max, min and average lines
+  */
+  function drawLines() {
+    var linesGroup = svg
+      .selectAll('g.m-timeline-chart__lines')
+      .data(function(clusters) { return [clusters]; });
+
+    linesGroup
+      .enter()
+      .append('g')
+      .attr('transform', `translate(${margin.left}, ${margin.top})`)
+      .classed('m-timeline-chart__lines', true);
+
+    var lineElement = linesGroup
+          .selectAll('path.m-timeline-chart__line')
+          .data(function(clusters) {
+            // return [[23,432,123,44],[23,432,123,44]]
+            var lineData = _.map(clusters, function(cluster) {
+              return _.map(cluster.features, function(isoline) {
+                return isoline.properties.meanDistance;
+              })
+            });
+            return lineData;
+          });
+
+    lineElement
+      .enter()
+      .append('path')
+      .classed('m-timeline-chart__line', true);
+
+    lineElement
+      .attr('class', function(lineData, i) {
+        return `m-timeline-chart__line m-timeline-chart__line--${data[i].properties.travelMode}`;
+      })
+      .attr('d', line);
+
+    lineElement
+      .exit()
+      .remove();
+
+    linesGroup
+      .exit()
+      .remove();
+  }
+
+  function drawCursorLine() {
+    var cursorGroup = svg
+      .selectAll('g.m-timeline-chart__cursor-group')
+      .data([1]);
+
+    var cursorGroupEnter = cursorGroup
+      .enter()
+      .append('g')
+      .classed('m-timeline-chart__cursor-group', true);
+
+    cursorGroup
+      .attr('transform', `translate(${hour2X(cursorPosition)}, ${margin.top})`)
+
+    var cursorLine = cursorGroupEnter
+      .append('line')
+      .classed('m-timeline-chart__cursor-line', true)
+
+    cursorLine
+      .attr('x1', 0)
+      .attr('x2', 0)
+      .attr('y1', 0)
+      .attr('y2', chartSize[1]);
+
+    cursorGroupEnter
+      .append('rect')
+      .classed('m-timeline-chart__cursor-background', true)
+      .attr('width', 30)
+      .attr('height', 20)
+      .attr('fill', 'transparent')
+      .attr('x', -15);
+
+    var cursorDots = cursorGroup
+      .selectAll('circle.m-timeline-chart__cursor-dot')
+      .data(data);
+
+    cursorDots
+      .enter()
+      .append('circle')
+      .attr('r', 4)
+      .attr('cx', 0)
+      .classed('m-timeline-chart__cursor-dot', true);
+
+    cursorGroup
+      .selectAll('circle.m-timeline-chart__cursor-dot')
+      .attr('cy', function(isolines) {
+        var meanDistance = isolines.features[cursorPosition].properties.meanDistance;
+        return distance2Y(meanDistance);
+      })
+      .attr('class', function(isolines) {
+        return `m-timeline-chart__cursor-dot--${isolines.properties.travelMode}`;
+      })
+      .classed('m-timeline-chart__cursor-dot', true);
+
+    cursorDots
+      .exit()
+      .remove();
+  }
+
+
+
+  /*
+  * Public functions for Timeline component
+  */
+  _timeline.size = function(_) {
+    if(!arguments.length) return size;
+    size = _;
+    return _timeline;
+  }
+
+  _timeline.data = function(_) {
+    if(!arguments.length) return data;
+    data = _;
+    return _timeline;
+  }
+
+  _timeline.cursorPosition = function(_) {
+    if(!arguments.length) return cursorPosition;
+    cursorPosition = _;
+    return _timeline;
+  }
+
+  _timeline.map = function(_) {
+    if(!arguments.length) return map;
+    map = _;
+    return _timeline;
+  }
+
+  _timeline.maxDistance = function(_) {
+    if(!arguments.length) return maxDistance;
+    maxDistance = _;
+    return _timeline;
   }
 
   return _timeline;

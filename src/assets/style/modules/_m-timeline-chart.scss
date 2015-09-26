@@ -42,10 +42,30 @@
 
 }
 
-.m-timeline-chart__cursor {
+.m-timeline-chart__cursor-line {
   fill: transparent;
   stroke: #d0d0d0;
   stroke-dasharray: 1, 2;
+}
+
+.m-timeline-chart__cursor-dot {
+  stroke: #f8f8f8;
+  stroke-width: 2;
+
+  &--car {
+    //stroke: $c-car;
+    fill: $c-car;
+  }
+
+  &--publicTransport {
+    //stroke: $c-public-transport;
+    fill: $c-public-transport;
+  }
+
+  &--bike {
+    //stroke: $c-bike;
+    fill: $c-bike;
+  }
 }
 
 .m-timeline-chart__line {

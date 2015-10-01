@@ -137,7 +137,11 @@ function IsolinesOverlay() {
 
     innerMasks = innerMasksGroup
       .selectAll('mask.m-cluster__inner-mask')
-      .data(function(cluster) { return cluster.features; });
+      .data(function(cluster) { return cluster.features; }, function(isoline) {
+        var startLocation = isoline.properties.startLocation.toString(),
+            travelMode = isoline.properties.travelMode;
+        return `${startLocation}__${travelMode}`;
+      });
 
     innerMasksEnter = innerMasks
       .enter()
@@ -352,7 +356,8 @@ function IsolinesOverlay() {
 
         // append masked isolines for each travelmode and mask them
         // with the other isolines 
-        console.log(isolineData);
+        console.log(isolinesGroups);
+
         isolinesGroups
           .each(function(isolineData) {
             var isolinesGroup = d3.select(this),
@@ -363,7 +368,7 @@ function IsolinesOverlay() {
               return !_.any(isolines, function(maskIsoline) {
                 return isolineData.properties.travelMode === maskIsoline.properties.travelMode;
               });
-            });
+            }) || [];
 
             isolines = isolinesGroup
               .selectAll('use.m-clusters__isoline--masked-inner')

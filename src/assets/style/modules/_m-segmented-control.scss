@@ -11,7 +11,7 @@
   min-width: 41px;
 
   &.is-selected {
-    background-color: $c-primary;
+    background-color: $c-accent-01;
 
     &.m-segmented-control__segment--car {
       background-color: $c-car;
@@ -26,7 +26,7 @@
     }
 
     &:hover {
-      background-color: $c-primary;
+      background-color: $c-accent-01;
 
       &.m-segmented-control__segment--car {
         background-color: $c-car;

@@ -77,13 +77,12 @@ var Component = React.createClass({
 
 
   render: function() {
-
     return (
         <div className={classNames("controller-view", {"is-loading": this.state.isLoading})}>
           <Map
             state={this.state.state}
             clusters={this.state.clusters}
-            handleStateChange={this._transitionTo} />
+            handleTransition={this._transitionTo} />
           <UIPanel 
             state={this.state.state}
             clusters={this.state.clusters}

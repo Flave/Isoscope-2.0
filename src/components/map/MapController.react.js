@@ -85,12 +85,12 @@ var MapController = React.createClass({
           .attr("xmlns", "http://www.w3.org/2000/svg")
           .style('position', 'relative');
 
-    this.state.isolinesOverlay/*
+    this.state.isolinesOverlay
       .on('click:startlocation', this._handleClickClusterStartLocation)
       .on('mouseenter:cluster', this._handleMouseenterCluster)
       .on('mouseleave:cluster', this._handleMouseleaveCluster)
       .on('mouseenter:isoline', this._handleMouseenterIsoline)
-      .on('mouseleave:isoline', this._handleMouseleaveIsoline)*/
+      .on('mouseleave:isoline', this._handleMouseleaveIsoline)
       .map(map)
       .data(this.getModesCluster());
 
@@ -114,13 +114,13 @@ var MapController = React.createClass({
         zoom = map.getZoom(),
         mapParams = [center.lat, center.lng, zoom];
 
-    this.props.handleStateChange({map: mapParams});
+    this.props.handleTransition({map: mapParams});
   },
 
   _handleMapClick: function(e) {
     var clusters = this.props.state.clusters.slice();
     clusters.push(_.map([e.latlng.lat, e.latlng.lng], parseFloat));
-    this.props.handleStateChange({clusters: clusters});
+    this.props.handleTransition({clusters: clusters});
   },
 
   _handleClickClusterStartLocation: function(cluster, i) {
@@ -129,19 +129,19 @@ var MapController = React.createClass({
 
   _handleMouseenterCluster: function(cluster, i) {
     var startLocation = cluster.features[0].properties.startLocation.toString();
-    this.props.handleStateChange({hoveredCluster: startLocation});
+    this.props.handleTransition({hoveredCluster: startLocation});
   },
 
   _handleMouseleaveCluster: function(cluster, i) {
-    this.props.handleStateChange({hoveredCluster: undefined});
+    this.props.handleTransition({hoveredCluster: undefined});
   },
 
   _handleMouseenterIsoline: function(isoline, i) {
-    this.props.handleStateChange({hoveredIsoline: isoline.properties.mode});
+    this.props.handleTransition({hoveredIsoline: isoline.properties.mode});
   },
 
   _handleMouseleaveIsoline: function(isoline, i) {
-    this.props.handleStateChange({hoveredIsoline: undefined});
+    this.props.handleTransition({hoveredIsoline: undefined});
   },
 
   render: function() {

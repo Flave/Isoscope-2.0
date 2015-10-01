@@ -1,14 +1,16 @@
 var ClusterActions = require('app/actions/ClusterActions'),
     ClustersStore = require('app/stores/ClustersStore'),
     EventEmitter = require('events').EventEmitter,
-    dispatcher = require('../dispatcher'),
+    dispatcher = require('app/dispatcher'),
+    locationsConfig = require('app/config/locations'),
     Q = require('q'),
     _ = require('lodash');
 
 
 var CHANGE_EVENT = 'change',
     _defaultState = {
-      map: [52.5,13.4,12],
+      map: locationsConfig[0].map,
+      location: locationsConfig[0],
       clusters: [],
       departureTime: 0,
       weekday: 0,
@@ -86,24 +88,25 @@ var config = {
 
 function set(values) {
   var newState = _.assign({}, _defaultState, _state, values),
-      newUrlState = _.assign({}, _urlState, _.pick(values, _clusterKeys));
+      newUrlState = _.assign({}, _urlState, _.pick(values, _urlKeys));
 
+  // update states
   _state = newState;
   _urlState = newUrlState;
 
   // clusters shouldn't be undefined otherwise we have to check for that later on
   if(!_state.clusters) _state.clusters = [];
+}
 
+
+function updateClusters(values) {
   // check if a property that requires a update of clusters has changed and update accordingly
   var clustersNeedUpdate = _.any(values, function(value, key) {
     return _clusterKeys.indexOf(key) !== -1;
   });
-  if(clustersNeedUpdate) update();
-}
 
-
-function update() {
-  ClusterActions.update(getClusterConfig());
+  if(clustersNeedUpdate)
+    ClusterActions.update(getClusterConfig());
 }
 
 
@@ -113,6 +116,7 @@ function getClusterConfig() {
 }
 
 
+// parse state from url
 function fromUrl(urlState) {
   _urlState = _(_urlKeys)
     // parse individual query parameters according to their parse function
@@ -136,11 +140,13 @@ function fromUrl(urlState) {
     .value();
 
   set(_urlState);
+  updateClusters(_urlState);
 }
 
 
-var ClustersStore = _.assign({}, EventEmitter.prototype, {
+var StateStore = _.assign({}, EventEmitter.prototype, {
 
+  // create url object which can be passed to react router
   toUrl: function() {
     return _(_urlState)
       .map(function(value, key) {
@@ -170,6 +176,7 @@ var ClustersStore = _.assign({}, EventEmitter.prototype, {
 
   set: function(values) {
     set(values);
+    updateClusters(values);
     this.emitChange();
   },
 
@@ -191,8 +198,8 @@ var ClustersStore = _.assign({}, EventEmitter.prototype, {
   }
 });
 
-ClustersStore.addChangeListener(function() {
+StateStore.addChangeListener(function() {
   
 });
 
-module.exports = ClustersStore;
+module.exports = StateStore;

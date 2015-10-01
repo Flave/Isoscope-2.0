@@ -30,7 +30,9 @@ var UIPanel = React.createClass({
     return (
       <div className="m-ui-panel">
         <div className="m-ui-panel__group">
-          <LocationSearch />
+          <LocationSearch 
+            state={this.props.state}
+            handleTransition={this.props.handleTransition}/>
         </div>
         <div className="m-ui-panel__group">
           <ViewSettings 

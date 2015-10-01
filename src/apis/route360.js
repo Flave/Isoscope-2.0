@@ -25,10 +25,10 @@ function webMercatorToLatLng(point){
 */
 
 function getIsolineGeoJSON(polygonsJson, options) {
-      
     if ( polygonsJson.error ) return errorMessage;
 
-    var feature = { 
+    var coordinates,
+        feature = { 
       type:"Feature", 
       geometry: { 
         type: "MultiPolygon" 
@@ -36,21 +36,24 @@ function getIsolineGeoJSON(polygonsJson, options) {
       properties: options
     };
 
-    var coordinates = _(polygonsJson[0].polygons)
-      .map(function (polygonJson) {
+    if(polygonsJson[0]) {
+      coordinates = _(polygonsJson[0].polygons)
+        .map(function (polygonJson) {
 
-          var pointsSimplified = simplify(polygonJson.outerBoundary, 340);
-          var points = _(pointsSimplified)
-            .map(function(point) {
-              return webMercatorToLatLng({x: point[0], y: point[1]})
-            })
-            .compact()
-            .value();
+            var pointsSimplified = simplify(polygonJson.outerBoundary, 340);
+            var points = _(pointsSimplified)
+              .map(function(point) {
+                return webMercatorToLatLng({x: point[0], y: point[1]})
+              })
+              .compact()
+              .value();
 
-          return [points];
-      })
-      .value();
-    feature.geometry.coordinates = coordinates;
+            return [points];
+        })
+        .value();
+    }
+    feature.geometry.coordinates = coordinates || [];
+
     return feature;
 }
 
@@ -151,15 +154,16 @@ var route360Api = {
       id: 'some-id'
     });
 
-    jsonp(`${base}?${params}`, {param: 'cb'}, function(err, res) {
-      if(err)
-        deferred.reject(error);
-      else if(res.Details)
-        deferred.reject(res);
-      else {
-        deferred.resolve(getIsolineGeoJSON(res.data, options));
-      }
-    });
+      jsonp(`${base}?${params}`, {param: 'cb'}, function(err, res) {
+
+        if(err)
+          deferred.reject(err);
+        else if(res.message)
+          deferred.reject(res);
+        else {
+          deferred.resolve(getIsolineGeoJSON(res.data, options));
+        }
+      });
 
     return deferred.promise;
   }

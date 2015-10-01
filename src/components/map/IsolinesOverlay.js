@@ -13,8 +13,8 @@ function IsolinesOverlay() {
       cluster, // g elements for clusters
       clusterEnter,
       isolineDefs, // path definisions
-      outerClusterMasks,
-      innerClusterMasks,
+      outerMasksGroup,
+      innerMasksGroup,
       dispatch = d3.dispatch(_isolinesOverlay, 'click:startlocation', 'mouseenter:cluster', 'mouseleave:cluster', 'mouseenter:isoline', 'mouseleave:isoline'),
       transform = d3.geo.transform({point: streamProjectPoint}),
       path = d3.geo.path().projection(transform), // only used for bounds calculation
@@ -42,7 +42,12 @@ function IsolinesOverlay() {
 
     cluster = clusterGroup
       .selectAll('g.m-clusters__cluster')
-      .data(function(clusters) { return clusters; });
+      .data(function(clusters) { 
+        return clusters; 
+      }, function(cluster) {
+        // databinding for individual cluster
+        return cluster.features[0].properties.startLocation.toString();
+      });
 
     // ENTER clusters
     clusterEnter = cluster
@@ -114,25 +119,32 @@ function IsolinesOverlay() {
 
   function createInnerIsolineMasks() {
     var innerMasks,
-      innerMasksEnter,
-      innerClusterMasksEnter;
-
-    innerClusterMasks = clusterGroup
+      innerMasksEnter;
+    
+    innerMasksGroup = clusterGroup
       .selectAll('g.m-cluster__inner-mask-group')
-      .data(function(clusters) { return clusters; });
+      .data(function(clusters) { 
+        return clusters; 
+      }, function(cluster) {
+        // databinding for individual cluster
+        return cluster.features[0].properties.startLocation.toString();
+      });
 
-    innerClusterMasksEnter = innerClusterMasks
+    innerMasksGroup
       .enter()
       .append('g')
       .classed('m-cluster__inner-mask-group', true);
 
-    var innerMasks = innerClusterMasksEnter
+    innerMasks = innerMasksGroup
       .selectAll('mask.m-cluster__inner-mask')
-      .data(function(cluster) {return cluster.features; });
+      .data(function(cluster) { return cluster.features; });
 
     innerMasksEnter = innerMasks
       .enter()
-      .append('svg:mask')
+      .append('svg:mask');
+
+
+    innerMasks
       .attr('class', function(isoline) {
         return `m-cluster__inner-mask--${isoline.properties.travelMode}`
       })
@@ -151,6 +163,10 @@ function IsolinesOverlay() {
 
     innerMasksEnter
       .append('use') // ENTER  of one rect per mask
+      .classed('m-cluster__inner-mask-use', true);
+
+    innerMasks
+      .selectAll('use.m-cluster__inner-mask-use')
       .attr('xlink:href', function(isoline) {
         return `#${createIsolineId(isoline)}`;
       });
@@ -159,7 +175,7 @@ function IsolinesOverlay() {
       .exit()
       .remove();
 
-    innerClusterMasks
+    innerMasksGroup
       .exit()
       .remove();
   }
@@ -167,18 +183,18 @@ function IsolinesOverlay() {
 
   function createOuterIsolineMasks() {
     // DATA for one group of masks per cluster
-    outerClusterMasks = clusterGroup
+    outerMasksGroup = clusterGroup
       .selectAll('g.m-clusters__masks-group')
       .data(function(clusters) { return clusters; });
 
     // ENTER for one group of masks per cluster
-    outerClusterMasks
+    outerMasksGroup
       .enter()
       .append('g')
       .classed('m-clusters__masks-group', true);
 
     // UPDATE for one group of masks per cluster
-    outerClusterMasks
+    outerMasksGroup
       .each(function(cluster) {
         var maskData = getMaskData(cluster);
 
@@ -232,7 +248,7 @@ function IsolinesOverlay() {
       });
 
     // EXIT for one group of masks per cluster
-    outerClusterMasks
+    outerMasksGroup
       .exit()
       .remove();
   }
@@ -319,6 +335,7 @@ function IsolinesOverlay() {
 
 
   function drawInnerMaskedIsolines() {
+
     // UPDATE of clusters
     cluster
       .each(function(clusterData) {
@@ -335,6 +352,7 @@ function IsolinesOverlay() {
 
         // append masked isolines for each travelmode and mask them
         // with the other isolines 
+        console.log(isolineData);
         isolinesGroups
           .each(function(isolineData) {
             var isolinesGroup = d3.select(this),
@@ -640,12 +658,12 @@ function IsolinesOverlay() {
         // .duration(600)
         .attr("transform", "translate(" + -topLeft[0] + "," + -topLeft[1] + ")");
 
-      outerClusterMasks
+      outerMasksGroup
         .selectAll('rect')
         .attr('x', topLeft[0])
         .attr('y', topLeft[1]);
 
-      innerClusterMasks
+      innerMasksGroup
         .selectAll('rect')
         .attr('x', topLeft[0])
         .attr('y', topLeft[1]);

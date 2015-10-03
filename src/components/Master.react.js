@@ -11,7 +11,6 @@ var React = require('react'),
 var tourManager;
 
 
-
 function getClusters(config) {
   return ClustersStore.get(config);
 };

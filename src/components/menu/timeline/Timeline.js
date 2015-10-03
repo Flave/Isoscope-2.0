@@ -14,6 +14,7 @@ function Timeline() {
       linesGroup,
       linesGroupEnter,
       svg,
+      highlightedLine,
       timeAxis = d3.svg.axis().orient('top'),
       distanceAxis = d3.svg.axis().orient('left'),
       line = d3.svg.line()
@@ -167,6 +168,9 @@ function Timeline() {
         return `m-timeline-chart__area--${features[0].properties.travelMode}`
       })
       .classed('m-timeline-chart__area', true)
+      .classed('is-hovered', function(features, i) {
+        return highlightedLine === features[0].properties.travelMode;
+      })
       .attr('d', area);
   }
 
@@ -249,6 +253,12 @@ function Timeline() {
   _timeline.size = function(_) {
     if(!arguments.length) return size;
     size = _;
+    return _timeline;
+  }
+
+  _timeline.highlightLine = function(_) {
+    if(!arguments.length) return highlightedLine;
+    highlightedLine = _;
     return _timeline;
   }
 

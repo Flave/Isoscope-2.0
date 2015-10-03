@@ -19,8 +19,6 @@ var Map = React.createClass({
 
     this.map = L.map(mapContainer);
 
-    console.log(this.props.zoom);
-
     this.map
       .setView(L.latLng(this.props.center), this.props.zoom);
 

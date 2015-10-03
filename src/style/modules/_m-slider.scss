@@ -1,0 +1,54 @@
+.m-slider {
+  margin-top: 40px;
+}
+
+.m-slider__svg {
+  overflow: visible !important;
+}
+
+.m-slider__group {
+  .background {
+    cursor: pointer !important;
+  }
+
+  .handle {
+    cursor: pointer;
+    fill: $c-accent-01;
+  }
+}
+
+.m-slider__handle-text {
+  text-anchor: middle;
+  fill: $c-gray-primary;
+  font-size: 15px;
+  text-anchor: end;
+}
+
+.m-slider__handle-suffix {
+  text-anchor: middle;
+  fill: $c-gray-primary;
+  font-size: 10px;
+}
+
+.m-slider__axis {
+  .domain {
+    fill: none;
+  }
+
+  .tick {
+    text {
+      font-size: 14px;
+      text-anchor: end !important;
+      fill: $c-gray-secondary;
+    }
+
+    line {
+      stroke: $c-gray-secondary;
+    }
+
+    .m-slider__axis-suffix {
+      font-size: 9px;
+      fill: $c-gray-secondary;
+    }
+  }
+}

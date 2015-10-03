@@ -10,7 +10,8 @@ var style = {
 var App = React.createClass({
   getInitialState: function() {
     return {
-      timeline: Timeline()
+      timeline: Timeline(),
+      isHighlighted: false
     }
   },
   componentDidMount: function() {
@@ -21,28 +22,39 @@ var App = React.createClass({
     this.updateTimeline();
   },
 
+
+  componentWillReceiveProps: function(nextProps) {
+    var isHighlighted = nextProps.state.hoveredCluster === nextProps.data[0].properties.startLocation.toString();
+
+    this.setState({
+      isHighlighted: isHighlighted
+    });
+  },
+
+
   updateTimeline: function() {
     var svgNode = this.refs.timelineCanvas.getDOMNode(),
         componentNode = this.getDOMNode(),
         size = [componentNode.offsetWidth - 20, 80],
-        svg = d3.select(svgNode);
+        svg = d3.select(svgNode),
+        highlightedLine = this.state.isHighlighted ? this.props.state.hoveredIsoline : undefined;
 
     this.state.timeline
       .data(this.props.data)
+      .highlightLine(highlightedLine)
       .maxDistance(this.props.maxDistance)
       .cursorPosition(this.props.state.departureTime)
       .size(size)(svg);
   },
 
   render: function() {
-    var locationInfo = this.props.data[0].properties.location,
-        isHighlighted = this.props.state.hoveredCluster === this.props.data[0].properties.startLocation.toString();
+    var locationInfo = this.props.data[0].properties.location;
 
     return (
       <div 
         style={style} 
         onClick={this._handleTimelineClick} 
-        className={classNames('m-timeline', {'is-highlighted': isHighlighted})}>
+        className={classNames('m-timeline', {'is-highlighted': this.state.isHighlighted})}>
         <div className="m-timeline__header">
           <span className="m-timeline__meta m-timeline__meta--primary">{locationInfo.city}, </span>
           <span className="m-timeline__meta m-timeline__meta--secondary">{locationInfo.address}</span>

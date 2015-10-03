@@ -1,0 +1,71 @@
+.is-loading {
+  .m-clusters__isoline {
+    animation: load1 1s infinite ease-in-out;
+  }
+}
+
+@keyframes load1 {
+  0%,
+  80%,
+  100% {
+    stroke-width: 6;
+    height: 4em;
+  }
+  40% {
+    stroke-width: 1;
+  }
+}
+
+
+.m-clusters__start-location {
+  path {
+    fill: #333;
+  }
+}
+
+.m-clusters__isoline {
+  cursor: pointer;
+  fill: transparent;
+  fill-opacity: 0;
+
+  &--plain {
+    stroke-width: .75;
+    transition: .05s;
+
+    &.is-not-hovered {
+      opacity: 0.1;
+    }
+
+    &:hover {
+      stroke-width: 4;
+      fill-opacity: .5;
+    }
+  }
+
+  &--masked-outer {
+    stroke-width: 5;
+  }
+
+  &--masked-inner {
+    stroke-width: 3;
+
+    &.is-not-hovered {
+      opacity: 0.1;
+    }
+  }
+
+  &--car {
+    stroke: $c-car;
+    fill: $c-car;
+  }
+
+  &--publicTransport {
+    stroke: $c-public-transport;
+    fill: $c-public-transport;
+  }
+
+  &--bike {
+    stroke: $c-bike;
+    fill: $c-bike;
+  }
+}

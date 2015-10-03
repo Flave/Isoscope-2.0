@@ -1,5 +1,5 @@
 if(process.env.BROWSER) {
-  require('./assets/style/main.scss');
+  require('./style/main.scss');
 }
 
 var React = require('react');

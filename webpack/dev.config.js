@@ -4,7 +4,7 @@
 var path = require("path");
 var webpack = require("webpack");
 
-const assetsPath = path.resolve(__dirname, "../public/assets");
+const assetsPath = path.resolve(__dirname, "../static/assets");
 
 const WEBPACK_HOST = "localhost";
 const WEBPACK_PORT = parseInt(process.env.PORT) + 1 || 3001;

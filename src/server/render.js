@@ -29,10 +29,6 @@ var render = function(req, res, next) {
     <HtmlDocument markup={markup}/>
   );
 
-  // In production, we just serve the pre-compiled assets from the /build directory
-  if (process.env.NODE_ENV === "production") {
-  }
-
   res.send("<!DOCTYPE html>" + html);
 }
 

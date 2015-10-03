@@ -137,7 +137,7 @@ var MapController = React.createClass({
   },
 
   _handleMouseenterIsoline: function(isoline, i) {
-    this.props.handleTransition({hoveredIsoline: isoline.properties.mode});
+    this.props.handleTransition({hoveredIsoline: isoline.properties.travelMode});
   },
 
   _handleMouseleaveIsoline: function(isoline, i) {

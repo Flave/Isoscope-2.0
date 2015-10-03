@@ -4,8 +4,11 @@ var React = require('react'),
     _ = require('lodash'),
     State = require('app/stores/StateStore'),
     classNames = require('classnames'),
+    tourDates = require('app/config/tour'),
+    TourManager = require('app/utility/tour-manager'),
     ClustersStore = require('app/stores/ClustersStore');
 
+var tourManager;
 
 function getClusters(config) {
   return ClustersStore.get(config);
@@ -41,6 +44,10 @@ var Component = React.createClass({
     ClustersStore.addChangeListener(this._onStores);
     State.addChangeListener(this._onState);
     State.setFromUrl(query);
+
+    setTimeout(function() {
+      //tourManager = TourManager({tourDates: tourDates}).start();
+    }, 2000);
   },
 
   componentWillReceiveProps: function(nextProps) {
@@ -50,6 +57,8 @@ var Component = React.createClass({
   },
 
   _transitionTo: function(newState) {
+    if(tourManager)
+      tourManager.stop();
     State.set(newState);
   },
 

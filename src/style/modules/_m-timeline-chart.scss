@@ -1,0 +1,121 @@
+.m-timeline {
+  &:first-child {
+    .m-timeline-chart__axis--y {
+      text {
+        opacity: 1;
+      }
+    }
+  }
+}
+
+.m-timeline-chart__axis {
+  .tick {
+
+    text {
+      font-size: 10px;
+      text-anchor: end;
+    }
+
+    line {
+      stroke: #d8d8d8;
+      fill: none;
+    }
+  }
+
+  .domain {
+    fill: none;
+    stroke: none;
+  }
+}
+
+.m-timeline-chart__axis--y {
+  text {
+    alignment-baseline: hanging;
+    text-anchor: end;
+    font-size: 10px;
+    fill: #999;
+    opacity: 0;
+  }
+}
+
+.m-timeline-chart__lines {
+
+}
+
+.m-timeline-chart__cursor-line {
+  fill: transparent;
+  stroke: #d0d0d0;
+  stroke-dasharray: 1, 2;
+}
+
+.m-timeline-chart__cursor-dot {
+  stroke: #f8f8f8;
+  stroke-width: 2;
+
+  &--car {
+    //stroke: $c-car;
+    fill: $c-car;
+  }
+
+  &--publicTransport {
+    //stroke: $c-public-transport;
+    fill: $c-public-transport;
+  }
+
+  &--bike {
+    //stroke: $c-bike;
+    fill: $c-bike;
+  }
+}
+
+.m-timeline-chart__line {
+  fill: none;
+  stroke: #000000;
+  stroke-width: 2;
+
+  &--car {
+    stroke: $c-car;
+  }
+
+  &--bike {
+    stroke: $c-bike;
+  }
+
+  &--publicTransport {
+    stroke: $c-public-transport;
+  }
+
+  &:hover {
+    stroke-width: 3;
+
+    ~ .m-timeline-chart__area {
+      opacity: 1;
+    }
+  }
+}
+
+.m-timeline-chart__area {
+  fill: none;
+  stroke-width: 0;
+  fill-opacity: .4;
+  opacity: 0;
+
+  &--car {
+    stroke: $c-car;
+    fill: $c-car;
+  }
+
+  &--bike {
+    stroke: $c-bike;
+    fill: $c-bike;
+  }
+
+  &--publicTransport {
+    stroke: $c-public-transport;
+    fill: $c-public-transport;
+  }
+
+  &.is-hovered {
+    opacity: 1;
+  }
+}

@@ -123,7 +123,7 @@ function IsolinesOverlay() {
     
     innerMasksGroup = clusterGroup
       .selectAll('g.m-cluster__inner-mask-group')
-      .data(function(clusters) { 
+      .data(function(clusters) {
         return clusters; 
       }, function(cluster) {
         // databinding for individual cluster
@@ -137,11 +137,7 @@ function IsolinesOverlay() {
 
     innerMasks = innerMasksGroup
       .selectAll('mask.m-cluster__inner-mask')
-      .data(function(cluster) { return cluster.features; }, function(isoline) {
-        var startLocation = isoline.properties.startLocation.toString(),
-            travelMode = isoline.properties.travelMode;
-        return `${startLocation}__${travelMode}`;
-      });
+      .data(function(cluster) { return cluster.features; }, createIsolineId);
 
     innerMasksEnter = innerMasks
       .enter()
@@ -264,12 +260,14 @@ function IsolinesOverlay() {
       .selectAll('use.m-clusters__isoline--plain')
       .data(function(cluster) { 
         return cluster.features;
-      });
+      }, createIsolineId);
 
     // ENTER for one use per isoline per cluster
     isolines
       .enter()
-      .append('use');
+      .append('use')
+      .on('mouseenter', handleMouseenterIsoline)
+      .on('mouseleave', handleMouseleaveIsoline);
 
     // UPDATE of one use per isoline per cluster
     isolines
@@ -281,15 +279,7 @@ function IsolinesOverlay() {
       })
       .classed('m-clusters__isoline', true)
       .classed('m-clusters__isoline--plain', true)
-      .on('mouseenter', handleMouseenterIsoline)
-      .on('mouseleave', handleMouseleaveIsoline)
-      .sort(function(isolineA, isolineB) {
-        if(isolineA.properties.meanDistance > isolineB.properties.meanDistance)
-          return -1;
-        if(isolineA.properties.meanDistance < isolineB.properties.meanDistance)
-          return 1;
-        return 0;
-      });
+      .sort(sortByMeanDistance);
 
     // EXIT of one use per isoline per cluster
     isolines
@@ -329,7 +319,8 @@ function IsolinesOverlay() {
             });
             if(!maskIsolines) return '';
             return `url(#${createOuterMaskId(maskIsolines)})`;
-          });
+          })
+          .sort(sortByMeanDistance);
 
         isolineMaskGroups
           .exit()
@@ -347,7 +338,7 @@ function IsolinesOverlay() {
             isolines,
             isolinesGroups = d3.select(this)
               .selectAll('g.m-clusters__masked-isoline-group')
-              .data(function(cluster) { return cluster.features; });
+              .data(function(cluster) { return cluster.features; }, createIsolineId);
 
         isolinesGroups
           .enter()
@@ -355,9 +346,7 @@ function IsolinesOverlay() {
           .classed('m-clusters__masked-isoline-group', true);
 
         // append masked isolines for each travelmode and mask them
-        // with the other isolines 
-        console.log(isolinesGroups);
-
+        // with the other isolines
         isolinesGroups
           .each(function(isolineData) {
             var isolinesGroup = d3.select(this),
@@ -394,7 +383,8 @@ function IsolinesOverlay() {
             isolines
               .exit()
               .remove();
-          });
+          })
+          .sort(sortByMeanDistance);
 
         isolinesGroups
           .exit()
@@ -418,7 +408,8 @@ function IsolinesOverlay() {
         var startLocation = cluster.features[0].properties.startLocation,
             projectedPoint = projectPoint(startLocation[0], startLocation[1]);
         return `translate(${projectedPoint[0] - 10}, ${projectedPoint[1] - 20})`
-      });
+      })
+      .moveToFront();
   }
 
 
@@ -457,14 +448,13 @@ function IsolinesOverlay() {
         travelMode = isoline.properties.travelMode,
         start = isoline.properties.startLocation.toString(),
         maskData = clusterData && getMaskData(clusterData),
-        wasHovered = element.classed('is-hovered'),
         maskIsolines = getMaskIsolines(maskData, isoline);
-
 
     // set secondary that are masked by hovered isolines to not-hovered
     _.forEach(maskIsolines, function(maskingIsoline) {
       var maskingTravelMode = maskingIsoline.properties.travelMode,
           maskingStart = maskingIsoline.properties.startLocation.toString();
+
       parent
         .selectAll(`use.m-clusters__isoline--masked-inner.m-clusters__isoline--${maskingTravelMode}`)
         .classed('is-not-hovered', true);
@@ -538,6 +528,15 @@ function IsolinesOverlay() {
       .compact()
       .value();
     });
+  }
+
+
+  function sortByMeanDistance(isolineA, isolineB) {
+    if(isolineA.properties.meanDistance > isolineB.properties.meanDistance)
+      return -1;
+    if(isolineA.properties.meanDistance < isolineB.properties.meanDistance)
+      return 1;
+    return 0;
   }
 
 

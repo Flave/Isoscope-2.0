@@ -1,0 +1,57 @@
+.m-timeline {
+  box-sizing: content-box;
+  width: 100%;
+  border-radius: 2px;
+  cursor: pointer;
+  margin-bottom: 15px;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+
+  &:hover,
+  &.is-highlighted {
+    background-color: #ececec;
+
+    .m-timeline__delete {
+      visibility: visible;
+    }
+  }
+}
+
+.m-timeline__header{
+  margin-bottom: 15px;
+}
+
+.m-timeline__meta {
+  font-size: 12px;
+  margin-bottom: 15px;
+  font-weight: 600;
+  margin-right: 10px;
+}
+
+.m-timeline__meta--primary {
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.m-timeline__meta--secondary {
+  color: $c-gray-secondary;
+  font-weight: 400;
+}
+
+.m-timeline__chart {
+  
+}
+
+.m-timeline__delete {
+  background-color: transparent;
+  border: none;
+  color: $c-accent-01;
+  text-transform: uppercase;
+  letter-spacing: .05em;
+  float: right;
+  font-family: Montserrat;
+  visibility: hidden;
+  cursor: pointer;
+}

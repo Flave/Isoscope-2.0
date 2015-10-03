@@ -1,0 +1,36 @@
+.popover {
+  position: relative;
+
+  &.menu-popover {
+
+  }
+
+  .content {
+    position: absolute; 
+    background-color: #FFF;
+    visibility: hidden;
+    opacity: 0;
+    top: 0;
+    left: 65px;
+    box-shadow: $shadow-map-overlay;
+
+    &:before {
+      content: '';
+      display: inline-block;
+      width: 14px;
+      height: 14px;
+      position: absolute;
+      top: 20px;
+      left: -7px;
+      transform: scale(.7, 1) rotate(45deg);
+      background-color: white;
+    }
+  }
+
+  &.is-open {
+    .content {
+      visibility: visible;
+      opacity: 1;
+    }
+  }
+}

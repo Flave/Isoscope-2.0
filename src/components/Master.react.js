@@ -12,6 +12,8 @@ var tourManager;
 
 
 
+
+
 function getClusters(config) {
   return ClustersStore.get(config);
 };

@@ -8,8 +8,9 @@ var scripts = [],
 if(process.env.NODE_ENV === "production") {
   const config = require('../../webpack/prod.config');
   const stats = require('../../static/dist/stats.json');
-  scripts.push(`${config.output.publicPath}${stats.main}`);
-  csss.push(`${config.output.publicPath}${stats.css}`);
+  
+  scripts.push(`${process.env.BASE_URL}${config.output.publicPath}${stats.main}`);
+  csss.push(`${process.env.BASE_URL}${config.output.publicPath}${stats.css}`);
 } else {
   const config = require('../../webpack/dev.config');
   scripts.push(`${config.output.publicPath}${config.output.filename}`);

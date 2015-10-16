@@ -1,4 +1,5 @@
 delete process.env.BROWSER;
+process.env.BASE_URL = process.env.BASE_URL || '';
 
 // Install node-jsx so we can use jsx on the server
 require('node-jsx').install({extension: '.js'});

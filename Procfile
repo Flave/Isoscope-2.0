@@ -1,1 +1,1 @@
-web: npm run build && npm run prod
+web: cd node_modules && ln -s ../src ./app && cd ../ && npm run build && npm run prod

@@ -5,7 +5,7 @@ var jsonp = require('jsonp'),
 
 var app_id = 'bVQHRXUn6uNHP3B24bdt',
     app_code = 'mwkokcyyoCIfExsmQq0qIg',
-    base = 'http://reverse.geocoder.cit.api.here.com/6.2/reversegeocode.json';
+    base = '//reverse.geocoder.cit.api.here.com/6.2/reversegeocode.json';
 
 
 function processResponse(res, latlng) {

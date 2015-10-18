@@ -1,1 +1,1 @@
-web: cd node_modules && ln -s ../src ./app && cd ../ && npm run build && npm run prod
+web: cd node_modules && ln -s ../src ./app && cd ../ && rm ./static/dist/* && webpack --stats --config ./webpack/prod.config.js && NODE_ENV=production PORT=$PORT node index

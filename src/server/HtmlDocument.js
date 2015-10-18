@@ -8,7 +8,7 @@ var scripts = [],
 if(process.env.NODE_ENV === "production") {
   const config = require('../../webpack/prod.config');
   const stats = require('../../static/dist/stats.json');
-  
+
   scripts.push(`${process.env.BASE_URL}${config.output.publicPath}${stats.main}`);
   csss.push(`${process.env.BASE_URL}${config.output.publicPath}${stats.css}`);
 } else {
@@ -26,7 +26,7 @@ var HtmlDocument = React.createClass({
         <html>
           <head>
             <title>React and Webpack Template</title>
-            <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.css" />
+            <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.5/leaflet.css" />
             { csss.map((href, k) => <link key={ k } rel="stylesheet" type="text/css" href={ href } />) }
           </head>
           <body>

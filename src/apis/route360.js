@@ -62,14 +62,18 @@ function getIsolineGeoJSON(polygonsJson, options) {
 * Create the api config object for the given options
 */
 function createIsolineConfig(options) {
-  var travelModeConfig;
+  var travelModeConfig,
+      mondayDate = d3.time.monday.round(new Date()),
+      yearAndMonth = d3.time.format('%Y%m')(mondayDate),
+      day = mondayDate.getDate() + options.weekday;
+
   switch(options.travelMode) {
     case "publicTransport":
       travelModeConfig = {
         "transit":{
           "frame":{
             "time": options.departureTime * 360, // hour of the day in seconds
-            "date": `201507${options.weekday + 20}`
+            "date": `${yearAndMonth}${day}`
           }
         }
       }

@@ -7,7 +7,7 @@ var jsonp = require('jsonp'),
 
 var api = {},
     apiKey = 'PFHFE67HTWKLOR6R8QTI',
-    base = 'http://api.route360.net/api_brandenburg/v1/polygon';
+    base = '//api.route360.net/api_brandenburg/v1/polygon';
 
 if(process.env.BROWSER) {
   L = require('leaflet');

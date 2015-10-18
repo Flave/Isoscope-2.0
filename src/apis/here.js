@@ -8,7 +8,7 @@ var jsonp = require('jsonp'),
 var api = {},
     app_id = 'bVQHRXUn6uNHP3B24bdt',
     app_code = 'mwkokcyyoCIfExsmQq0qIg',
-    base = 'http://route.st.nlp.nokia.com/routing/6.2/calculateisoline.json';
+    base = '//route.st.nlp.nokia.com/routing/6.2/calculateisoline.json';
 
 /*
 * Converts weird here response "lat,lng" format to {lat: lat, lng:lng}

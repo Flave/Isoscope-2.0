@@ -1,3 +1,7 @@
+if(process.env.BROWSER) {
+  require('./style/main.scss');
+}
+
 var React = require('react');
 var Router = require('react-router');
 var RouteHandler = Router.RouteHandler;

@@ -1,3 +1,4 @@
+console.log('running js');
 if(process.env.BROWSER) {
   require('./style/main.scss');
 }
@@ -8,5 +9,6 @@ var RouteHandler = Router.RouteHandler;
 var routes = require('./routes.js');
 
 Router.run(routes, Router.HistoryLocation, function (Handler, state) {
+  console.log('rendering shit');
   React.render(<Handler routerState={state} />, document.getElementById('root'));
 });

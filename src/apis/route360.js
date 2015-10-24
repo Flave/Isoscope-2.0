@@ -37,18 +37,9 @@ function getIsolineGeoJSON(polygonsJson, options) {
     };
 
     if(polygonsJson[0]) {
-      //console.log(polygonsJson[0].polygons);
       coordinates = _(polygonsJson[0].polygons)
         .map(function (polygonJson, i) {
-            if(i%2 === 0) {
-              console.log('before: ' + i);
-              console.log(polygonJson.outerBoundary);
-            }
             var pointsSimplified = simplify(polygonJson.outerBoundary, 340);
-            if(i%2 === 0) {
-              console.log('after: ' + i);
-              console.log(pointsSimplified);
-            }
             var points = _(pointsSimplified)
               .map(function(point) {
                 return webMercatorToLatLng({x: point[0], y: point[1]})
@@ -59,7 +50,6 @@ function getIsolineGeoJSON(polygonsJson, options) {
         })
         .value();
     }
-    //console.log(coordinates);
     feature.geometry.coordinates = coordinates || [];
 
     return feature;

@@ -25,7 +25,6 @@ function IsolinesOverlay() {
 
 
   function _isolinesOverlay(_svg) {
-    console.log(data);
     svg = _svg;
 
     // DATA BINDING of container for all clusters
@@ -609,7 +608,6 @@ function IsolinesOverlay() {
       .reduce(function(dAttribute, polygon) {
         return dAttribute + line(polygon);
       }, '');
-      console.log(dAttribute);
       return dAttribute;
   }
 

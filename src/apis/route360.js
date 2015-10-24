@@ -37,7 +37,7 @@ function getIsolineGeoJSON(polygonsJson, options) {
     };
 
     if(polygonsJson[0]) {
-      console.log(polygonsJson[0]);
+      console.log(polygonsJson[0].polygons);
       coordinates = _(polygonsJson[0].polygons)
         .map(function (polygonJson) {
             var pointsSimplified = simplify(polygonJson.outerBoundary, 340);
@@ -51,6 +51,7 @@ function getIsolineGeoJSON(polygonsJson, options) {
         })
         .value();
     }
+    console.log(coordinates);
     feature.geometry.coordinates = coordinates || [];
 
     return feature;

@@ -37,19 +37,16 @@ function getIsolineGeoJSON(polygonsJson, options) {
     };
 
     if(polygonsJson[0]) {
+      console.log(polygonsJson[0]);
       coordinates = _(polygonsJson[0].polygons)
         .map(function (polygonJson) {
-            console.log(polygonJson.outerBoundary);
             var pointsSimplified = simplify(polygonJson.outerBoundary, 340);
-            console.log(pointsSimplified);
             var points = _(pointsSimplified)
               .map(function(point) {
                 return webMercatorToLatLng({x: point[0], y: point[1]})
               })
               .compact()
               .value();
-              
-          console.log(points);
             return [points];
         })
         .value();

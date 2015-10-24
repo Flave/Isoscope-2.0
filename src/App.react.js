@@ -1,16 +1,13 @@
-var React = require('react'),
-    Router = require('react-router'),
-    RouteHandler = Router.RouteHandler;
-
-require('app/utility');
+var React = require('react');
 
 var App = React.createClass({
   componentDidMount: function() {
     
   },
   render: function() {
+    console.log('rendering root component');
     return (<div className="app-container">
-        <RouteHandler/>
+        App rendered
       </div>)
   }
 });

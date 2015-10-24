@@ -12,9 +12,6 @@ var React = require('react'),
 
 var Routes = (
   <Route handler={App}>
-    <Route name="home" path="/" handler={Master}/>
-    <Route name="info" path="/info" handler={Info}/>
-    <Route name="transition-test" path="/transition-test" handler={TransitionTest} />
   </Route>
 );
 

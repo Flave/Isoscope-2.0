@@ -12,6 +12,10 @@ var React = require('react'),
 
 var Routes = (
   <Route handler={App}>
+    <Route name="home2" path="/" handler={Master}/>
+    <Route name="home" path="/isoscope/?" handler={Master}/>
+    <Route name="info" path="/info" handler={Info}/>
+    <Route name="transition-test" path="/transition-test" handler={TransitionTest} />
   </Route>
 );
 

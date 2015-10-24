@@ -62,8 +62,7 @@ var ViewSettings = React.createClass({
         <div className="m-view-settings__group">
           <div className="m-view-settings__group-title">
             Travel Time
-            <br/>
-            <span className="m-view-settings__group-value">{this.state.travelTime}</span>
+            <div className="m-view-settings__group-value">{this.state.travelTime}</div>
           </div>
           <div className="m-view-settings__group-input">
             <ReactSlider 

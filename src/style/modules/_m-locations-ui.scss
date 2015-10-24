@@ -3,18 +3,31 @@
   width: 100%;
   background: #fff;
   padding: 10px;
+  position: relative;
+
+  &:after {
+    content: "";
+    position: absolute;
+    display: inline-block;
+    width: 12px;
+    height: 12px;
+    box-shadow: 1.5px 1.8px 0 0 $c-gray-secondary;
+    transform: rotate(45deg) translateY(-100%);
+    right: 30px;
+    top: 47%;
+  }
 }
 
 .m-locations-ui__location {
   display: inline-block;
-  font-size: 12px;
+  font-size: 14px;
   padding: 10px 12px;
   margin-right: 10px;
-  color: #fff;
+  color: $c-gray-primary;
   cursor: pointer;
-  background-color: $c-gray-primary;
+  background-color: none;
 
   &.is-active {
-    background-color: $c-accent-01;
+    //background-color: $c-accent-01;
   }
 }

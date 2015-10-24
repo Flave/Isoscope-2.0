@@ -2,7 +2,7 @@ var jsonp = require('jsonp'),
     _ = require('lodash'),
     L,
     util = require('app/utility').apiUtility,
-    simplify = require('simplify-js'),
+    simplify = require('app/utility/simplify'),
     Q = require('q');
 
 var api = {},

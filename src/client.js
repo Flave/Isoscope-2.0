@@ -10,5 +10,8 @@ var routes = require('./routes.js');
 
 Router.run(routes, Router.HistoryLocation, function (Handler, state) {
   console.log('rendering shit');
+  console.log(document.getElementById('root'));
+  console.log(Handler);
+  console.log(state);
   React.render(<Handler routerState={state} />, document.getElementById('root'));
 });

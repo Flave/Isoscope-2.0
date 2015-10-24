@@ -1,3 +1,4 @@
+// include styles if environment is browser?!
 if(process.env.BROWSER) {
   require('./style/main.scss');
 }

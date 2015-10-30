@@ -2,7 +2,7 @@ var jsonp = require('jsonp'),
     _ = require('lodash'),
     L,
     util = require('app/utility').apiUtility,
-    simplify = require('simplify-js'),
+    simplify = require('app/utility/simplify'),
     Q = require('q');
 
 var api = {},
@@ -38,8 +38,7 @@ function getIsolineGeoJSON(polygonsJson, options) {
 
     if(polygonsJson[0]) {
       coordinates = _(polygonsJson[0].polygons)
-        .map(function (polygonJson) {
-
+        .map(function (polygonJson, i) {
             var pointsSimplified = simplify(polygonJson.outerBoundary, 340);
             var points = _(pointsSimplified)
               .map(function(point) {
@@ -47,7 +46,6 @@ function getIsolineGeoJSON(polygonsJson, options) {
               })
               .compact()
               .value();
-
             return [points];
         })
         .value();

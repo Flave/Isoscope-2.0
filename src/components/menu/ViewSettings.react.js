@@ -1,5 +1,4 @@
 var React = require('react'),
-    ReactSlider = require('react-slider'),
     Slider = require('app/components/common/Slider.react'),
     d3 = require('d3'),
     classnames = require('classnames'),

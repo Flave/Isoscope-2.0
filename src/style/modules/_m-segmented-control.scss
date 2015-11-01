@@ -3,52 +3,65 @@
 
 .m-segmented-control__segment {
   display: inline-block;
-  background-color: $c-gray-primary;
-  color: white;
-  border-right: 1px solid white;
+  border: 1px solid $c-gray-tertiary;
+  border-right-width: 0;
+  color: $c-gray-primary;
   text-align: center;
   cursor: pointer;
   min-width: 41px;
 
   &.is-selected {
-    background-color: $c-accent-01;
+    background-color: $c-gray-primary;
+    border-color: $c-gray-primary;
+    color: #fff;
 
     &.m-segmented-control__segment--car {
       background-color: $c-car;
+      border-color: $c-car;
     }
 
     &.m-segmented-control__segment--bike {
       background-color: $c-bike;
+      border-color: $c-bike;
     }
 
     &.m-segmented-control__segment--publicTransport {
       background-color: $c-public-transport;
+      border-color: $c-public-transport;
     }
 
     &:hover {
-      background-color: $c-accent-01;
+      background-color: darken($c-gray-primary, 10);
+      border-color: darken($c-gray-primary, 10);
 
       &.m-segmented-control__segment--car {
         background-color: $c-car;
+        border-color: $c-car;
       }
 
       &.m-segmented-control__segment--bike {
         background-color: $c-bike;
+        border-color: $c-bike;
       }
 
       &.m-segmented-control__segment--publicTransport {
         background-color: $c-public-transport;
+        border-color: $c-public-transport;
       }
     }
   }
 
+  &.is-selected + .m-segmented-control__segment {
+    border-left-color: white;
+  }
+
   &:hover {
-    background-color: darken($c-gray-primary, 10);
+    background-color: $c-gray-quaternary;
   }
 
   &:last-child {
     border-radius: 0 1px 1px 0;
-    border-right: none;
+    border-right-width: 1px;
   }
 
   &:first-child {

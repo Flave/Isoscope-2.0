@@ -25,7 +25,7 @@ var HtmlDocument = React.createClass({
     return (
         <html>
           <head>
-            <title>React and Webpack Template</title>
+            <title>Isoscope Two</title>
             <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.5/leaflet.css" />
             { csss.map((href, k) => <link key={ k } rel="stylesheet" type="text/css" href={ href } />) }
           </head>

@@ -34,30 +34,6 @@ var MapController = React.createClass({
   /**
   * @return {array} An array of FeatureCollections with one isoline for every travelmode as feature
   */
-
-  /*
-  [ // clusters
-    [ // modeClusters
-      {
-        properties: { mode: x, startLocation: z }
-        features: [
-          {
-            properties: { departureTime: y }
-          }
-        ]
-      }
-    ]
-  ]
-
-  [
-    {
-      properties: { startLocation: z },
-      features: [
-        properties: { departureTime: y, mode: x }
-      ]
-    }
-  ]
-  */
   getModesCluster: function() {
     var that = this;
 
@@ -82,6 +58,7 @@ var MapController = React.createClass({
         map = this.refs.map.getMap(),
         overlaySvg = d3.select(map.getPanes().overlayPane)
           .append('svg:svg')
+          .classed('m-clusters__svg', true)
           .attr("xmlns", "http://www.w3.org/2000/svg")
           .style('position', 'relative');
 

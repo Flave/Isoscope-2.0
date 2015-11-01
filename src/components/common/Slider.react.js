@@ -1,6 +1,7 @@
 var React = require('react'),
     d3 = require('d3'),
-    classnames = require('classnames');
+    _ = require('lodash'),
+    classNames = require('classnames');
 
 var patternLineStyle = {
   stroke: "#777" ,
@@ -20,11 +21,13 @@ var Slider = React.createClass({
   getDefaultProps: function() {
     return {
       onChange: function() {},
+      onAfterChange: function(){},
       segments: [],
       value: 0,
       scale: d3.scale.linear().range([0,1]).domain([0,1]),
+      tickValues: undefined,
+      tickValuesSuffix: '',
       xAxis: d3.svg.axis()
-        .tickValues([0, 6, 12, 18, 23])
         .orient('top')
         .tickSize(3)
         .tickPadding(5),
@@ -106,12 +109,19 @@ var Slider = React.createClass({
       .attr('x', -1)
       .text(this.props.value);
 
-    handleEnter
-      .append('text')
-      .classed('m-slider__handle-suffix', true)
-      .attr('y', 26)
-      .attr('x', 7)
-      .text('00');
+
+    if(this.props.tickValuesSuffix) {
+      handleEnter
+        .selectAll('text.m-slider__handle-text')
+        .style('text-anchor', 'end');
+
+      handleEnter
+        .append('text')
+        .classed('m-slider__handle-suffix', true)
+        .attr('y', 26)
+        .attr('x', 7)
+        .text('00');
+    }
 
     handle
       .attr("transform", `translate(${this.props.scale(this.props.value)},${this.props.height / 2})`);
@@ -120,6 +130,9 @@ var Slider = React.createClass({
 
   updateAxis: function() {
     var xAxisElement = d3.select(this.refs.xAxis.getDOMNode());
+
+    if(this.props.tickValues)
+      this.props.xAxis.tickValues(this.props.tickValues);
 
     this.props.xAxis.scale(this.props.scale);
     xAxisElement.call(this.props.xAxis);
@@ -132,17 +145,24 @@ var Slider = React.createClass({
       .selectAll('.tick text')
       .attr('y');
 
-    xAxisElement
-      .selectAll('.tick')
-      .selectAll('text.m-slider__axis-suffix')
-      .data([1])
-      .enter()
-      .append('text')
-      .classed('m-slider__axis-suffix', true)
-      .text('00')
-      .attr('dy', tickLabelDy)
-      .attr('y', tickLabelY)
-      .attr('x', 13);
+    if(this.props.tickValuesSuffix) {
+      xAxisElement
+        .selectAll('.tick text')
+        .style('text-anchor', 'end');
+
+      xAxisElement
+        .selectAll('.tick')
+        .selectAll('text.m-slider__axis-suffix')
+        .data([1])
+        .enter()
+        .append('text')
+        .classed('m-slider__axis-suffix', true)
+        .text('00')
+        .style('text-anchor', 'end')
+        .attr('dy', tickLabelDy)
+        .attr('y', tickLabelY - 4)
+        .attr('x', 14);
+    }
   },
 
 
@@ -150,7 +170,7 @@ var Slider = React.createClass({
     this.props.scale.range([0, this.state.width]);
 
     return (
-      <div className="m-slider">
+      <div className={classNames("m-slider", _.map(this.props.modifiers, function(m){ return `m-slider--${m}`}))}>
         <svg className="m-slider__svg" width={this.state.width} height={this.props.height}>
           <defs> 
             <pattern id="bg-pattern" patternUnits="userSpaceOnUse" width="7" height="7">
@@ -183,7 +203,7 @@ var Slider = React.createClass({
   _handleBrushEnd: function() {
     var value = this._handleBrushChange();
     if (d3.event.sourceEvent) { // not a programmatic event
-      this.props.onChange(value);
+      this.props.onAfterChange(value);
     }
   },
 

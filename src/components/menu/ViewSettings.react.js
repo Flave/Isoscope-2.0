@@ -1,5 +1,7 @@
 var React = require('react'),
     ReactSlider = require('react-slider'),
+    Slider = require('app/components/common/Slider.react'),
+    d3 = require('d3'),
     classnames = require('classnames'),
     SegmentedControl = require('../common/SegmentedControl.react'),
     SegmentedMultiControl = require('../common/SegmentedMultiControl.react');
@@ -33,21 +35,21 @@ var ViewSettings = React.createClass({
     })
   },
 
-  handleTravelTimeAfterChange: function(value) {
+  _handleTravelTimeAfterChange: function(value) {
     this.props.handleTransition({travelTime: value});
   },
 
-  handleTravelTimeChange: function(value) {
+  _handleTravelTimeChange: function(value) {
     this.setState({
       travelTime: value
     })
   },
 
-  handleDayChange: function(value, label, index) {
+  _handleDayChange: function(value, label, index) {
     this.props.handleTransition({weekday: value});
   },
 
-  handleTransportModeChange: function(value, label, index) {
+  _handleTransportModeChange: function(value, label, index) {
     this.props.handleTransition({travelModes: value});
   },
 
@@ -61,18 +63,15 @@ var ViewSettings = React.createClass({
         <h3 className="m-ui-panel__section-title">Settings</h3>
         <div className="m-view-settings__group">
           <div className="m-view-settings__group-title">
-            Travel Time
-            <div className="m-view-settings__group-value">{this.state.travelTime}</div>
+            Travel Time (minutes)
           </div>
           <div className="m-view-settings__group-input">
-            <ReactSlider 
-              min={2}
-              max={30} 
-              step={2}
-              value={this.state.travelTime}
-              onChange={this.handleTravelTimeChange}
-              onAfterChange={this.handleTravelTimeAfterChange}
-              withBars={true}/>
+            <Slider 
+              scale={d3.scale.linear().domain([2, 30]).clamp(true)}
+              value={this.props.state.travelTime}
+              height={40}
+              tickValues={[2, 30]}
+              onAfterChange={this._handleTravelTimeAfterChange}/>
           </div>
         </div>
         <div className="m-view-settings__group">
@@ -80,17 +79,17 @@ var ViewSettings = React.createClass({
           <div className="m-view-settings__group-input">
             <SegmentedControl
               name='weekday'
-              onChange={this.handleDayChange}
+              onChange={this._handleDayChange}
               selected={this.props.state.weekday}
               segments={daySegments} />
           </div>
         </div>
         <div className="m-view-settings__group">
-          <div className="m-view-settings__group-title">Day of the week</div>
+          <div className="m-view-settings__group-title">Means of Transportation</div>
           <div className="m-view-settings__group-input">
             <SegmentedMultiControl
               name='travelMode'
-              onChange={this.handleTransportModeChange}
+              onChange={this._handleTransportModeChange}
               selected={this.props.state.travelModes}
               segments={transportModeSegments} />
           </div>

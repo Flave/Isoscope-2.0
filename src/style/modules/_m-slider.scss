@@ -1,5 +1,7 @@
 .m-slider {
-  margin-top: 40px;
+  &--timeline {
+    margin-top: 40px;
+  }
 }
 
 .m-slider__svg {
@@ -13,7 +15,17 @@
 
   .handle {
     cursor: pointer;
-    fill: $c-accent-01;
+    fill: $c-gray-primary;
+    stroke-width: 3;
+    stroke: rgba(0, 0, 0, .05);
+
+    &:hover {
+      fill: darken($c-gray-primary, 5);
+    }
+
+    &:active {
+      fill: darken($c-gray-primary, 10);
+    }
   }
 }
 
@@ -21,7 +33,6 @@
   text-anchor: middle;
   fill: $c-gray-primary;
   font-size: 15px;
-  text-anchor: end;
 }
 
 .m-slider__handle-suffix {
@@ -38,8 +49,8 @@
   .tick {
     text {
       font-size: 14px;
-      text-anchor: end !important;
       fill: $c-gray-secondary;
+      text-anchor: middle;
     }
 
     line {

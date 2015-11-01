@@ -652,15 +652,15 @@ function IsolinesOverlay() {
       svg
         // .transition()
         // .duration(600)
-        .attr('width', bottomRight[0] - topLeft[0])
-        .attr('height', bottomRight[1] - topLeft[1])
-        .style('left', topLeft[0] + 'px')
-        .style('top', topLeft[1] + 'px');
+        .attr('width', bottomRight[0] - topLeft[0] + 8)
+        .attr('height', bottomRight[1] - topLeft[1] + 8)
+        .style('left', `${topLeft[0] - 4}px`)
+        .style('top', `${topLeft[1] - 4}px`);
 
       clusterGroup
         // .transition()
         // .duration(600)
-        .attr("transform", "translate(" + -topLeft[0] + "," + -topLeft[1] + ")");
+        .attr("transform", `translate(${-topLeft[0] + 4},${-topLeft[1] + 4})`);
 
       outerMasksGroup
         .selectAll('rect')

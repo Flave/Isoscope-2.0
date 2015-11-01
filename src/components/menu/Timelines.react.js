@@ -2,6 +2,7 @@ var React = require('react'),
     Timeline = require('./timeline/Timeline.react'),
     classNames = require('classnames'),
     Slider = require('app/components/common/Slider.react'),
+    Legend = require('./Legend.react'),
     _ = require('lodash'),
     d3 = require('d3');
 
@@ -35,8 +36,6 @@ var App = React.createClass({
 
     if(!timelines.length) return <div/>
 
-
-
     return (
       <div className='m-ui-panel__section m-ui-panel__section--timelines'>
         <h3 className="m-ui-panel__section-title">Distance Averages (M)</h3>
@@ -44,14 +43,14 @@ var App = React.createClass({
           scale={d3.scale.linear().domain([0, 23]).clamp(true)}
           value={this.props.state.departureTime}
           height={40}
+          tickValuesSuffix='00'
+          modifiers={['timeline']}
+          tickValues={[0, 6, 12, 18, 23]}
           onChange={this._handleDepartureTimeChange}/>
+        <Legend/>
         <div className="m-timelines">
           {timelines}
         </div>
-        {/*<div className={classNames(
-                  "m-loading-indicator", 
-                  {"is-loading": this.props.isLoading}
-                )}><span className="m-loading-indicator__spinner"></span></div>*/}
       </div>)
   },
 

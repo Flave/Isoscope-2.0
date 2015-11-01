@@ -1,6 +1,6 @@
 .m-view-settings {
   background-color: #fff;
-  border-bottom: 1px solid $c-gray-tertiary;
+  border-bottom: 1px solid $c-gray-quaternary;
 }
 
 .m-view-settings__group {
@@ -8,14 +8,25 @@
   //border-bottom: 1px solid $c-gray-tertiary;
   display: flex;
   align-items: center;
+
+  &--controls {
+    height: 283px;
+  }
+
+  &--timelines {
+    height: 100%;
+    padding-top: 283px;
+  }
 }
 
 .m-view-settings__group-title {
   color: $c-gray-primary;
-  font-size: 10px;
+  font-size: 11px;
   text-transform: uppercase;
   letter-spacing: .2;
   flex-basis: 30%;
+  line-height: 15px;
+  padding-right: 15px;
 }
 
 .m-view-settings__group-value {
@@ -26,32 +37,4 @@
 
 .m-view-settings__group-input {
   flex-basis: 70%;
-}
-
-.slider {
-  padding: 10px;
-
-  .bar {
-    height: 1px;
-  }
-
-  .bar-0 {
-    background-color: $c-gray-primary;
-    border-radius: 1px;
-  } 
-
-  .bar-1 {
-    background-color: $c-gray-primary;
-    border-radius: 1px;
-  }
-
-  .handle {
-    width: 20px;
-    height: 20px;
-    border-radius: 100%;
-    cursor: pointer;
-    transform: translate(0%, -50%);
-    background-color: $c-accent-01;
-    box-shadow: 0 0 5px rgba(0, 0, 0, .2);
-  }
 }

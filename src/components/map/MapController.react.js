@@ -94,9 +94,9 @@ var MapController = React.createClass({
     this.props.handleTransition({map: mapParams});
   },
 
-  _handleMapClick: function(e) {
+  _handleMapClick: function(coordinates) {
     var clusters = this.props.state.clusters.slice();
-    clusters.push(_.map([e.latlng.lat, e.latlng.lng], parseFloat));
+    clusters.push(coordinates);
     this.props.handleTransition({clusters: clusters});
   },
 
@@ -128,7 +128,7 @@ var MapController = React.createClass({
         center={this.props.state.map.slice(0,2)}
         zoom={this.props.state.map[2]}
         onMapBoundsChanged={this.handleMapBoundsChanged}
-        handleClick={this._handleMapClick}/>
+        onClick={this._handleMapClick}/>
     )
   }
 });

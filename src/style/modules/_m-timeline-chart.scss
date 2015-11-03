@@ -8,6 +8,10 @@
   }
 }
 
+.m-timeline-chart {
+  overflow: visible;
+}
+
 .m-timeline-chart__axis {
   .tick {
 
@@ -31,7 +35,7 @@
 .m-timeline-chart__axis--y {
   text {
     alignment-baseline: hanging;
-    text-anchor: end;
+    text-anchor: start;
     font-size: 10px;
     fill: #999;
     opacity: 0;

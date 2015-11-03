@@ -1,8 +1,11 @@
 var React = require('react'),
     Slider = require('app/components/common/Slider.react'),
     d3 = require('d3'),
-    classnames = require('classnames'),
+    _ = require('lodash'),
+    classNames = require('classnames'),
     SegmentedControl = require('../common/SegmentedControl.react'),
+    Select = require('app/components/common/Select.react'),
+    locations = require('app/config/locations'),
     SegmentedMultiControl = require('../common/SegmentedMultiControl.react');
 
 var daySegments = [
@@ -52,6 +55,12 @@ var ViewSettings = React.createClass({
     this.props.handleTransition({travelModes: value});
   },
 
+  _handleLocationChange: function(location) {
+    this.props.handleTransition({
+      map: location.map
+    });
+  },
+
   render: function() {
     var isOpenClassName = this.props.isOpen ? 'is-open' : '';
     var className = isOpenClassName + ' view-settings';
@@ -60,6 +69,17 @@ var ViewSettings = React.createClass({
     return (
       <div ref="root" className='m-view-settings m-ui-panel__section'>
         <h3 className="m-ui-panel__section-title">Settings</h3>
+        <div className="m-view-settings__group">
+          <div className="m-view-settings__group-title">
+            Location
+          </div>
+          <div className="m-view-settings__group-input">
+            <Select 
+              onChange={this._handleLocationChange}
+              options={locations}
+            />
+          </div>
+        </div>
         <div className="m-view-settings__group">
           <div className="m-view-settings__group-title">
             Travel Time (minutes)

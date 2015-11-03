@@ -26,13 +26,16 @@ var Map = React.createClass({
 
     this.map
       .on('moveend', this.handleMapBoundsChanged)
-      .on('click', this.props.handleClick);
+      .on('click', this._handleClick);
 
     L.tileLayer('https://{s}.tiles.mapbox.com/v4/flaviogortana.2efcca31/{z}/{x}/{y}.png?access_token=pk.eyJ1IjoiZmxhdmlvZ29ydGFuYSIsImEiOiJzalRHcS1JIn0.aeJmH09S2p_hjOSs3wuT3w', {
         id: 'examples.map-20v6611k',
     }).addTo(this.map);
 
     this.map.zoomControl.setPosition('bottomright');
+
+    this.handleDebouncedClick = _.debounce(this._handleDebouncedClick, 600);
+    this.prevClicks = 0;
   },
 
   componentWillUpdate: function(nextProps) {
@@ -44,6 +47,23 @@ var Map = React.createClass({
       animate: true,
       duration: .8
     });
+  },
+
+  _handleDebouncedClick: function(coordinates) {
+    this.props.onClick(coordinates);
+    this.prevClicks = 0;
+  },
+
+  _handleClick: function(e) {
+    var coordinates = _.map([e.latlng.lat, e.latlng.lng], parseFloat);
+    if(this.prevClicks > 0) {
+      this.handleDebouncedClick.cancel();
+      this.prevClicks = 0;
+    }
+    else {
+      this.prevClicks++;
+      this.handleDebouncedClick(coordinates);
+    }
   },
 
   handleMapBoundsChanged: function(e) {

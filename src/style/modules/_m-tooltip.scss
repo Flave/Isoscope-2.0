@@ -1,0 +1,20 @@
+.m-tooltip {
+  position: fixed;
+  background-color: $c-gray-primary;
+  color: #fff;
+  padding: 15px;
+  max-width: 250px;
+  font-size: 12px;
+  line-height: 18px;
+
+  &:after {
+    content: "";
+    position: aboslute;
+    display: block;
+    width: 8px;
+    height: 8px;
+    transform: translateY(-50%) rotate(45deg);
+    bottom: -5px;
+    left: 50%;
+  }
+}

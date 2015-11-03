@@ -36,7 +36,8 @@ function Timeline() {
     svg.attr({
       width: size[0],
       height: size[1]
-    });
+    })
+    .classed('m-timeline-chart', true)
 
     updateScales();
     updateAxes();
@@ -102,7 +103,7 @@ function Timeline() {
     distanceAxisContainer
       .enter()
       .append('g')
-      .attr('transform', `translate(${chartSize[0] - 5}, 0)`)
+      .attr('transform', `translate(5, 0)`)
       .classed('m-timeline-chart__axis--y m-timeline-chart__axis', true)
       .append('text');
 

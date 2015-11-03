@@ -1,0 +1,16 @@
+.m-cluster-legend {
+  position: relative;
+}
+
+.m-cluster-legend__inner {
+  position: relative;
+  display: flex;
+  align-items: center;
+  
+  p {
+    font-size: 12px;
+    line-height: 16px;
+    width: 60%;
+    padding-right: 20px;
+  }
+}

@@ -1,4 +1,18 @@
 .m-timelines {
-  padding-top: 25px;
-  position: relative;
+  overflow: hidden;
+  left: 20px;
+  height: 100%;
+  width: 100%;
+}
+
+.m-timelines__inner {
+  width: 100%;
+  height: 99%;
+  padding-right: 15px;
+  box-sizing: content-box;
+  overflow: auto;
+
+  &.is-scrolled {
+    box-shadow: inset 0 2px 0 0 rgba(0, 0, 0, .1);
+  }
 }

@@ -1,8 +1,8 @@
 .m-timeline {
-  box-sizing: content-box;
   width: 100%;
   border-radius: 2px;
   cursor: pointer;
+  padding: 10px;  
   margin-bottom: 15px;
 
   &:last-child {
@@ -19,7 +19,7 @@
   }
 }
 
-.m-timeline__header{
+.m-timeline__header {
   margin-bottom: 15px;
 }
 
@@ -40,10 +40,6 @@
   font-weight: 400;
 }
 
-.m-timeline__chart {
-  
-}
-
 .m-timeline__delete {
   background-color: transparent;
   border: none;
@@ -51,7 +47,7 @@
   text-transform: uppercase;
   letter-spacing: .05em;
   float: right;
-  font-family: Montserrat;
+  font-family: 'Montserrat';
   visibility: hidden;
   cursor: pointer;
 }

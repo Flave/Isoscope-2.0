@@ -1,0 +1,33 @@
+.m-select {
+  width: 100%;
+  position: relative;
+
+  &:after {
+    content: "";
+    position: absolute;
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    box-shadow: 1.8px 1.8px 0 0 $c-gray-secondary;
+    transform: rotate(45deg) translateY(-100%);
+    right: 22px;
+    top: 47%;
+  }
+}
+
+.m-select__ui {
+  background: #fff;
+  padding: 10px;
+  font-family: 'Montserrat';
+  font-size: 14px;
+  font-weight: 400;
+  box-sizing: border-box;
+  border: 1px solid $c-gray-tertiary;
+  border-radius: 1px;
+  width: 100%;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  outline: none;
+  cursor: pointer;
+}

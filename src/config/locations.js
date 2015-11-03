@@ -1,44 +1,44 @@
 module.exports = [
   {
     label: "Brandenburg",
-    id: "brandenburg",
+    value: "brandenburg",
     endpoint: "api_brandenburg",
     map: [52.51831005956184,13.408126831054686,10]
-  }/*,
+  },
   {
     label: "Berlin",
-    id: "berlin",
+    value: "berlin",
     endpoint: "api_brandenburg",
     map: [52.51831005956184,13.408126831054686,12]
   },
    {
     label: "Denmark",
-    id: "denmark",
+    value: "denmark",
     endpoint: "api_denmark",
     map: [52.51831005956184,13.408126831054686,12]
   },
   {
     label: "Great Britain",
-    id: "great-britain",
+    value: "great-britain",
     endpoint: "api_brandenburg",
     map: [52.51831005956184,13.408126831054686,12]
   },
   {
     label: "Norway",
-    id: "norway",
+    value: "norway",
     endpoint: "api_brandenburg",
     map: [52.51831005956184,13.408126831054686,12]
   },
   {
     label: "Switzerland",
-    id: "switzerland",
+    value: "switzerland",
     endpoint: "api_brandenburg",
     map: [52.51831005956184,13.408126831054686,12]
   },
   {
     label: "France",
-    id: "france",
+    value: "france",
     endpoint: "api_brandenburg",
     map: [52.51831005956184,13.408126831054686,12]
-  }*/
+  }
 ]

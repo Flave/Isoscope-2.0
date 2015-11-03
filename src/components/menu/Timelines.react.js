@@ -8,7 +8,9 @@ var React = require('react'),
 
 var App = React.createClass({
   getInitialState: function() {
-    return {}
+    return {
+      isScrolled: false
+    }
   },
   getDefaultProps: function() {
     return {
@@ -38,21 +40,32 @@ var App = React.createClass({
 
     return (
       <div className='m-ui-panel__section m-ui-panel__section--timelines'>
-        <h3 className="m-ui-panel__section-title">Distance Averages (M)</h3>
-        <Slider 
-          scale={d3.scale.linear().domain([0, 23]).clamp(true)}
-          value={this.props.state.departureTime}
-          height={40}
-          tickValuesSuffix='00'
-          modifiers={['timeline']}
-          tickValues={[0, 6, 12, 18, 23]}
-          onChange={this._handleDepartureTimeChange}/>
-        <Legend/>
+        <div className='m-ui-panel__section-header'>
+          <h3 className="m-ui-panel__section-title">Distances</h3>
+          <Slider 
+            scale={d3.scale.linear().domain([0, 23]).clamp(true)}
+            value={this.props.state.departureTime}
+            height={40}
+            tickValuesSuffix='00'
+            modifiers={['timeline']}
+            tickValues={[0, 6, 12, 18, 23]}
+            onChange={this._handleDepartureTimeChange}/>
+        </div>
         <div className="m-timelines">
-          {timelines}
+          <div className={classNames("m-timelines__inner", {'is-scrolled': this.state.isScrolled})} 
+            onScroll={this._handleScroll}>
+            {timelines}
+          </div>
         </div>
       </div>)
   },
+
+  _handleScroll: function(e) {
+    if(!this.state.isScrolled && e.target.scrollTop > 0)
+      this.setState({isScrolled: true});
+    else if(e.target.scrollTop === 0)
+      this.setState({isScrolled: false});
+  },  
 
   _handleDepartureTimeChange: function(value) {
     this.props.handleTransition({ departureTime: value });

@@ -37,6 +37,7 @@ var Component = React.createClass({
     return {
       state: getState(),
       isLoading: isLoading(),
+      loadingStateChanged: false,
       clusters: []
     }
   },
@@ -74,7 +75,8 @@ var Component = React.createClass({
 
     this.setState({
       state: getState(),
-      isLoading: isLoading()
+      isLoading: isLoading(),
+      loadingStateChanged: false
     });
 
     this.context.router.transitionTo(routes[routes.length - 1].path, params, urlState);
@@ -84,6 +86,7 @@ var Component = React.createClass({
   _onStores: function() {
     this.setState({
       isLoading: isLoading(),
+      loadingStateChanged: true,
       clusters: getClusters(State.getClusterConfig())
     });
   },
@@ -95,6 +98,8 @@ var Component = React.createClass({
           <Map
             state={this.state.state}
             clusters={this.state.clusters}
+            isLoading={this.state.isLoading}
+            loadingStateChanged={this.state.loadingStateChanged}
             handleTransition={this._transitionTo} />
           <UIPanel 
             state={this.state.state}

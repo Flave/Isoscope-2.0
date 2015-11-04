@@ -106,7 +106,10 @@ var Slider = React.createClass({
       .append('text')
       .classed('m-slider__handle-text', true)
       .attr('y', 30)
-      .attr('x', -1)
+      .attr('x', -1);
+
+    handle
+      .selectAll('text.m-slider__handle-text')
       .text(this.props.value);
 
 

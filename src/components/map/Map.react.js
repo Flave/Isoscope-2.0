@@ -34,6 +34,8 @@ var Map = React.createClass({
 
     this.map.zoomControl.setPosition('bottomright');
 
+    // super elaborate debouncing to prevent click listeners to be triggered on double click
+    // debounced method is component method so clicks can be counted and reset
     this.handleDebouncedClick = _.debounce(this._handleDebouncedClick, 600);
     this.prevClicks = 0;
   },

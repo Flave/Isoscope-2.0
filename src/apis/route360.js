@@ -70,6 +70,7 @@ function createIsolineConfig(options) {
       travelModeConfig = {
         "transit":{
           "frame":{
+            "duration": 3600*2,
             "time": options.departureTime * 360, // hour of the day in seconds
             "date": `${yearAndMonth}${day}`
           }

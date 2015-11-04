@@ -17,10 +17,15 @@ var Map = React.createClass({
   componentDidMount: function() {
     var mapContainer = this.refs.mapContainer.getDOMNode();
 
-    this.map = L.map(mapContainer);
+    this.map = L.map(mapContainer, {
+      minZoom: 9
+    });
 
     this.map
-      .setView(L.latLng(this.props.center), this.props.zoom);
+      .fitBounds(L.latLngBounds(L.latLng(51.359131, 11.26932), L.latLng(53.5578, 14.76569)))
+      .setMaxBounds(L.latLngBounds(L.latLng(51.359131, 11.26932), L.latLng(53.5578, 14.76569)));
+
+    console.log(this.map.options.maxBounds);
 
     this.throtteledTransition = _.throttle(this.transitionMap, 500);
 
@@ -41,7 +46,7 @@ var Map = React.createClass({
   },
 
   componentWillUpdate: function(nextProps) {
-    this.throtteledTransition(nextProps);
+    //this.throtteledTransition(nextProps);
   },
 
   transitionMap: function(nextProps) {

@@ -7,6 +7,12 @@ var ClusterActions = {
       actionType: ClusterConstants.CLUSTER_UPDATE,
       data: data
     });
+  },
+  remove: function(data) {
+    dispatcher.handleAPIAction({
+      actionType: ClusterConstants.CLUSTER_REMOVE,
+      data: data
+    });
   }
 }
 

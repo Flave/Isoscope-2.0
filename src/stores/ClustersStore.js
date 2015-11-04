@@ -256,6 +256,23 @@ function reduceDistancesOfClusters(cluster, reduceFunc, propertyName) {
 }
 
 
+function remove(startLocation) {
+  console.log(_clusters);
+  console.log(startLocation);
+
+  _clusters = _(_clusters)
+    .pairs()
+    .filter(function(pair) {
+      var cluster = pair[1];
+      console.log((cluster.properties.startLocation[0] === startLocation[0]) && (cluster.properties.startLocation[1] === startLocation[1]));  
+      return !(cluster.properties.startLocation[0] === startLocation[0]) && !(cluster.properties.startLocation[1] === startLocation[1]);
+    })
+    .object()
+    .value();
+
+  console.log(_clusters);
+}
+
 
 var ClustersStore = _.assign({}, EventEmitter.prototype, {
 
@@ -313,6 +330,7 @@ var ClustersStore = _.assign({}, EventEmitter.prototype, {
     var action = payload.action;
     switch(action.actionType) {
       case ClusterConstants.CLUSTER_UPDATE:
+        console.log(_clusters);
         isLoading = true;
         update(action.data)
           .then(function(newClusters) {
@@ -321,6 +339,9 @@ var ClustersStore = _.assign({}, EventEmitter.prototype, {
           }, function(err) {
             console.log(err);
           });
+        break;
+      case ClusterConstants.CLUSTER_REMOVE:
+        remove(action.data);
         break;
       default:
         break;

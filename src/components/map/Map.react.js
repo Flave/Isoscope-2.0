@@ -25,8 +25,6 @@ var Map = React.createClass({
       .fitBounds(L.latLngBounds(L.latLng(51.359131, 11.26932), L.latLng(53.5578, 14.76569)))
       .setMaxBounds(L.latLngBounds(L.latLng(51.359131, 11.26932), L.latLng(53.5578, 14.76569)));
 
-    console.log(this.map.options.maxBounds);
-
     this.throtteledTransition = _.throttle(this.transitionMap, 500);
 
     this.map

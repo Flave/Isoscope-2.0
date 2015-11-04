@@ -1,5 +1,6 @@
 var React = require('react'),
     Timeline = require('./Timeline'),
+    ClusterActions = require('app/actions/ClusterActions'),
     classNames = require('classnames');
 
 var style = {
@@ -75,11 +76,16 @@ var App = React.createClass({
 
   _handleDeleteClick: function(e) {
     e.stopPropagation();
+
     var startLocation = this.props.data[0].properties.startLocation;
     var clusters = _.filter(this.props.state.clusters, function(cluster) {
       return !((startLocation[0] == cluster[0]) && (startLocation[1] == cluster[1]));
     });
-    this.props.handleTransition({clusters: clusters});
+
+    ClusterActions.remove(startLocation);
+    this.props.handleTransition({
+      clusters: clusters
+    });
   },
 });
 

@@ -1,4 +1,5 @@
-var React = require('react');
+var React = require('react'),
+    _ = require('lodash');
 
 var Tooltip = React.createClass({
   getDefaultProps: function() {

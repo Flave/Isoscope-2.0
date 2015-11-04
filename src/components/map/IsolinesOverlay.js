@@ -671,6 +671,15 @@ function IsolinesOverlay() {
         .selectAll('rect')
         .attr('x', topLeft[0])
         .attr('y', topLeft[1]);
+
+      cluster
+        .selectAll('g.m-clusters__start-location')
+        .attr('transform', function(cluster) {
+          var startLocation = cluster.features[0].properties.startLocation,
+              projectedPoint = projectPoint(startLocation[0], startLocation[1]);
+          return `translate(${projectedPoint[0] - 10}, ${projectedPoint[1] - 20})`
+        })
+        .moveToFront();
     }    
   }
 

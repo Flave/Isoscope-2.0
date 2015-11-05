@@ -45,7 +45,9 @@ var App = React.createClass({
       .highlightLine(highlightedLine)
       .maxDistance(this.props.maxDistance)
       .cursorPosition(this.props.state.departureTime)
-      .size(size)(svg);
+      .size(size)
+      .on('mouseenter', this._handleMouseEnterLine)
+      .on('mouseleave', this._handleMouseEnterLeave)(svg);
   },
 
   render: function() {
@@ -54,7 +56,9 @@ var App = React.createClass({
     return (
       <div 
         style={style} 
-        onClick={this._handleTimelineClick} 
+        onClick={this._handleTimelineClick}
+        onMouseEnter={this._handleMouseEnter}
+        onMouseLeave={this._handleMouseLeave}
         className={classNames('m-timeline', {'is-highlighted': this.state.isHighlighted})}>
         <div className="m-timeline__header">
           <span className="m-timeline__meta m-timeline__meta--primary">{locationInfo.city}, </span>
@@ -87,6 +91,27 @@ var App = React.createClass({
       clusters: clusters
     });
   },
+
+  _handleMouseEnter: function() {
+    var clusterLocation = this.props.data[0].properties.startLocation.toString();
+    this.props.handleTransition({hoveredCluster: clusterLocation});
+  },
+
+  _handleMouseLeave: function() {
+    this.props.handleTransition({hoveredCluster: undefined});
+  },
+
+  _handleMouseEnterLine: function(features, i) {
+    this.props.handleTransition({
+      hoveredIsoline: features[0].properties.travelMode
+    });
+  },
+
+  _handleMouseLeaveLine: function(features, i) {
+    this.props.handleTransition({
+      hoveredIsoline: undefined
+    });
+  }
 });
 
 module.exports = App;

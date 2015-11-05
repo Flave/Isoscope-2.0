@@ -19,11 +19,13 @@ var MapController = React.createClass({
   },
 
   shouldComponentUpdate: function(nextProps, nextState) {
-    if(nextProps.loadingStateChanged) {
+    if(nextProps.state.map !== this.props.state.map)
       return true;
-    }
-    if(nextProps.state.hoveredCluster === this.props.state.hoveredCluster && nextProps.state.hoveredCluster !== undefined)
-      return false;
+    if(nextProps.loadingStateChanged)
+      return true;
+
+/*    if(nextProps.state.hoveredCluster === this.props.state.hoveredCluster && nextProps.state.hoveredCluster !== undefined)
+      return false;*/
     if(nextProps.state.hoveredIsoline === this.props.state.hoveredIsoline && nextProps.state.hoveredIsoline !== undefined)
       return false;
 
@@ -81,7 +83,6 @@ var MapController = React.createClass({
     _.defer(function() {
       this.state.isolinesOverlay
         .data(this.getModesCluster())(this.state.overlaySvg);
-
       }.bind(this));
   },
 

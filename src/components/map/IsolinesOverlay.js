@@ -15,6 +15,8 @@ function IsolinesOverlay() {
       isolineDefs, // path definisions
       outerMasksGroup,
       innerMasksGroup,
+      hoveredIsoline,
+      hoveredCluster,
       dispatch = d3.dispatch(_isolinesOverlay, 'click:startlocation', 'mouseenter:cluster', 'mouseleave:cluster', 'mouseenter:isoline', 'mouseleave:isoline'),
       transform = d3.geo.transform({point: streamProjectPoint}),
       path = d3.geo.path().projection(transform), // only used for bounds calculation
@@ -285,6 +287,16 @@ function IsolinesOverlay() {
       .exit()
       .attr('opacity', 0)
       .remove();
+
+
+/*    if(hoveredCluster && hoveredIsoline) {
+      var hoveredC = cluster.each(function(cluster) {
+        return cluster.features[0].properties.startLocation.toString() === hoveredCluster;
+      }),
+      hoveredI = hoveredC.selectAll(`.m-clusters__isoline--plain.m-clusters__isoline--${hoveredIsoline}`);
+
+      handleMouseenterIsoline.call(hoveredI.node());
+    }*/
   }
 
 
@@ -705,6 +717,17 @@ function IsolinesOverlay() {
     return _isolinesOverlay;
   }
 
+  _isolinesOverlay.hoveredIsoline = function(_) {
+    if(!arguments.length) return hoveredIsoline;
+    hoveredIsoline = _;
+    return _isolinesOverlay;
+  }
+
+  _isolinesOverlay.hoveredCluster = function(_) {
+    if(!arguments.length) return hoveredCluster;
+    hoveredCluster = _;
+    return _isolinesOverlay;
+  }
 
   _isolinesOverlay.map = function(_map) {
     if(!arguments.length) return map;

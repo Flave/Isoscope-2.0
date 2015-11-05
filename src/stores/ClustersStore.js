@@ -324,7 +324,6 @@ var ClustersStore = _.assign({}, EventEmitter.prototype, {
     var action = payload.action;
     switch(action.actionType) {
       case ClusterConstants.CLUSTER_UPDATE:
-        console.log(_clusters);
         isLoading = true;
         update(action.data)
           .then(function(newClusters) {

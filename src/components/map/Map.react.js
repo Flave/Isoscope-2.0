@@ -44,7 +44,7 @@ var Map = React.createClass({
   },
 
   componentWillUpdate: function(nextProps) {
-    //this.throtteledTransition(nextProps);
+    this.throtteledTransition(nextProps);
   },
 
   transitionMap: function(nextProps) {

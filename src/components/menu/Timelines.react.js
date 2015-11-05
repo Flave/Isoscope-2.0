@@ -65,7 +65,7 @@ var App = React.createClass({
       this.setState({isScrolled: true});
     else if(e.target.scrollTop === 0)
       this.setState({isScrolled: false});
-  },  
+  },
 
   _handleDepartureTimeChange: function(value) {
     this.props.handleTransition({ departureTime: value });

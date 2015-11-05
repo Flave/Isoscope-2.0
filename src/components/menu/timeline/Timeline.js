@@ -173,6 +173,10 @@ function Timeline() {
         return highlightedLine === features[0].properties.travelMode;
       })
       .attr('d', area);
+
+    areas
+      .exit()
+      .remove();
   }
 
 
@@ -275,7 +279,7 @@ function Timeline() {
       .attr('dx', padding/2)
       .attr('dy', 5);
 
-    label.text(d3.round(distance, 1) + " km");
+    label.text(d3.round(distance/1000, 1) + " km");
     ttipWidth = label.node().getBoundingClientRect().width
 
 

@@ -15,6 +15,7 @@
 .m-ui-panel__section {
   padding: 20px;
   position: relative;
+  border-bottom: 1px solid $c-gray-quaternary;
 
   &--timelines {
     background-color: #f8f8f8;
@@ -45,7 +46,7 @@
         width: 8px;
         height: 8px;
         box-shadow: 1.8px 1.8px 0 0 $c-gray-secondary;
-        transform: rotate(-135deg) translateY(-100%);
+        transform: translateY(50%) rotate(-135deg);
         right: 10px;
         top: 47%;
       }
@@ -53,13 +54,14 @@
 
     &.is-expanded .m-ui-panel__section-title {
       &:after {
-        transform: rotate(45deg) translateY(-100%);
+        transform: translateY(-50%) rotate(45deg);
       }
     }
   }
 
   &:last-of-type {
     padding-bottom: 0;
+    border: none;
   }
 }
 

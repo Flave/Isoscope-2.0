@@ -17,7 +17,6 @@ function Timeline() {
       highlightedLine,
       timeAxis = d3.svg.axis().orient('top'),
       distanceAxis = d3.svg.axis().orient('left'),
-      dispatch = d3.dispatch(_timeline, 'mouseenter', 'mouseleave'),
       line = d3.svg.line()
         .x(function(feature, i){ return hour2X(i); })
         .y(function(feature, i){ return distance2Y(feature.properties.meanDistance); })
@@ -240,7 +239,7 @@ function Timeline() {
       .selectAll(`.m-timeline-chart__area--${features[0].properties.travelMode}`)
       .classed('is-hovered', true);
 
-    dispatch.mouseenter(features, i);
+    //dispatch.mouseenter(features, i);
   }
 
   function handleMouseLeaveLine(features, i) {
@@ -248,7 +247,7 @@ function Timeline() {
       .selectAll(`.m-timeline-chart__area--${features[0].properties.travelMode}`)
       .classed('is-hovered', false);
 
-    dispatch.mouseleave(features, i);
+    //dispatch.mouseleave(features, i);
   }
 
 
@@ -291,7 +290,7 @@ function Timeline() {
     return _timeline;
   }
 
-  return d3.rebind(_timeline, dispatch, 'on');
+  return _timeline;
 }
 
 module.exports = Timeline;

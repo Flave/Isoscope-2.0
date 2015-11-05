@@ -1,0 +1,81 @@
+.m-idle {
+  position: absolute;
+  top: 50%;
+  left: 60%;
+  max-width: 450px;
+  transform: translate(-50%, -50%);
+  line-height: 1.4em;
+  font-size: 28px;
+  pointer-events: none;
+  text-shadow: 0 0 20px rgba(255, 255, 255, 1);
+
+  &:before, &:after {
+    content: "";
+    position: absolute;
+    display: block;
+    width: 15px;
+    height: 15px;
+    background-color: #4488f8;
+    border: 3px solid #fff;
+    border-radius: 100%;
+    top: 12px;
+    left: -40px;
+  }
+
+  &:before {
+    background-color: #fff;
+    opacity: 0;
+    transform: scale(1);
+    animation-name: vap;
+    animation-duration: 1.6s;
+    animation-iteration-count: infinite;
+  }
+
+  .m-idle__highlight {
+    font-weight: 600;
+    position: relative;
+    display: inline-block;
+
+    &:after {
+      position: absolute;
+      content: "";
+      display: block;
+      left: 0;
+      right: 0;
+      bottom: -2px;
+      height: 3px;
+    }
+  }
+
+  .m-idle__highlight--car {
+    &:after {
+      background-color: $c-car;
+    }
+  }
+
+  .m-idle__highlight--bike {
+    &:after {
+      background-color: $c-bike;
+    }
+  }
+
+  .m-idle__highlight--public-transport {
+    &:after {
+      background-color: $c-public-transport;
+    }
+  }
+}
+
+@keyframes vap {
+  0% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  10% {
+    opacity: 1;
+  }
+  50% {
+    transform: scale(3);
+    opacity: 0;
+  }
+}

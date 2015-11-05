@@ -5,12 +5,18 @@
 .m-cluster-legend__inner {
   position: relative;
   display: flex;
-  align-items: center;
+  align-items: flex-end;
   
+  svg {
+    margin-top: -20px;
+  }
+
   p {
     font-size: 12px;
-    line-height: 16px;
+    line-height: 17px;
+    font-weight: 300;
     width: 60%;
-    padding-right: 20px;
+    padding-right: 30px;
+    margin-bottom: 25px;
   }
 }

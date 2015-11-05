@@ -39,6 +39,10 @@
   font-size: 10px;
 }
 
+.m-slider__domain {
+
+}
+
 .m-slider__axis {
   .domain {
     fill: none;
@@ -46,7 +50,7 @@
 
   .tick {
     text {
-      font-size: 14px;
+      font-size: 13px;
       fill: $c-gray-secondary;
       text-anchor: middle;
     }

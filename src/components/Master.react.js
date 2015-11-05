@@ -4,6 +4,7 @@ var React = require('react'),
     _ = require('lodash'),
     State = require('app/stores/StateStore'),
     classNames = require('classnames'),
+    IdleComponent = require('app/components/common/IdleComponent.react'),
     tourDates = require('app/config/tour'),
     TourManager = require('app/utility/tour-manager'),
     ClustersStore = require('app/stores/ClustersStore');
@@ -44,15 +45,26 @@ var Component = React.createClass({
 
 
   componentDidMount: function() {
-    var query = this.context.router.getCurrentQuery();
+    var query = this.context.router.getCurrentQuery(),
+        context = this;
 
     ClustersStore.addChangeListener(this._onStores);
     State.addChangeListener(this._onState);
     State.setFromUrl(query);
+    tourManager = TourManager({tourDates: tourDates});
+    var debouncedSetIdle = _.debounce(this.setIdle, 60000 * 2);
 
-    setTimeout(function() {
-      //tourManager = TourManager({tourDates: tourDates}).start();
-    }, 2000);
+    document.addEventListener('mousemove', function() {
+      if(context.state.state.idle)
+        State.set({
+          idle: false,
+          clusters: []
+        });
+
+      debouncedSetIdle();
+    });
+
+    debouncedSetIdle();
   },
 
   componentWillReceiveProps: function(nextProps) {
@@ -62,11 +74,12 @@ var Component = React.createClass({
   },
 
   _transitionTo: function(newState) {
-    if(tourManager)
-      tourManager.stop();
     State.set(newState);
   },
 
+  setIdle: function() {
+    State.set({idle: true});
+  },
 
   _onState: function() {
     var routes = this.context.router.getCurrentRoutes(),
@@ -101,6 +114,7 @@ var Component = React.createClass({
             isLoading={this.state.isLoading}
             loadingStateChanged={this.state.loadingStateChanged}
             handleTransition={this._transitionTo} />
+          {this.state.state.idle ? <IdleComponent /> : undefined}
           <UIPanel 
             state={this.state.state}
             clusters={this.state.clusters}

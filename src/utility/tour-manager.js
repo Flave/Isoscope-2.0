@@ -4,26 +4,34 @@ var state = require('app/stores/StateStore'),
 
 var defaults = {
   tourDates: [],
-  interval: 4000
+  interval: 10000
 }
 
 function tourManager(options) {
   var that = {},
       currentStep = 0,
+      isRunning = false,
       intervalId;
 
   that.tourDates = options.tourDates || defaults.tourDates;
   that.interval = options.interval || defaults.interval;
 
   that.start = function() {
-    intervalId = setInterval(processStep, that.interval);
-    console.log('started tour');
+    if(!isRunning) {
+      intervalId = setInterval(processStep, that.interval);
+      console.log('started tour');
+      isRunning = true;
+    }
+    return that;
   }
 
   that.stop = function() {
-    clearInterval(intervalId);
-    setTimeout(that.start, 8000);
-    console.log('stopped tour');
+    if(isRunning) {
+      clearInterval(intervalId);
+      console.log('stopped tour');
+      isRunning = false;
+    }
+    return that;
   }
 
   that.pause = function() {

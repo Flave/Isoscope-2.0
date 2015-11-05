@@ -5,7 +5,7 @@ module.exports = [
       [52.5270835964481,13.415679931640625],
       [52.47713460532417,13.329505920410156]
     ],
-    travelTime: 14,
+    travelTime: 10,
     travelModes: ["car", "bike"],
     weekday: 0,
     departureTime: 11,
@@ -16,7 +16,7 @@ module.exports = [
     clusters: [
       [52.4270835964481,13.415679931640625]
     ],
-    travelTime: 14,
+    travelTime: 6,
     travelModes: ["car", "bike", "publicTransport"],
     weekday: 0,
     departureTime: 11,

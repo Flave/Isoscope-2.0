@@ -3,7 +3,7 @@ module.exports = [
     label: "Brandenburg",
     value: "brandenburg",
     endpoint: "api_brandenburg",
-    map: [52.51831005956184,13.408126831054686,10]
+    map: [52.51831005956184,13.408126831054686,12]
   },
   {
     label: "Berlin",

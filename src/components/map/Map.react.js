@@ -1,8 +1,5 @@
 var React = require('react'),
     Router = require('react-router'),
-    hereLogo = require('../../../static/assets/logo-here.png'),
-    fhpLogo = require('../../../static/assets/logo-fhp.png'),
-    miLogo = require('../../../static/assets/logo-mi.png'),
     L;
 
 if(process.env.BROWSER) {
@@ -88,13 +85,13 @@ var Map = React.createClass({
         <div className="m-map__container" ref="mapContainer"></div>
         <div className="m-map__attributions">
           <a href="http://www.fh-potsdam.de/" target="_blank">
-            <img className="m-map__attribution" src={fhpLogo}/>
+            <img className="m-map__attribution" src="/assets/logo-fhp.png"/>
           </a>
           <a href="http://motionintelligence.net/" target="_blank">
-            <img className="m-map__attribution" src={miLogo}/>
+            <img className="m-map__attribution" src="/assets/logo-mi.png"/>
           </a>
           <a href="https://www.here.com" target="_blank">
-            <img className="m-map__attribution" src={hereLogo}/>
+            <img className="m-map__attribution" src="/assets/logo-here.png"/>
           </a>
         </div>
       </div>

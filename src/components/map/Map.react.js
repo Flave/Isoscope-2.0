@@ -1,5 +1,8 @@
 var React = require('react'),
     Router = require('react-router'),
+    hereLogo = require('../../../static/assets/logo-here.png'),
+    fhpLogo = require('../../../static/assets/logo-fhp.png'),
+    miLogo = require('../../../static/assets/logo-mi.png'),
     L;
 
 if(process.env.BROWSER) {
@@ -35,7 +38,7 @@ var Map = React.createClass({
         id: 'examples.map-20v6611k',
     }).addTo(this.map);
 
-    this.map.zoomControl.setPosition('bottomright');
+    this.map.zoomControl.setPosition('topright');
 
     // super elaborate debouncing to prevent click listeners to be triggered on double click
     // debounced method is component method so clicks can be counted and reset
@@ -80,7 +83,22 @@ var Map = React.createClass({
   },
 
   render: function() {
-    return (<div className="map-container" ref="mapContainer"></div>)
+    return (
+      <div className="m-map">
+        <div className="m-map__container" ref="mapContainer"></div>
+        <div className="m-map__attributions">
+          <a href="http://www.fh-potsdam.de/" target="_blank">
+            <img className="m-map__attribution" src={fhpLogo}/>
+          </a>
+          <a href="http://motionintelligence.net/" target="_blank">
+            <img className="m-map__attribution" src={miLogo}/>
+          </a>
+          <a href="https://www.here.com" target="_blank">
+            <img className="m-map__attribution" src={hereLogo}/>
+          </a>
+        </div>
+      </div>
+    )
   }
 });
 

@@ -257,6 +257,11 @@ function reduceDistancesOfClusters(cluster, reduceFunc, propertyName) {
 
 
 function remove(startLocation) {
+  if(!startLocation) {
+    _clusters = [];
+    return;
+  }
+  
   _clusters = _(_clusters)
     .pairs()
     .filter(function(pair) {

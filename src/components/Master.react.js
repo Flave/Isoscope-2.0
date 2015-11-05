@@ -7,7 +7,8 @@ var React = require('react'),
     IdleComponent = require('app/components/common/IdleComponent.react'),
     tourDates = require('app/config/tour'),
     TourManager = require('app/utility/tour-manager'),
-    ClustersStore = require('app/stores/ClustersStore');
+    ClustersStore = require('app/stores/ClustersStore'),
+    ClusterActions = require('app/actions/ClusterActions');
 
 var tourManager;
 
@@ -57,8 +58,7 @@ var Component = React.createClass({
     document.addEventListener('mousemove', function() {
       if(context.state.state.idle)
         State.set({
-          idle: false,
-          clusters: []
+          idle: false
         });
 
       debouncedSetIdle();
@@ -78,7 +78,12 @@ var Component = React.createClass({
   },
 
   setIdle: function() {
-    State.set({idle: true});
+    ClusterActions.remove();
+
+    State.set({
+      idle: true,
+      clusters: []
+    });
   },
 
   _onState: function() {

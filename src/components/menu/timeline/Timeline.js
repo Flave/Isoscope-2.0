@@ -133,6 +133,7 @@ function Timeline() {
       .append('path')
       .classed('m-timeline-chart__line', true)
       .on('mouseenter', handleMouseEnterLine)
+      .on('mousemove', handleMouseMoveLine)
       .on('mouseleave', handleMouseLeaveLine);
 
     lineElement
@@ -234,11 +235,68 @@ function Timeline() {
   }
 
 
+  function handleMouseMoveLine(features, i) {
+    // 1. get x position
+    // 2. get value of x position
+    // 3. get y position for value
+    var mouse = d3.mouse(svg.node()),
+        mouseX = mouse[0],
+        hour = Math.round(hour2X.invert(mouseX)),
+        x = hour2X(hour),
+        distance = features[hour].properties.meanDistance,
+        padding = 15,
+        y = distance2Y(distance),
+        tooltip = svg.selectAll('g.m-timeline-chart__ttip').data([1]),
+        label,
+        bg,
+        ttipWidth;
+
+    tooltip
+      .enter()
+      .append('g')
+      .classed('m-timeline-chart__ttip', true);
+
+    bg = tooltip
+      .selectAll('rect')
+      .data([1]);
+
+    bg
+      .enter()
+      .append('rect')
+      .attr({rx: 1, ry: 1})
+
+    label = tooltip
+      .selectAll('text')
+      .data([1]);
+
+    label
+      .enter()
+      .append('text')
+      .attr('dx', padding/2)
+      .attr('dy', 5);
+
+    label.text(d3.round(distance, 1) + " km");
+    ttipWidth = label.node().getBoundingClientRect().width
+
+
+    x = ((x - ttipWidth/2 - padding/2) <= 0) ? (ttipWidth/2 + padding/2) : x;
+
+    x = ((x + ttipWidth/2 + padding/2) >= size[0]) ? (size[0] - ttipWidth/2 - padding/2) : x;
+
+    
+
+    tooltip
+      .attr('transform', `translate(${x - ttipWidth/2 - padding/2},${y - 35})`);
+
+    bg
+      .attr('width', ttipWidth + padding)
+      .attr('height', 25);
+  }
+
   function handleMouseEnterLine(features, i) {
     svg
       .selectAll(`.m-timeline-chart__area--${features[0].properties.travelMode}`)
       .classed('is-hovered', true);
-
     //dispatch.mouseenter(features, i);
   }
 
@@ -246,6 +304,10 @@ function Timeline() {
     svg
       .selectAll(`.m-timeline-chart__area--${features[0].properties.travelMode}`)
       .classed('is-hovered', false);
+
+    svg
+      .selectAll('g.m-timeline-chart__ttip')
+      .remove();
 
     //dispatch.mouseleave(features, i);
   }

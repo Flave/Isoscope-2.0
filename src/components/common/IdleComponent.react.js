@@ -7,7 +7,7 @@ var Accordeon = React.createClass({
   render: function() {
     return (
       <div className="m-idle">
-        <p>Click somewhere on the map to see how far you get by <span className="m-idle__highlight m-idle__highlight--car">car</span>, <span className="m-idle__highlight m-idle__highlight--public-transport">public transport</span> or by <span className="m-idle__highlight m-idle__highlight--bike">bike</span></p>
+        <p>Click somewhere on the map to see how far you get by <span className="m-idle__highlight m-idle__highlight--car">car</span>, <span className="m-idle__highlight m-idle__highlight--public-transport">public transport</span> or by <span className="m-idle__highlight m-idle__highlight--bike">bike</span>.</p>
       </div>
     )
   }

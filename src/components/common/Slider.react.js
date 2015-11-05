@@ -183,12 +183,12 @@ var Slider = React.createClass({
           </defs>
           <g
             className="m-slider__axis"
-            transform='translate(0, 5)'
+            transform='translate(0, 7)'
             ref="xAxis"/>
           <rect 
             ref="domain"
             className="m-slider__domain"
-            transform={`translate(0, ${this.props.height/2 - 2})`}
+            transform={`translate(0, ${this.props.height/2})`}
             style={{fill: '#999'}}
             width={this.state.width} 
             height={1}/>

@@ -122,3 +122,16 @@
     opacity: 1;
   }
 }
+
+.m-timeline-chart__ttip {
+  text {
+    alignment-baseline: before-edge;
+    fill: #fff;
+    font-size: 12px;
+  }
+
+  rect {
+    fill: $c-gray-primary;
+
+  }
+}

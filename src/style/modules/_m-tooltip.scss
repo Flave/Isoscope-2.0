@@ -9,12 +9,13 @@
 
   &:after {
     content: "";
-    position: aboslute;
+    position: absolute;
     display: block;
     width: 8px;
     height: 8px;
-    transform: translateY(-50%) rotate(45deg);
-    bottom: -5px;
+    background-color: inherit;
+    bottom: -4px;
     left: 50%;
+    transform: translateX(-50%) rotate(45deg);
   }
 }

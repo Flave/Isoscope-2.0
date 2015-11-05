@@ -3,8 +3,8 @@ var React = require('react'),
     Tooltip = require('app/components/common/Tooltip.react');
 
 var infos = [
-  "Here Car is da best",
-  "Here Public Transport is da second bestest"
+  "Traveling in this direction you would get the furthest by car, followed by the bike and public transport.",
+  "Traveling in this direction you would get the furthest by bike, followed by the car and public transport."
 ]
 
 var Legend = React.createClass({

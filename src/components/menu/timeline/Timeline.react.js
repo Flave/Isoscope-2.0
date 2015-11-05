@@ -45,9 +45,7 @@ var App = React.createClass({
       .highlightLine(highlightedLine)
       .maxDistance(this.props.maxDistance)
       .cursorPosition(this.props.state.departureTime)
-      .size(size)
-      .on('mouseenter', this._handleMouseEnterLine)
-      .on('mouseleave', this._handleMouseEnterLeave)(svg);
+      .size(size)(svg);
   },
 
   render: function() {
@@ -99,18 +97,6 @@ var App = React.createClass({
 
   _handleMouseLeave: function() {
     this.props.handleTransition({hoveredCluster: undefined});
-  },
-
-  _handleMouseEnterLine: function(features, i) {
-    this.props.handleTransition({
-      hoveredIsoline: features[0].properties.travelMode
-    });
-  },
-
-  _handleMouseLeaveLine: function(features, i) {
-    this.props.handleTransition({
-      hoveredIsoline: undefined
-    });
   }
 });
 

@@ -5,6 +5,7 @@ Barebones Boilerplate using the above mentioned technologies. Quite some stuff s
 To install run
 ```
 npm install
+cd node_modules && ln -s ../src ./app
 ```
 
 To start development run

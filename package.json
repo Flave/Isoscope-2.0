@@ -8,7 +8,7 @@
     "dev": "NODE_ENV=development nodemon --watch src/server --watch src/server.js index.js",
     "build": "rm ./static/dist/* && webpack --stats --config ./webpack/prod.config.js",
     "build-uberspace": "rm ./static/dist/* && webpack --stats --config ./webpack/prod.config.js",
-    "prod": "NODE_ENV=production node index"
+    "prod": "NODE_ENV=production PORT=61425 node index"
   },
   "author": "",
   "license": "ISC",

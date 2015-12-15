@@ -4,19 +4,27 @@ Barebones Boilerplate using the above mentioned technologies. Quite some stuff s
 
 To install run
 ```
-npm install
-cd node_modules && ln -s ../src ./app
+$ npm install
+$ cd node_modules && ln -s ../src ./app
 ```
 
 To start development run
 ```
-npm run dev
+$ npm run dev
 
 or without nodemon
 
-NODE_ENV=development node index.js
+$ NODE_ENV=development node index.js
 ```
-and visit `[http://localhost:3000](http://localhost:3000)`
+and visit [http://localhost:3000](http://localhost:3000)
+
+For production run
+```
+$ npm run build
+$ npm run prod
+```
+
+This will start a node server on port 61425. Edit the package.json scripts property to change the port.
 
 A development server serving and updating the transformed javascript and css runs on http://localhost:3001.
 

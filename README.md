@@ -16,7 +16,7 @@ or without nodemon
 
 $ NODE_ENV=development node index.js
 ```
-and visit [http://localhost:3000](http://localhost:3000)
+and visit [http://localhost:3002](http://localhost:3002)
 
 For production run
 ```

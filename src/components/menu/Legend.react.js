@@ -1,6 +1,7 @@
 var React = require('react'),
     classNames = require('classnames'),
-    Tooltip = require('app/components/common/Tooltip.react');
+    Tooltip = require('app/components/common/Tooltip.react'),
+    StateStore = require('app/stores/StateStore');
 
 var infos = [
   "Traveling in this direction you would get the furthest by car, followed by the bike and public transport.",
@@ -25,7 +26,9 @@ var Legend = React.createClass({
         <h3 onClick={this.props.onToggle} className="m-ui-panel__section-title">Info</h3>
         {this.props.isExpanded ? (
           <div className='m-cluster-legend__inner'>
-            <p>When you click on the map you will see the area you can reach within the given amount of time for different means of transportation. Every transport modality has it's own shape due to speed, traffic and underlying infrastructure.</p>
+            <p>When you click on the map you will see the area you can reach within the given amount of time for different means of transportation. Every transport modality has it's own shape due to speed, traffic and underlying infrastructure. 
+              <br/> <span onClick={this._handleMoreInfoClick} className="btn">More Info</span>
+            </p>
             <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="250px" height="250px" viewBox="0 0 250 250">
               <path fill="none" stroke="#FF5F85" strokeWidth="5" strokeLinecap="round" strokeMiterlimit="10" d="M26.346,173.399c-6.624,12.743-10.258,24.368-0.983,34.439C47.819,232.22,80.01,244.46,115.77,244.46c35.079,0,69.001-1.8,91.391-25.376c20.923-22.033,39.073-61.682,39.073-94.464c0-31.548-25.548-55.765-45.089-77.523C178.65,22.051,152.086,3.263,115.77,3.263c-31.346,0-59.952,10.22-81.659,29.54c-13.717,12.209-9.049,27.446-1.907,44.66"/>
               <path fill="none" stroke="#FF5F85" strokeWidth="3" strokeLinecap="round" strokeMiterlimit="10" d="M26.346,173.399c7.773-14.953,19.665-31.447,19.665-48.779c0-16.707-7.784-32.636-13.809-47.156"/>
@@ -66,6 +69,10 @@ var Legend = React.createClass({
           ) : undefined}
       </div>
     )
+  },
+
+  _handleMoreInfoClick: function() {
+    StateStore.set({documentationIsOpen: true});
   }
 });
 

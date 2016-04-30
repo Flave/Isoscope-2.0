@@ -8,13 +8,10 @@ var React = require('react'),
     tourDates = require('app/config/tour'),
     TourManager = require('app/utility/tour-manager'),
     ClustersStore = require('app/stores/ClustersStore'),
-    ClusterActions = require('app/actions/ClusterActions');
+    ClusterActions = require('app/actions/ClusterActions'),
+    Documentation = require('app/components/common/Documentation.react');
 
 var tourManager;
-
-
-
-
 
 function getClusters(config) {
   return ClustersStore.get(config);
@@ -113,6 +110,7 @@ var Component = React.createClass({
   render: function() {
     return (
         <div className={classNames("controller-view", {"is-loading": this.state.isLoading})}>
+          {this.state.state.documentationIsOpen && <Documentation />}
           <Map
             state={this.state.state}
             clusters={this.state.clusters}

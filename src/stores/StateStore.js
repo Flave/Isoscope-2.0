@@ -18,7 +18,8 @@ var CHANGE_EVENT = 'change',
       travelModes: ['car', 'publicTransport', 'bike'],
       travelTime: 6,
       hoveredCluster: undefined,
-      hoveredIsoline: undefined
+      hoveredIsoline: undefined,
+      documentationIsOpen: false
     },
     _state = _.clone(_defaultState),
     _urlState = {},

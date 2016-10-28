@@ -8,7 +8,7 @@ var jsonp = require('jsonp'),
 var api = {},
     app_id = 'bVQHRXUn6uNHP3B24bdt',
     app_code = 'mwkokcyyoCIfExsmQq0qIg',
-    base = '//route.st.nlp.nokia.com/routing/6.2/calculateisoline.json';
+    base = 'https://isoline.route.cit.api.here.com/routing/7.2/calculateisoline.json';
 
 /*
 * Converts weird here response "lat,lng" format to {lat: lat, lng:lng}
@@ -17,7 +17,6 @@ var api = {},
 
 function processIsolineValues(latLngValues) {
   var values = _.map(latLngValues, function(latLngValue, i) {
-    if(i%2 === 1) return undefined;
     var latLng = latLngValue.split(',');
     return [ parseFloat(latLng[0]), parseFloat(latLng[1]) ];
   });
@@ -31,9 +30,9 @@ function processIsolineValues(latLngValues) {
 */
 
 function processIsolineResponse(res) {
-  var isoline = res.Response.isolines[0],
-      meta = res.Response.MetaInfo,
-      params = _(util.queryStringToJSON(meta.RequestId))
+  var isoline = res.response.isoline[0].component[0].shape,
+      meta = res.response.metaInfo,
+      params = _(util.queryStringToJSON(meta.requestId))
         .map(function(param, key) {
           var value;
           // split startLocation paramter into array of lat/lng
@@ -47,7 +46,7 @@ function processIsolineResponse(res) {
         .object()
         .value(),
       isoline = {
-        data: processIsolineValues(isoline.value)
+        data: processIsolineValues(isoline)
       },
 
     idConfig = {
@@ -143,11 +142,17 @@ var hereApi = {
       departure: util.getXsDateTime(options.weekday, options.departureTime, 0), // = departureTime
       mode: `fastest;${options.travelMode};traffic:enabled`,
       start: `${options.startLocation[0]},${options.startLocation[1]}`,
-      time: `PT0H${zeroPad2(Math.floor(options.travelTime))}M`, // = travelTime
+      range: options.travelTime * 60, // = travelTime
+      rangetype: "time",
       app_id: app_id,
       app_code: app_code,
+      singlecomponent: true,
+      resolution: 10,
+      quality: 3,
       requestId: util.JSON2QueryString(options) // requestId: start=lat,lng&mode=mode&weekday=weekday&departureTime=departureTime&travelTime=travelTime&
     });
+
+    console.log(util.getXsDateTime(options.weekday, options.departureTime, 0), options.departureTime)
 
     jsonp(`${base}?${params}`, {param: 'jsonCallback'}, function(err, res) {
       if(err)

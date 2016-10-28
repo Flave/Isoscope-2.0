@@ -29,6 +29,18 @@ This will start a node server on port 61425. Edit the package.json scripts prope
 A development server serving and updating the transformed javascript and css runs on http://localhost:3001.
 
 
+
+## Deployment on UBERSPACE
+To deploy to UBERSPACE push to uberspace master and run
+```
+ssh isoscope@alkaid.uberspace.de
+cd isoscope-two.flavio.is
+git pull
+npm run build-uberspace
+svc -d ~/service/isoscope-two
+svc -u ~/service/isoscope-two
+```
+
 ## Basic Folder Structure
 ```
 ├── src

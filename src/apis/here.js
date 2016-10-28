@@ -152,8 +152,6 @@ var hereApi = {
       requestId: util.JSON2QueryString(options) // requestId: start=lat,lng&mode=mode&weekday=weekday&departureTime=departureTime&travelTime=travelTime&
     });
 
-    console.log(util.getXsDateTime(options.weekday, options.departureTime, 0), options.departureTime)
-
     jsonp(`${base}?${params}`, {param: 'jsonCallback'}, function(err, res) {
       if(err)
         deferred.reject(error);
